@@ -1,0 +1,45 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../Italbytz.Adapters.Algorithms.EA",
+          "files": [
+            "Italbytz.Adapters.Algorithms.EA/*.csproj"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "Italbytz.Adapters.Algorithms.EA",
+      "_appTitle": "Italbytz.Adapters.Algorithms.EA",
+      "_enableSearch": true,
+      "pdf": false
+    }
+  }
+}
