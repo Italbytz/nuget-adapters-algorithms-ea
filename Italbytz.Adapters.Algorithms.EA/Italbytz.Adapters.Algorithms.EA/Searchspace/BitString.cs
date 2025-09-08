@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using Italbytz.AI;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.SearchSpace;
-using Italbytz.EA.Util;
 
 namespace Italbytz.EA.Searchspace;
 

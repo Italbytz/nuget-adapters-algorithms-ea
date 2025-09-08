@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Italbytz.EA.Util;
+using Italbytz.AI;
 
 namespace Italbytz.EA.Individuals;
 

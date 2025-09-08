@@ -21,9 +21,10 @@
     <ItemGroup>
         <None Include="../../docfx/docs/introduction.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <PackageReference Include="Italbytz.Ports.Algorithms.EA" Version="9.0.0" />
+        <PackageReference Include="Italbytz.Adapters.Algorithms.AI" Version="9.9.1"/>
+        <PackageReference Include="Italbytz.Ports.Algorithms.EA" Version="9.1.0"/>
     </ItemGroup>
 
 </Project>
