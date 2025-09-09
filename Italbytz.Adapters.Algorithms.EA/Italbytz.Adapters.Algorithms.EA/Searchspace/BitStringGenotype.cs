@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Linq;
 using Italbytz.EA.Individuals;
@@ -22,12 +21,6 @@ public class BitStringGenotype : IGenotype
         return new BitStringGenotype(BitArray, _dimension);
     }
 
-    public void UpdatePredictions()
-    {
-        throw new NotImplementedException();
-    }
-
-    public float[][] Predictions { get; }
     public double[]? LatestKnownFitness { get; set; }
     public int Size { get; }
 

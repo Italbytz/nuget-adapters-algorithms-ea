@@ -7,10 +7,10 @@ namespace Italbytz.EA.Selection;
 public class CutSelection : AbstractSelection
 {
     protected override IEnumerable<IIndividual> Select(
-        IIndividualList individualList)
+        IIndividualList individualList, int noOfIndividualsToSelect)
     {
         return individualList
             .OrderByDescending(i => i.LatestKnownFitness.Sum())
-            .Take(NoOfIndividualsToSelect);
+            .Take(noOfIndividualsToSelect);
     }
 }

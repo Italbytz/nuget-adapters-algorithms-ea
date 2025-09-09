@@ -11,11 +11,11 @@ public class TournamentSelection : AbstractSelection
     protected bool SelectWorst { get; set; } = false;
 
     protected override IEnumerable<IIndividual> Select(
-        IIndividualList individualList)
+        IIndividualList individualList, int noOfIndividualsToSelect)
     {
         var selectedIndividuals = new List<IIndividual>();
         var rnd = ThreadSafeRandomNetCore.LocalRandom;
-        for (var i = 0; i < NoOfIndividualsToSelect; i++)
+        for (var i = 0; i < noOfIndividualsToSelect; i++)
         {
             var tournament = new List<IIndividual>();
             for (var j = 0; j < TournamentSize; j++)

@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using Italbytz.EA.Individuals;
+using static Italbytz.EA.Searchspace.TinyGpPrimitive;
 
 namespace Italbytz.EA.Searchspace;
 
@@ -20,12 +21,6 @@ public class TinyGpGenotype : IGenotype
         throw new NotImplementedException();
     }
 
-    public void UpdatePredictions()
-    {
-        throw new NotImplementedException();
-    }
-
-    public float[][] Predictions { get; }
     public double[]? LatestKnownFitness { get; set; }
     public int Size { get; }
 
@@ -34,13 +29,57 @@ public class TinyGpGenotype : IGenotype
         return PrintIndividual(Program, 0).Item2;
     }
 
+    public double Run(double[] variables, ref int pc)
+    {
+        var primitive = Program[pc++];
+        if (primitive < FSET_START)
+        {
+            if (primitive < VariableCount)
+                /*                Console.WriteLine(
+                    $"Evaluating variable X{primitive + 1} with value {variables[primitive]}");*/
+                return variables[primitive];
+
+            /*Console.WriteLine(
+                $"Evaluating constant C{primitive - VariableCount + 1} with value{primitive - VariableCount + 1}");*/
+            return primitive - VariableCount + 1;
+        }
+
+        double result;
+        switch ((int)primitive)
+        {
+            case ADD:
+                result = Run(variables, ref pc) + Run(variables, ref pc);
+                //Console.WriteLine($"Adding: {result}");
+                return result;
+            case SUB:
+                result = Run(variables, ref pc) - Run(variables, ref pc);
+                //Console.WriteLine($"Subtracting: {result}");
+                return result;
+            case MUL:
+                result = Run(variables, ref pc) * Run(variables, ref pc);
+                //Console.WriteLine($"Multiplying: {result}");
+                return result;
+            case DIV:
+                var num = Run(variables, ref pc);
+                var den = Run(variables, ref pc);
+                if (Math.Abs(den) < 0.0001)
+                    result = num; // protect against division by zero
+                else
+                    result = num / den;
+                //Console.WriteLine($"Dividing: {result}");
+                return result;
+        }
+
+        throw new Exception("Unknown primitive");
+    }
+
     private static (int, string) PrintIndividual(char[] buffer,
         int buffercounter)
     {
         int a1, a2 = 0;
         string s1, s2 = null;
         var sb = new StringBuilder();
-        if (buffer[buffercounter] < TinyGpPrimitive.FSET_START)
+        if (buffer[buffercounter] < FSET_START)
         {
             if (buffer[buffercounter] < VariableCount)
                 sb.Append("X" + (buffer[buffercounter] + 1) + " ");
@@ -53,16 +92,16 @@ public class TinyGpGenotype : IGenotype
 
         switch ((int)buffer[buffercounter])
         {
-            case TinyGpPrimitive.ADD:
+            case ADD:
                 sb.Append("(ADD ");
                 break;
-            case TinyGpPrimitive.SUB:
+            case SUB:
                 sb.Append("(SUB ");
                 break;
-            case TinyGpPrimitive.MUL:
+            case MUL:
                 sb.Append("(MUL ");
                 break;
-            case TinyGpPrimitive.DIV:
+            case DIV:
                 sb.Append("(DIV ");
                 break;
         }
