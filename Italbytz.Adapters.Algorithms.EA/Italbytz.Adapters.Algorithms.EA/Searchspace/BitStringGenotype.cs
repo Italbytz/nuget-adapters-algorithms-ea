@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Linq;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.Mutation;
 
 namespace Italbytz.EA.Searchspace;
 
-public class BitStringGenotype : IGenotype
+public class BitStringGenotype : IGenotype, IMutable
 {
     private readonly int _dimension;
 
@@ -23,6 +25,13 @@ public class BitStringGenotype : IGenotype
 
     public double[]? LatestKnownFitness { get; set; }
     public int Size { get; }
+
+    public void Mutate(double mutationProbability)
+    {
+        for (var i = 0; i < BitArray.Count; i++)
+            if (Random.Shared.NextDouble() < mutationProbability)
+                BitArray[i] = !BitArray[i];
+    }
 
     public override string ToString()
     {

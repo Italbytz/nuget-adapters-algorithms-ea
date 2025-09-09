@@ -1,11 +1,13 @@
 using System;
 using System.Text;
+using Italbytz.AI;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.Mutation;
 using static Italbytz.EA.Searchspace.TinyGpPrimitive;
 
 namespace Italbytz.EA.Searchspace;
 
-public class TinyGpGenotype : IGenotype
+public class TinyGpGenotype : IGenotype, IMutable
 {
     public TinyGpGenotype(char[] program)
     {
@@ -13,16 +15,90 @@ public class TinyGpGenotype : IGenotype
     }
 
     public static int VariableCount { get; set; } = 1;
+    public static int NumberConst { get; set; } = 100;
 
     public char[] Program { get; }
 
     public object Clone()
     {
-        throw new NotImplementedException();
+        var newProgram = new char[Program.Length];
+        Array.Copy(Program, newProgram, Program.Length);
+        return new TinyGpGenotype(newProgram);
     }
 
     public double[]? LatestKnownFitness { get; set; }
     public int Size { get; }
+
+    public void Mutate(double mutationProbability)
+    {
+        for (var i = 0; i < Program.Length; i++)
+            if (ThreadSafeRandomNetCore.LocalRandom.NextDouble() <
+                mutationProbability)
+            {
+                if (Program[i] < FSET_START) // leaf
+                    Program[i] = CreateRandomLeaf();
+                else // function
+                    Program[i] = CreateRandomFunctionNode();
+            }
+    }
+
+    public static TinyGpGenotype GenerateRandomGenotype(int maxLen, int depth)
+    {
+        var program = new char[maxLen];
+        var len = Grow(program, 0, maxLen, depth);
+        while (len < 0)
+            len = Grow(program, 0, maxLen, depth);
+        var individualProgram = new char[len];
+        Array.Copy(program, 0, individualProgram, 0, len);
+        var genotype = new TinyGpGenotype(individualProgram);
+        return genotype;
+    }
+
+    private static int Grow(char[] program, int pos, int maxLen, int depth)
+    {
+        while (true)
+        {
+            var random = ThreadSafeRandomNetCore.LocalRandom;
+            var growPrimitive = random.Next(2) == 0;
+
+            if (pos >= maxLen) return -1;
+
+            if (pos == 0) growPrimitive = true; // force function at root
+
+            if (!growPrimitive || depth == 0)
+            {
+                program[pos] = CreateRandomLeaf();
+                return pos + 1;
+            }
+
+            // Create a function node
+            program[pos] = CreateRandomFunctionNode();
+            pos = Grow(program, pos + 1, maxLen, depth - 1);
+            depth -= 1;
+            continue;
+
+            return 0; // should never get here
+            break;
+        }
+    }
+
+    private static char CreateRandomFunctionNode()
+    {
+        var functionType =
+            ThreadSafeRandomNetCore.LocalRandom.Next(FSET_END - FSET_START +
+                1) + FSET_START;
+        return (char)functionType;
+    }
+
+    private static char CreateRandomLeaf()
+    {
+        if (NumberConst == 0 ||
+            ThreadSafeRandomNetCore.LocalRandom.Next(2) == 0)
+            return (char)ThreadSafeRandomNetCore.LocalRandom
+                .Next(VariableCount);
+        return (char)(VariableCount +
+                      ThreadSafeRandomNetCore.LocalRandom.Next(NumberConst));
+    }
 
     public override string ToString()
     {
@@ -35,12 +111,7 @@ public class TinyGpGenotype : IGenotype
         if (primitive < FSET_START)
         {
             if (primitive < VariableCount)
-                /*                Console.WriteLine(
-                    $"Evaluating variable X{primitive + 1} with value {variables[primitive]}");*/
                 return variables[primitive];
-
-            /*Console.WriteLine(
-                $"Evaluating constant C{primitive - VariableCount + 1} with value{primitive - VariableCount + 1}");*/
             return primitive - VariableCount + 1;
         }
 
@@ -49,15 +120,12 @@ public class TinyGpGenotype : IGenotype
         {
             case ADD:
                 result = Run(variables, ref pc) + Run(variables, ref pc);
-                //Console.WriteLine($"Adding: {result}");
                 return result;
             case SUB:
                 result = Run(variables, ref pc) - Run(variables, ref pc);
-                //Console.WriteLine($"Subtracting: {result}");
                 return result;
             case MUL:
                 result = Run(variables, ref pc) * Run(variables, ref pc);
-                //Console.WriteLine($"Multiplying: {result}");
                 return result;
             case DIV:
                 var num = Run(variables, ref pc);
@@ -66,7 +134,6 @@ public class TinyGpGenotype : IGenotype
                     result = num; // protect against division by zero
                 else
                     result = num / den;
-                //Console.WriteLine($"Dividing: {result}");
                 return result;
         }
 

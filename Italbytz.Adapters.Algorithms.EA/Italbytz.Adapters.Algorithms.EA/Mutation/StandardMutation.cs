@@ -18,9 +18,11 @@ public class StandardMutation : GraphOperator
         var newPopulation = new Population();
         foreach (var individual in individualList)
         {
-            var mutant = (IIndividual)individual.Clone();
-            DoMutation(mutant);
-            newPopulation.Add(mutant);
+            var candidate = (IIndividual)individual.Clone();
+            if (candidate.Genotype is not IMutable mutant)
+                throw new InvalidOperationException("Mutant is not IMutable");
+            mutant.Mutate(MutationProbability);
+            newPopulation.Add(candidate);
         }
 
         return Task.FromResult<IIndividualList>(newPopulation);

@@ -1,3 +1,4 @@
+using Italbytz.EA.Mutation;
 using Italbytz.EA.Operator;
 using Italbytz.EA.Selection;
 
@@ -14,14 +15,20 @@ public class TinyGPGraph : OperatorGraph
             UseRatio = true,
             RatioOfIndividualsToSelect = 0.1
         };
+        Start.AddChildren(mutationSelection);
+        var mutation = new StandardMutation
+        {
+            MutationProbability = 0.02
+        };
+        mutationSelection.AddChildren(mutation);
+        mutation.AddChildren(Finish);
         var crossoverSelection = new TournamentSelection
         {
             UseRatio = true,
-            RatioOfIndividualsToSelect = 0.9
+            RatioOfIndividualsToSelect = 1.8 // 2 parents for 90 % of population
         };
-        Start.AddChildren(mutationSelection);
+
         Start.AddChildren(crossoverSelection);
-        mutationSelection.AddChildren(Finish);
         crossoverSelection.AddChildren(Finish);
     }
 }
