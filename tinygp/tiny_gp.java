@@ -187,10 +187,8 @@ public class tiny_gp {
     }
 
     double fitness_function(char[] Prog) {
-        int i = 0, len;
+        int i = 0;
         double result, fit = 0.0;
-
-        len = traverse(Prog, 0);
 
         for (i = 0; i < fitnesscases; i++) {
             for (int j = 0; j < varnumber; j++)
@@ -323,7 +321,7 @@ public class tiny_gp {
         favgpop = 0.0;
 
         for (i = 0; i < POPSIZE; i++) {
-            node_count += traverse(pop[i], 0);
+            node_count += pop[i].length;
             favgpop += fitness[i];
             if (fitness[i] > fbestpop) {
                 best = i;
@@ -375,8 +373,8 @@ public class tiny_gp {
     char[] crossover(char[] parent1, char[] parent2) {
         int xo1start, xo1end, xo2start, xo2end;
         char[] offspring;
-        int len1 = traverse(parent1, 0);
-        int len2 = traverse(parent2, 0);
+        int len1 = parent1.length;
+        int len2 = parent2.length;
         int lenoff;
 
         xo1start = rd.nextInt(len1);
@@ -400,7 +398,7 @@ public class tiny_gp {
     }
 
     char[] mutation(char[] parent, double pmut) {
-        int len = traverse(parent, 0), i;
+        int len = parent.length, i;
         int mutsite;
         char[] parentcopy = new char[len];
 

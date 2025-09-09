@@ -1,3 +1,4 @@
+using Italbytz.EA.Crossover;
 using Italbytz.EA.Mutation;
 using Italbytz.EA.Operator;
 using Italbytz.EA.Selection;
@@ -27,8 +28,9 @@ public class TinyGPGraph : OperatorGraph
             UseRatio = true,
             RatioOfIndividualsToSelect = 1.8 // 2 parents for 90 % of population
         };
-
         Start.AddChildren(crossoverSelection);
-        crossoverSelection.AddChildren(Finish);
+        var crossover = new TinyGpCrossover();
+        crossoverSelection.AddChildren(crossover);
+        crossover.AddChildren(Finish);
     }
 }

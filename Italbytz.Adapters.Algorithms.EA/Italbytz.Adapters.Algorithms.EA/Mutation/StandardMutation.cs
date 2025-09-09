@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Operator;
-using Italbytz.EA.Searchspace;
 
 namespace Italbytz.EA.Mutation;
 
@@ -26,15 +25,5 @@ public class StandardMutation : GraphOperator
         }
 
         return Task.FromResult<IIndividualList>(newPopulation);
-    }
-
-    private void DoMutation(IIndividual mutant)
-    {
-        if (mutant.Genotype is not BitStringGenotype bitStringGenotype)
-            throw new InvalidOperationException(
-                "StandardMutation can currently only be applied to BitStringGenotype.");
-        for (var i = 0; i < bitStringGenotype.BitArray.Count; i++)
-            if (Random.Shared.NextDouble() < MutationProbability)
-                bitStringGenotype.BitArray[i] = !bitStringGenotype.BitArray[i];
     }
 }

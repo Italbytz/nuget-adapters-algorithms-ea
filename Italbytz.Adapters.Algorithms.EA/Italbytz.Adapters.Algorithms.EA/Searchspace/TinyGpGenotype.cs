@@ -17,7 +17,7 @@ public class TinyGpGenotype : IGenotype, IMutable
     public static int VariableCount { get; set; } = 1;
     public static int NumberConst { get; set; } = 100;
 
-    public char[] Program { get; }
+    public char[] Program { get; set; }
 
     public object Clone()
     {
@@ -27,7 +27,7 @@ public class TinyGpGenotype : IGenotype, IMutable
     }
 
     public double[]? LatestKnownFitness { get; set; }
-    public int Size { get; }
+    public int Size => Program.Length;
 
     public void Mutate(double mutationProbability)
     {
@@ -40,6 +40,17 @@ public class TinyGpGenotype : IGenotype, IMutable
                 else // function
                     Program[i] = CreateRandomFunctionNode();
             }
+
+        LatestKnownFitness = null;
+    }
+
+    public int Traverse(int pos)
+    {
+        if (Program[pos] < FSET_START)
+            return pos + 1;
+        pos = Traverse(pos + 1);
+        pos = Traverse(pos);
+        return pos;
     }
 
     public static TinyGpGenotype GenerateRandomGenotype(int maxLen, int depth)
