@@ -34,7 +34,8 @@ public class TinyGpGenotype : IGenotype
         return PrintIndividual(Program, 0).Item2;
     }
 
-    private (int, string) PrintIndividual(char[] buffer, int buffercounter)
+    private static (int, string) PrintIndividual(char[] buffer,
+        int buffercounter)
     {
         int a1, a2 = 0;
         string s1, s2 = null;

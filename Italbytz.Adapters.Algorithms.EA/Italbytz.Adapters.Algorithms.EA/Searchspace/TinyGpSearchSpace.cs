@@ -22,7 +22,6 @@ public class TinyGpSearchSpace : ISearchSpace
         var individualProgram = new char[len];
         Array.Copy(program, 0, individualProgram, 0, len);
         var genotype = new TinyGpGenotype(individualProgram);
-        var genString = genotype.ToString();
         return genotype;
     }
 

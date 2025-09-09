@@ -1,11 +1,13 @@
 using Italbytz.AI;
 using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
+using Italbytz.EA.GP.StoppingCriterion;
 using Italbytz.EA.Graph.Common;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
-using Italbytz.EA.StoppingCriterion;
 using Microsoft.ML;
+using GenerationStoppingCriterion =
+    Italbytz.EA.StoppingCriterion.GenerationStoppingCriterion;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
@@ -99,7 +101,8 @@ public class TinyGpTests
             new GenerationStoppingCriterion(tinyGp)
             {
                 Limit = 50
-            }
+            },
+            new FitnessBound()
         ];
         await tinyGp.Run();
     }

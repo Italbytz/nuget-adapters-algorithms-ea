@@ -12,11 +12,12 @@ public class Accuracy : IStaticSingleObjectiveFitnessFunction
     {
         _data = data;
     }
-    
-    public int NumberOfObjectives { get; } = 1;
+
     public string LabelColumnName { get; set; } = "Label";
 
-    double[] IFitnessFunction.Evaluate(IIndividual individual, IDataView data)
+    public int NumberOfObjectives { get; } = 1;
+
+    double[] IFitnessFunction.Evaluate(IIndividual individual)
     {
         throw new NotImplementedException();
     }

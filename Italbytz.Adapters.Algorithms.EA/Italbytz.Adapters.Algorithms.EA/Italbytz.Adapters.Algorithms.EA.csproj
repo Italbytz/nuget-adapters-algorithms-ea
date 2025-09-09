@@ -24,7 +24,7 @@
 
     <ItemGroup>
         <PackageReference Include="Italbytz.Adapters.Algorithms.AI" Version="9.9.1"/>
-        <PackageReference Include="Italbytz.Ports.Algorithms.EA" Version="9.1.0"/>
+        <PackageReference Include="Italbytz.Ports.Algorithms.EA" Version="9.3.0"/>
     </ItemGroup>
 
 </Project>
