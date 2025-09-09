@@ -1,3 +1,4 @@
+using System.Linq;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 
@@ -17,6 +18,6 @@ public class DefaultPopulationManager : IPopulationManager
 
     public string GetPopulationInfo()
     {
-        return Population?.ToString() ?? "Population not initialized.";
+        return Population?.Count().ToString() ?? "Population not initialized.";
     }
 }

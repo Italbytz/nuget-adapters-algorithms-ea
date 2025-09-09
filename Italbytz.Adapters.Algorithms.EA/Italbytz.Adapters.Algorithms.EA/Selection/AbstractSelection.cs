@@ -10,9 +10,9 @@ namespace Italbytz.EA.Selection;
 public abstract class AbstractSelection : GraphOperator
 {
     public override int MaxParents { get; } = int.MaxValue;
-    protected int NoOfIndividualsToSelect { get; } = 1;
-    public double RatioOfIndividualsToSelect { get; set; } = 0.5;
-    public bool UseRatio { get; set; } = false;
+    public int NoOfIndividualsToSelect { get; init; } = 1;
+    public double RatioOfIndividualsToSelect { get; init; } = 0.5;
+    public bool UseRatio { get; init; } = false;
 
     public override Task<IIndividualList> Operate(
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)

@@ -187,8 +187,10 @@ public class tiny_gp {
     }
 
     double fitness_function(char[] Prog) {
-        int i = 0;
+        int i = 0,len;
         double result, fit = 0.0;
+
+        len = Prog.length;
 
         for (i = 0; i < fitnesscases; i++) {
             for (int j = 0; j < varnumber; j++)

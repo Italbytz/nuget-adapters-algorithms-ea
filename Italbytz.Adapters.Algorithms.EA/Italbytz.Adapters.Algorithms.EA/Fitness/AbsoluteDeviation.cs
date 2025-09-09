@@ -25,7 +25,7 @@ public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
 
         var totalAbsoluteDeviation = 0.0;
 
-        Console.WriteLine($"Evaluating individual: {genotype}");
+        //Console.WriteLine($"Evaluating individual: {genotype}");
 
         for (var i = 0; i < _features.Length; i++)
         {

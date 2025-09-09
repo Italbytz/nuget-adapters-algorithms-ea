@@ -11,6 +11,11 @@ public class TinyGPGraph : OperatorGraph
     {
         Start = new Start();
         Finish = new Finish();
+        var finalSelection = new DropTournamentWorstSelection
+        {
+            NoOfIndividualsToSelect = 10000
+        };
+        Start.AddChildren(finalSelection);
         var mutationSelection = new TournamentSelection
         {
             UseRatio = true,
@@ -22,7 +27,7 @@ public class TinyGPGraph : OperatorGraph
             MutationProbability = 0.02
         };
         mutationSelection.AddChildren(mutation);
-        mutation.AddChildren(Finish);
+        mutation.AddChildren(finalSelection);
         var crossoverSelection = new TournamentSelection
         {
             UseRatio = true,
@@ -31,6 +36,7 @@ public class TinyGPGraph : OperatorGraph
         Start.AddChildren(crossoverSelection);
         var crossover = new TinyGpCrossover();
         crossoverSelection.AddChildren(crossover);
-        crossover.AddChildren(Finish);
+        crossover.AddChildren(finalSelection);
+        finalSelection.AddChildren(Finish);
     }
 }
