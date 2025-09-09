@@ -9,13 +9,15 @@ namespace Italbytz.EA.Searchspace;
 
 public class TinyGpGenotype : IGenotype, IMutable
 {
-    public TinyGpGenotype(char[] program)
+    public TinyGpGenotype(char[] program, double[] constants)
     {
         Program = program;
+        Constants = constants;
     }
 
     public static int VariableCount { get; set; } = 1;
     public static int NumberConst { get; set; } = 100;
+    public double[] Constants { get; set; }
 
     public char[] Program { get; set; }
 
@@ -23,7 +25,7 @@ public class TinyGpGenotype : IGenotype, IMutable
     {
         var newProgram = new char[Program.Length];
         Array.Copy(Program, newProgram, Program.Length);
-        return new TinyGpGenotype(newProgram);
+        return new TinyGpGenotype(newProgram, Constants);
     }
 
     public double[]? LatestKnownFitness { get; set; }
@@ -53,7 +55,8 @@ public class TinyGpGenotype : IGenotype, IMutable
         return pos;
     }
 
-    public static TinyGpGenotype GenerateRandomGenotype(int maxLen, int depth)
+    public static TinyGpGenotype GenerateRandomGenotype(int maxLen, int depth,
+        double[] constants)
     {
         var program = new char[maxLen];
         var len = Grow(program, 0, maxLen, depth);
@@ -61,7 +64,7 @@ public class TinyGpGenotype : IGenotype, IMutable
             len = Grow(program, 0, maxLen, depth);
         var individualProgram = new char[len];
         Array.Copy(program, 0, individualProgram, 0, len);
-        var genotype = new TinyGpGenotype(individualProgram);
+        var genotype = new TinyGpGenotype(individualProgram, constants);
         return genotype;
     }
 
@@ -120,11 +123,9 @@ public class TinyGpGenotype : IGenotype, IMutable
     {
         var primitive = Program[pc++];
         if (primitive < FSET_START)
-        {
-            if (primitive < VariableCount)
-                return variables[primitive];
-            return primitive - VariableCount + 1;
-        }
+            return primitive < VariableCount
+                ? variables[primitive]
+                : Constants[primitive - VariableCount];
 
         double result;
         switch ((int)primitive)
@@ -151,20 +152,20 @@ public class TinyGpGenotype : IGenotype, IMutable
         throw new Exception("Unknown primitive");
     }
 
-    private static (int, string) PrintIndividual(char[] buffer,
+    private (int, string) PrintIndividual(char[] buffer,
         int buffercounter)
     {
         int a1, a2 = 0;
-        string s1, s2 = null;
+        string s1, s2;
         var sb = new StringBuilder();
         if (buffer[buffercounter] < FSET_START)
         {
             if (buffer[buffercounter] < VariableCount)
                 sb.Append("X" + (buffer[buffercounter] + 1) + " ");
             else
-                sb.Append("C" +
-                          (buffer[buffercounter] - VariableCount + 1) +
-                          " ");
+                sb.Append(
+                    Constants[buffer[buffercounter] - VariableCount] +
+                    " ");
             return (++buffercounter, sb.ToString());
         }
 

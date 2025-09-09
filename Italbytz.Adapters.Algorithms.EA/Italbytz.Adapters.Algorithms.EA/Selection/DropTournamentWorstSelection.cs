@@ -36,10 +36,9 @@ public class DropTournamentWorstSelection : AbstractSelection
             selectedIndividuals.Remove(tournament.Last());
         }
 
-        Console.WriteLine("Top 10 Individuals:");
         foreach (var ind in selectedIndividuals
                      .OrderByDescending(i => i.LatestKnownFitness.Sum())
-                     .Take(10))
+                     .Take(1))
             Console.WriteLine(
                 $"Genotype {ind.Genotype} Fitness: {ind.LatestKnownFitness.Sum()}");
         return selectedIndividuals;
