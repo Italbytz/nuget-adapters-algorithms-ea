@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.AI;
@@ -16,32 +15,35 @@ public class DropTournamentWorst : AbstractSelection
         var noOfIndividualsToDrop =
             individualList.Count - noOfIndividualsToSelect;
         if (noOfIndividualsToDrop <= 0) return individualList;
-        var selectedIndividuals = individualList.ToList();
         var rnd = ThreadSafeRandomNetCore.LocalRandom;
-        for (var i = 0; i < noOfIndividualsToDrop; i++)
+        var dropped = 0;
+        SortedSet<int> droppedIndices = [];
+        while (dropped < noOfIndividualsToDrop)
         {
             IIndividual? unfittest = null;
+            var unfittestIndex = -1;
             for (var j = 0;
-                 j < Math.Min(TournamentSize, selectedIndividuals.Count);
+                 j < TournamentSize;
                  j++)
             {
+                var selectedIndex = rnd.Next(individualList.Count);
                 var individual =
-                    selectedIndividuals[rnd.Next(selectedIndividuals.Count)];
-                if (unfittest == null ||
-                    individual.LatestKnownFitness.Sum() <
-                    unfittest.LatestKnownFitness.Sum())
-                    unfittest = individual;
+                    individualList[selectedIndex];
+                if (unfittest != null &&
+                    !(individual.LatestKnownFitness.Sum() <
+                      unfittest.LatestKnownFitness.Sum())) continue;
+                unfittest = individual;
+                unfittestIndex = selectedIndex;
             }
 
-            // ToDo: This is a big performance issue that needs to be fixed
-            selectedIndividuals.Remove(unfittest);
+            if (unfittestIndex != -1 &&
+                droppedIndices.Add(unfittestIndex))
+                dropped++;
         }
 
-        /*foreach (var ind in selectedIndividuals
-                     .OrderByDescending(i => i.LatestKnownFitness.Sum())
-                     .Take(1))
-            Console.WriteLine(
-                $"Genotype {ind.Genotype} Fitness: {ind.LatestKnownFitness.Sum()}");*/
+        var selectedIndividuals = individualList
+            .Where((ind, index) => !droppedIndices.Contains(index));
+
         return selectedIndividuals;
     }
 }
