@@ -48,7 +48,7 @@ public class TinyGpTests
         [
             new GenerationStoppingCriterion(tinyGp)
             {
-                Limit = 3
+                Limit = 10
             },
             new FitnessBound()
         ];

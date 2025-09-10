@@ -20,20 +20,20 @@ public class DropTournamentWorstSelection : AbstractSelection
         var rnd = ThreadSafeRandomNetCore.LocalRandom;
         for (var i = 0; i < noOfIndividualsToDrop; i++)
         {
-            var tournament = new List<IIndividual>();
+            IIndividual? unfittest = null;
             for (var j = 0;
                  j < Math.Min(TournamentSize, selectedIndividuals.Count);
                  j++)
             {
                 var individual =
                     selectedIndividuals[rnd.Next(selectedIndividuals.Count)];
-                tournament.Add(individual);
+                if (unfittest == null ||
+                    individual.LatestKnownFitness.Sum() <
+                    unfittest.LatestKnownFitness.Sum())
+                    unfittest = individual;
             }
 
-            tournament.Sort((a, b) =>
-                b.LatestKnownFitness.Sum()
-                    .CompareTo(a.LatestKnownFitness.Sum()));
-            selectedIndividuals.Remove(tournament.Last());
+            selectedIndividuals.Remove(unfittest);
         }
 
         foreach (var ind in selectedIndividuals

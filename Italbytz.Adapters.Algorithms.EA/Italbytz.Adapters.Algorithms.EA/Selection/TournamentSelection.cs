@@ -8,29 +8,26 @@ namespace Italbytz.EA.Selection;
 public class TournamentSelection : AbstractSelection
 {
     public int TournamentSize { get; set; } = 2;
-    protected bool SelectWorst { get; set; } = false;
 
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individualList, int noOfIndividualsToSelect)
     {
-        var selectedIndividuals = new List<IIndividual>();
+        var selectedIndividuals = new IIndividual[noOfIndividualsToSelect];
         var rnd = ThreadSafeRandomNetCore.LocalRandom;
         for (var i = 0; i < noOfIndividualsToSelect; i++)
         {
-            var tournament = new List<IIndividual>();
+            IIndividual? fittest = null;
             for (var j = 0; j < TournamentSize; j++)
             {
                 var individual =
                     individualList[rnd.Next(individualList.Count())];
-                tournament.Add(individual);
+                if (fittest == null ||
+                    individual.LatestKnownFitness.Sum() >
+                    fittest.LatestKnownFitness.Sum())
+                    fittest = individual;
             }
 
-            tournament.Sort((a, b) =>
-                b.LatestKnownFitness.Sum()
-                    .CompareTo(a.LatestKnownFitness.Sum()));
-            selectedIndividuals.Add(SelectWorst
-                ? tournament.Last()
-                : tournament.First());
+            selectedIndividuals[i] = fittest;
         }
 
         return selectedIndividuals;
