@@ -10,8 +10,9 @@ public class TournamentSelection : AbstractSelection
     public int TournamentSize { get; set; } = 2;
 
     protected override IEnumerable<IIndividual> Select(
-        IIndividualList individualList, int noOfIndividualsToSelect)
+        IIndividualList individuals, int noOfIndividualsToSelect)
     {
+        var individualList = individuals.ToList();
         var selectedIndividuals = new IIndividual[noOfIndividualsToSelect];
         var rnd = ThreadSafeRandomNetCore.LocalRandom;
         for (var i = 0; i < noOfIndividualsToSelect; i++)

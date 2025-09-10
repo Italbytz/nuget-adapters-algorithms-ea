@@ -11,7 +11,7 @@ public class TinyGPGraph : OperatorGraph
     {
         Start = new Start();
         Finish = new Finish();
-        var finalSelection = new DropTournamentWorstSelection
+        var finalSelection = new DropWorst
         {
             NoOfIndividualsToSelect = 10000
         };

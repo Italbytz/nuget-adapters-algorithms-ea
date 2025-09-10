@@ -6,7 +6,7 @@ using Italbytz.EA.Individuals;
 
 namespace Italbytz.EA.Selection;
 
-public class DropTournamentWorstSelection : AbstractSelection
+public class DropTournamentWorst : AbstractSelection
 {
     public int TournamentSize { get; set; } = 2;
 
@@ -33,14 +33,15 @@ public class DropTournamentWorstSelection : AbstractSelection
                     unfittest = individual;
             }
 
+            // ToDo: This is a big performance issue that needs to be fixed
             selectedIndividuals.Remove(unfittest);
         }
 
-        foreach (var ind in selectedIndividuals
+        /*foreach (var ind in selectedIndividuals
                      .OrderByDescending(i => i.LatestKnownFitness.Sum())
                      .Take(1))
             Console.WriteLine(
-                $"Genotype {ind.Genotype} Fitness: {ind.LatestKnownFitness.Sum()}");
+                $"Genotype {ind.Genotype} Fitness: {ind.LatestKnownFitness.Sum()}");*/
         return selectedIndividuals;
     }
 }
