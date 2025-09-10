@@ -9,27 +9,29 @@ public class TinyGpSearchSpace : ISearchSpace
 {
     public TinyGpSearchSpace()
     {
+        Constants = new double[NumberConst];
         for (var i = 0; i < NumberConst; i++)
             Constants[i] =
                 ThreadSafeRandomNetCore.LocalRandom.NextDouble() *
                 (MaxRandom - MinRandom) + MinRandom;
     }
 
-    public int Depth { get; set; } = 5;
+    public int Depth { get; init; } = 5;
 
-    public int MaxLen { get; set; } = 10000;
+    public int MaxLen { get; init; } = 10000;
 
-    public int MinRandom { get; set; } = -5;
-    public int MaxRandom { get; set; } = 5;
+    public int MinRandom { get; init; } = -5;
+    public int MaxRandom { get; init; } = 5;
 
-    public int VariableCount { get; set; } = 1;
-    public int NumberConst { get; set; } = 100;
+    public int VariableCount { get; init; } = 1;
+    public int NumberConst { get; init; } = 100;
 
-    public double[] Constants { get; set; } = new double[100];
+    public double[] Constants { get; }
 
     public IGenotype GetRandomGenotype()
     {
-        return TinyGpGenotype.GenerateRandomGenotype(MaxLen, Depth, Constants);
+        return TinyGpGenotype.GenerateRandomGenotype(MaxLen, Depth,
+            VariableCount, Constants);
     }
 
     public IIndividualList GetAStartingPopulation()

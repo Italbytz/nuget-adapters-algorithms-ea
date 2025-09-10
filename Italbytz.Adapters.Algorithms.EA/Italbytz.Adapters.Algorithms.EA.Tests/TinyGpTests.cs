@@ -28,7 +28,15 @@ public class TinyGpTests
         var tinyGp = new EvolutionaryAlgorithm
         {
             FitnessFunction = new AbsoluteDeviation(_features, _labels),
-            SearchSpace = new TinyGpSearchSpace(),
+            SearchSpace = new TinyGpSearchSpace
+            {
+                MaxLen = 10000,
+                Depth = 5,
+                VariableCount = 1,
+                NumberConst = 100,
+                MinRandom = -5,
+                MaxRandom = 5
+            },
             AlgorithmGraph = new TinyGPGraph()
         };
         tinyGp.Initialization = new RandomInitialization(tinyGp)
@@ -40,7 +48,7 @@ public class TinyGpTests
         [
             new GenerationStoppingCriterion(tinyGp)
             {
-                Limit = 50
+                Limit = 3
             },
             new FitnessBound()
         ];

@@ -9,15 +9,16 @@ namespace Italbytz.EA.Searchspace;
 
 public class TinyGpGenotype : IGenotype, IMutable
 {
-    public TinyGpGenotype(char[] program, double[] constants)
+    public TinyGpGenotype(char[] program, double[] constants, int variableCount)
     {
         Program = program;
         Constants = constants;
+        VariableCount = variableCount;
     }
 
-    public static int VariableCount { get; set; } = 1;
-    public static int NumberConst { get; set; } = 100;
-    public double[] Constants { get; set; }
+    public int VariableCount { get; }
+
+    private double[] Constants { get; }
 
     public char[] Program { get; set; }
 
@@ -25,7 +26,7 @@ public class TinyGpGenotype : IGenotype, IMutable
     {
         var newProgram = new char[Program.Length];
         Array.Copy(Program, newProgram, Program.Length);
-        return new TinyGpGenotype(newProgram, Constants);
+        return new TinyGpGenotype(newProgram, Constants, VariableCount);
     }
 
     public double[]? LatestKnownFitness { get; set; }
@@ -38,7 +39,8 @@ public class TinyGpGenotype : IGenotype, IMutable
                 mutationProbability)
             {
                 if (Program[i] < FSET_START) // leaf
-                    Program[i] = CreateRandomLeaf();
+                    Program[i] =
+                        CreateRandomLeaf(VariableCount, Constants.Length);
                 else // function
                     Program[i] = CreateRandomFunctionNode();
             }
@@ -56,19 +58,23 @@ public class TinyGpGenotype : IGenotype, IMutable
     }
 
     public static TinyGpGenotype GenerateRandomGenotype(int maxLen, int depth,
+        int variableCount,
         double[] constants)
     {
+        var noOfConstants = constants.Length;
         var program = new char[maxLen];
-        var len = Grow(program, 0, maxLen, depth);
+        var len = Grow(program, 0, maxLen, depth, variableCount, noOfConstants);
         while (len < 0)
-            len = Grow(program, 0, maxLen, depth);
+            len = Grow(program, 0, maxLen, depth, variableCount, noOfConstants);
         var individualProgram = new char[len];
         Array.Copy(program, 0, individualProgram, 0, len);
-        var genotype = new TinyGpGenotype(individualProgram, constants);
+        var genotype =
+            new TinyGpGenotype(individualProgram, constants, variableCount);
         return genotype;
     }
 
-    private static int Grow(char[] program, int pos, int maxLen, int depth)
+    private static int Grow(char[] program, int pos, int maxLen, int depth,
+        int variableCount, int noOfConstants)
     {
         while (true)
         {
@@ -81,13 +87,14 @@ public class TinyGpGenotype : IGenotype, IMutable
 
             if (!growPrimitive || depth == 0)
             {
-                program[pos] = CreateRandomLeaf();
+                program[pos] = CreateRandomLeaf(variableCount, noOfConstants);
                 return pos + 1;
             }
 
             // Create a function node
             program[pos] = CreateRandomFunctionNode();
-            pos = Grow(program, pos + 1, maxLen, depth - 1);
+            pos = Grow(program, pos + 1, maxLen, depth - 1, variableCount,
+                noOfConstants);
             depth -= 1;
             continue;
 
@@ -95,6 +102,7 @@ public class TinyGpGenotype : IGenotype, IMutable
             break;
         }
     }
+
 
     private static char CreateRandomFunctionNode()
     {
@@ -104,14 +112,14 @@ public class TinyGpGenotype : IGenotype, IMutable
         return (char)functionType;
     }
 
-    private static char CreateRandomLeaf()
+    private static char CreateRandomLeaf(int variableCount, int numberConst)
     {
-        if (NumberConst == 0 ||
+        if (numberConst == 0 ||
             ThreadSafeRandomNetCore.LocalRandom.Next(2) == 0)
             return (char)ThreadSafeRandomNetCore.LocalRandom
-                .Next(VariableCount);
-        return (char)(VariableCount +
-                      ThreadSafeRandomNetCore.LocalRandom.Next(NumberConst));
+                .Next(variableCount);
+        return (char)(variableCount +
+                      ThreadSafeRandomNetCore.LocalRandom.Next(numberConst));
     }
 
     public override string ToString()
