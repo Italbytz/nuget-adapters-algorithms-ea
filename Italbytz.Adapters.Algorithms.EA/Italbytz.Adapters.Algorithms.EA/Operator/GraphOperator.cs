@@ -35,21 +35,26 @@ public abstract class GraphOperator : IGraphOperator
                 $"Operator cannot have more than {MaxParents} parents.");
     }
 
-    public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
+    public async Task<IIndividualList>? Process(
+        Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
     {
         if (Parents.Count > 1)
         {
             ParentTasks.Add(individuals);
             if (ParentTasks.Count < Parents.Count) return null;
-            Task.WhenAll(ParentTasks).Wait();
-            // Combine the results from all parents into a single list.
-            var combinedIndividuals = new Population();
-            foreach (var individual in ParentTasks
-                         .Select(parentTask => parentTask.Result)
-                         .SelectMany(parentIndividuals => parentIndividuals))
+            await Task.WhenAll(ParentTasks);
+
+            var results = ParentTasks.Select(t => t.Result).ToList();
+            var totalSize = results.Sum(r => r.Count);
+            var combinedIndividuals = new Population(totalSize);
+
+            foreach (var parentIndividuals in results)
+            foreach (var individual in parentIndividuals)
                 combinedIndividuals.Add(individual);
+
             individuals = Task.FromResult<IIndividualList>(combinedIndividuals);
+            ParentTasks.Clear();
         }
 
         // This method is called to process the individuals through the operator.
@@ -57,15 +62,15 @@ public abstract class GraphOperator : IGraphOperator
         // After the operation, we process the result through the children.
         // If there are no children, we return the result directly.
         if (Children.Count == 0)
-            return operationResult;
-        Task<IIndividualList>? returnValue = null;
-        foreach (var childReturnValue in Children
-                     .Select(child =>
-                         child.Process(operationResult, fitnessFunction))
-                     .OfType<Task<IIndividualList>>())
-            returnValue = childReturnValue;
+            return await operationResult;
 
-        return returnValue;
+        var childTasks = Children
+            .Select(child => child.Process(operationResult, fitnessFunction))
+            .Where(task => task != null)
+            .Cast<Task<IIndividualList>>()
+            .ToList();
+
+        return await childTasks.Last();
     }
 
     public virtual Task<IIndividualList> Operate(

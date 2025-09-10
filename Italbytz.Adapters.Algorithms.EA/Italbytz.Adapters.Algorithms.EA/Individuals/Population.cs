@@ -8,6 +8,16 @@ namespace Italbytz.EA.Individuals;
 public class Population : IIndividualList
 {
     private readonly List<IIndividual> _individuals = [];
+
+    public Population()
+    {
+    }
+
+    public Population(int capacity)
+    {
+        _individuals = new List<IIndividual>(capacity);
+    }
+
     public int Count => _individuals.Count;
     public IIndividual this[int index] => _individuals[index];
 

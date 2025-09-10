@@ -12,38 +12,44 @@ public class DropTournamentWorst : AbstractSelection
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individualList, int noOfIndividualsToSelect)
     {
-        var noOfIndividualsToDrop =
-            individualList.Count - noOfIndividualsToSelect;
-        if (noOfIndividualsToDrop <= 0) return individualList;
+        var count = individualList.Count;
+        if (noOfIndividualsToSelect >= count) return individualList;
+
         var rnd = ThreadSafeRandomNetCore.LocalRandom;
+        var result = new List<IIndividual>(noOfIndividualsToSelect);
+        var selected = new bool[count];
+        var noOfIndividualsToDrop = count - noOfIndividualsToSelect;
         var dropped = 0;
-        SortedSet<int> droppedIndices = [];
+
         while (dropped < noOfIndividualsToDrop)
         {
             IIndividual? unfittest = null;
             var unfittestIndex = -1;
-            for (var j = 0;
-                 j < TournamentSize;
-                 j++)
+
+            for (var j = 0; j < TournamentSize; j++)
             {
-                var selectedIndex = rnd.Next(individualList.Count);
-                var individual =
-                    individualList[selectedIndex];
-                if (unfittest != null &&
-                    !(individual.LatestKnownFitness.Sum() <
-                      unfittest.LatestKnownFitness.Sum())) continue;
-                unfittest = individual;
-                unfittestIndex = selectedIndex;
+                var selectedIndex = rnd.Next(count);
+                var individual = individualList[selectedIndex];
+
+                if (unfittest == null || individual.LatestKnownFitness.Sum() <
+                    unfittest.LatestKnownFitness.Sum())
+                {
+                    unfittest = individual;
+                    unfittestIndex = selectedIndex;
+                }
             }
 
-            if (unfittestIndex != -1 &&
-                droppedIndices.Add(unfittestIndex))
+            if (unfittestIndex != -1 && !selected[unfittestIndex])
+            {
+                selected[unfittestIndex] = true;
                 dropped++;
+            }
         }
 
-        var selectedIndividuals = individualList
-            .Where((ind, index) => !droppedIndices.Contains(index));
+        for (var i = 0; i < count; i++)
+            if (!selected[i])
+                result.Add(individualList[i]);
 
-        return selectedIndividuals;
+        return result;
     }
 }
