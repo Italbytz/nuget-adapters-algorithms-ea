@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.EA.Individuals;
@@ -10,10 +11,13 @@ public class DropWorst : AbstractSelection
         IIndividualList individualList, int noOfIndividualsToSelect)
     {
         var noOfIndividualsToDrop =
-            individualList.Count() - noOfIndividualsToSelect;
+            individualList.Count - noOfIndividualsToSelect;
         if (noOfIndividualsToDrop <= 0) return individualList;
-        return individualList
+        var best = individualList
             .OrderByDescending(i => i.LatestKnownFitness.Sum())
-            .Take(individualList.Count() - noOfIndividualsToDrop);
+            .Take(individualList.Count - noOfIndividualsToDrop);
+        Console.WriteLine(
+            $"Genotype {best.First().Genotype} Fitness: {best.First().Genotype.LatestKnownFitness.Sum()}");
+        return best;
     }
 }

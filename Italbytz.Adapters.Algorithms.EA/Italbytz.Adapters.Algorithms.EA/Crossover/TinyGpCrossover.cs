@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Italbytz.AI;
 using Italbytz.EA.Fitness;
@@ -16,7 +15,7 @@ public class TinyGpCrossover : GraphOperator
     {
         var individualList = individuals.Result;
         var newPopulation = new Population();
-        for (var i = 0; i < individualList.Count() - 1; i += 2)
+        for (var i = 0; i < individualList.Count - 1; i += 2)
         {
             var parent = individualList[i];
             var offspring = (IIndividual)individualList[i + 1].Clone();

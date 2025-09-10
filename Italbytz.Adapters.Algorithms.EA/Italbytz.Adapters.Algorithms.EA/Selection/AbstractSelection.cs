@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
@@ -26,7 +25,7 @@ public abstract class AbstractSelection : GraphOperator
         var calculatedNoOfIndividualsToSelect = NoOfIndividualsToSelect;
         if (UseRatio)
             calculatedNoOfIndividualsToSelect =
-                (int)(RatioOfIndividualsToSelect * individualList.Count());
+                (int)(RatioOfIndividualsToSelect * individualList.Count);
         var selectedIndividuals =
             Select(individualList, calculatedNoOfIndividualsToSelect);
         foreach (var individual in selectedIndividuals)

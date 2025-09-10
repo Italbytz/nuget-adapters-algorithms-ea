@@ -14,7 +14,7 @@ public class DropTournamentWorst : AbstractSelection
         IIndividualList individualList, int noOfIndividualsToSelect)
     {
         var noOfIndividualsToDrop =
-            individualList.Count() - noOfIndividualsToSelect;
+            individualList.Count - noOfIndividualsToSelect;
         if (noOfIndividualsToDrop <= 0) return individualList;
         var selectedIndividuals = individualList.ToList();
         var rnd = ThreadSafeRandomNetCore.LocalRandom;

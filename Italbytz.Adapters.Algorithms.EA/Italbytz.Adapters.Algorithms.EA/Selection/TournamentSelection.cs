@@ -21,7 +21,7 @@ public class TournamentSelection : AbstractSelection
             for (var j = 0; j < TournamentSize; j++)
             {
                 var individual =
-                    individualList[rnd.Next(individualList.Count())];
+                    individualList[rnd.Next(individualList.Count)];
                 if (fittest == null ||
                     individual.LatestKnownFitness.Sum() >
                     fittest.LatestKnownFitness.Sum())
