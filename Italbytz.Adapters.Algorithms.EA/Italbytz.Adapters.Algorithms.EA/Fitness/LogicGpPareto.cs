@@ -5,10 +5,10 @@ namespace Italbytz.EA.Fitness;
 
 public class LogicGpPareto : IStaticMultiObjectiveFitnessFunction
 {
-    private readonly double[][] _features;
+    private readonly float[][] _features;
     private readonly string[] _labels;
 
-    public LogicGpPareto(double[][] features, string[] labels)
+    public LogicGpPareto(float[][] features, string[] labels)
     {
         _features = features;
         _labels = labels;
@@ -16,7 +16,18 @@ public class LogicGpPareto : IStaticMultiObjectiveFitnessFunction
 
     public double[] Evaluate(IIndividual individual)
     {
-        throw new NotImplementedException();
+        if (individual.Genotype is not IPredictingGenotype genotype)
+            throw new ArgumentException(
+                "Expected genotype of type IPredictingGenotype");
+        var featuresLength = _features.Length;
+        for (var i = 0; i < featuresLength; i++)
+        {
+            var prediction = genotype.PredictClass(_features[i]);
+        }
+
+        // ToDo: Do we need information about the labels here or can we assume a certain label format?
+        // ToDo: Implement logic after this is clear
+        return [0.0];
     }
 
     public int NumberOfObjectives { get; }

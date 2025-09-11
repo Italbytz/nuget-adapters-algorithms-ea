@@ -48,13 +48,13 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
     public double[]? LatestKnownFitness { get; set; }
     public int Size => Program.Length;
 
-    public double PredictValue(double[] features)
+    public double PredictValue(float[] features)
     {
         var pc = 0;
         return Run(features, ref pc);
     }
 
-    public string PredictClass(double[] features)
+    public string PredictClass(float[] features)
     {
         throw new NotImplementedException();
     }
@@ -119,7 +119,7 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
     {
         var functionType =
             ThreadSafeRandomNetCore.Shared.Next(FSET_END - FSET_START +
-                1) + FSET_START;
+                                                1) + FSET_START;
         return (char)functionType;
     }
 
@@ -138,7 +138,7 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
         return PrintIndividual(Program, 0).Item2;
     }
 
-    public double Run(double[] variables, ref int pc)
+    public double Run(float[] variables, ref int pc)
     {
         var primitive = Program[pc++];
         if (primitive < FSET_START)

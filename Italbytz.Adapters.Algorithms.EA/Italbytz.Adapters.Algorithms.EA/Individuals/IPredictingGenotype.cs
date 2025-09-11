@@ -2,6 +2,6 @@ namespace Italbytz.EA.Individuals;
 
 public interface IPredictingGenotype : IGenotype
 {
-    double PredictValue(double[] features);
-    string PredictClass(double[] features);
+    double PredictValue(float[] features);
+    string PredictClass(float[] features);
 }

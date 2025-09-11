@@ -5,10 +5,10 @@ namespace Italbytz.EA.Fitness;
 
 public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
 {
-    private readonly double[][] _features;
-    private readonly double[] _labels;
+    private readonly float[][] _features;
+    private readonly float[] _labels;
 
-    public AbsoluteDeviation(double[][] features, double[] labels)
+    public AbsoluteDeviation(float[][] features, float[] labels)
     {
         _features = features;
         _labels = labels;

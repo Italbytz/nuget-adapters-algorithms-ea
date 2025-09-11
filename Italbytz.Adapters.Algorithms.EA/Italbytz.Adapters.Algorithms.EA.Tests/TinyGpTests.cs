@@ -13,13 +13,13 @@ namespace Italbytz.Adapters.Algorithms.EA.Tests;
 [TestClass]
 public class TinyGpTests
 {
-    private readonly double[][] _features =
+    private readonly float[][] _features =
         Enumerable.Range(0, 63)
-            .Select(i => new[] { 0.1 * i })
+            .Select(i => new[] { 0.1f * i })
             .ToArray();
 
-    private readonly double[] _labels = Enumerable.Range(0, 63)
-        .Select(i => Math.Sin(0.1 * i)).ToArray();
+    private readonly float[] _labels = Enumerable.Range(0, 63)
+        .Select(i => (float)Math.Sin(0.1 * i)).ToArray();
 
     [TestMethod]
     public async Task TestTinyGp()
