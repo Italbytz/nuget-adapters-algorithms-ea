@@ -7,7 +7,7 @@ using static Italbytz.EA.Searchspace.TinyGpPrimitive;
 
 namespace Italbytz.EA.Searchspace;
 
-public class TinyGpGenotype : IGenotype, IMutable
+public class TinyGpGenotype : IPredictingGenotype, IMutable
 {
     public TinyGpGenotype(char[] program, double[] constants, int variableCount)
     {
@@ -21,16 +21,6 @@ public class TinyGpGenotype : IGenotype, IMutable
     private double[] Constants { get; }
 
     public char[] Program { get; set; }
-
-    public object Clone()
-    {
-        var newProgram = new char[Program.Length];
-        Array.Copy(Program, newProgram, Program.Length);
-        return new TinyGpGenotype(newProgram, Constants, VariableCount);
-    }
-
-    public double[]? LatestKnownFitness { get; set; }
-    public int Size => Program.Length;
 
     public void Mutate(double mutationProbability)
     {
@@ -46,6 +36,27 @@ public class TinyGpGenotype : IGenotype, IMutable
             }
 
         LatestKnownFitness = null;
+    }
+
+    public object Clone()
+    {
+        var newProgram = new char[Program.Length];
+        Array.Copy(Program, newProgram, Program.Length);
+        return new TinyGpGenotype(newProgram, Constants, VariableCount);
+    }
+
+    public double[]? LatestKnownFitness { get; set; }
+    public int Size => Program.Length;
+
+    public double PredictValue(double[] features)
+    {
+        var pc = 0;
+        return Run(features, ref pc);
+    }
+
+    public string PredictClass(double[] features)
+    {
+        throw new NotImplementedException();
     }
 
     public int Traverse(int pos)

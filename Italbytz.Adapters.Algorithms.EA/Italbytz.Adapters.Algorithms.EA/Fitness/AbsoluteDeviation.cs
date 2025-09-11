@@ -1,6 +1,5 @@
 using System;
 using Italbytz.EA.Individuals;
-using Italbytz.EA.Searchspace;
 
 namespace Italbytz.EA.Fitness;
 
@@ -19,20 +18,16 @@ public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
 
     double[] IFitnessFunction.Evaluate(IIndividual individual)
     {
-        if (individual.Genotype is not TinyGpGenotype genotype)
+        if (individual.Genotype is not IPredictingGenotype genotype)
             throw new ArgumentException(
-                "Expected genotype of type TinyGpGenotype");
+                "Expected genotype of type IPredictingGenotype");
 
-        var totalAbsoluteDeviation = 0.0;
+        double totalAbsoluteDeviation = 0;
+        var featuresLength = _features.Length;
 
-        //Console.WriteLine($"Evaluating individual: {genotype}");
-
-        for (var i = 0; i < _features.Length; i++)
+        for (var i = 0; i < featuresLength; i++)
         {
-            var pc = 0;
-            var prediction = genotype.Run(_features[i], ref pc);
-
-
+            var prediction = genotype.PredictValue(_features[i]);
             totalAbsoluteDeviation += Math.Abs(prediction - _labels[i]);
         }
 
