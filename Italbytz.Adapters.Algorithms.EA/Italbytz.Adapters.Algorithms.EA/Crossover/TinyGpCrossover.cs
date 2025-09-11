@@ -14,7 +14,7 @@ public class TinyGpCrossover : GraphOperator
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)
     {
         var individualList = individuals.Result;
-        var newPopulation = new Population();
+        var newPopulation = new ListBasedPopulation();
         for (var i = 0; i < individualList.Count - 1; i += 2)
         {
             var parent = individualList[i];

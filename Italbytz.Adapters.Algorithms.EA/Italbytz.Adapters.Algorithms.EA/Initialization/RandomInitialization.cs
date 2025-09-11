@@ -13,7 +13,7 @@ public class RandomInitialization(EvolutionaryAlgorithm schedule)
     public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
     {
-        var result = new Population();
+        var result = new ListBasedPopulation();
         var searchSpace = schedule.SearchSpace;
         for (var i = 0; i < Size; i++)
             result

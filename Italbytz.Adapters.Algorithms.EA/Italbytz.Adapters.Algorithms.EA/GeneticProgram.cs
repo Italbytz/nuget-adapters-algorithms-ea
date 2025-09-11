@@ -69,7 +69,7 @@ public class GeneticProgram : IGeneticProgram
         {
             stop = StoppingCriteria.Any(sc => sc.IsMet());
             if (stop) continue;
-            var newPopulation = new Population();
+            var newPopulation = new ListBasedPopulation();
             foreach (var crossover in Crossovers)
             {
                 SelectionForOperator.Size = 2;

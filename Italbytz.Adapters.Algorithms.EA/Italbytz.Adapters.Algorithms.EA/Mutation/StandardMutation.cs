@@ -14,7 +14,7 @@ public class StandardMutation : GraphOperator
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)
     {
         var individualList = individuals.Result;
-        var newPopulation = new Population();
+        var newPopulation = new ListBasedPopulation();
         foreach (var individual in individualList)
         {
             var candidate = (IIndividual)individual.Clone();

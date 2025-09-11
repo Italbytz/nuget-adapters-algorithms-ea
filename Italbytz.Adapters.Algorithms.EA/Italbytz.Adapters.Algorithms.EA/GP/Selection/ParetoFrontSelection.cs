@@ -46,7 +46,7 @@ public class ParetoFrontSelection : ISelection
             i++;
         }
 
-        var population = new Population();
+        var population = new ListBasedPopulation();
         foreach (var individual in individualList) population.Add(individual);
         return Task.FromResult<IIndividualList>(population);
     }

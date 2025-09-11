@@ -43,32 +43,37 @@ public abstract class GraphOperator : IGraphOperator
         {
             ParentTasks.Add(individuals);
             if (ParentTasks.Count < Parents.Count) return null;
-            await Task.WhenAll(ParentTasks);
 
-            var results = ParentTasks.Select(t => t.Result).ToList();
+            var results = (await Task.WhenAll(ParentTasks)).ToList();
+
             var totalSize = results.Sum(r => r.Count);
-            var combinedIndividuals = new Population(totalSize);
+            var combinedIndividuals = new ListBasedPopulation(totalSize);
 
             foreach (var parentIndividuals in results)
-            foreach (var individual in parentIndividuals)
-                combinedIndividuals.Add(individual);
+                combinedIndividuals.AddRange(parentIndividuals);
 
             individuals = Task.FromResult<IIndividualList>(combinedIndividuals);
             ParentTasks.Clear();
         }
 
-        // This method is called to process the individuals through the operator.
         var operationResult = Operate(individuals, fitnessFunction);
-        // After the operation, we process the result through the children.
-        // If there are no children, we return the result directly.
+
         if (Children.Count == 0)
             return await operationResult;
 
-        var childTasks = Children
-            .Select(child => child.Process(operationResult, fitnessFunction))
-            .Where(task => task != null)
-            .Cast<Task<IIndividualList>>()
-            .ToList();
+        if (Children.Count == 1)
+            return await Children[0].Process(operationResult, fitnessFunction);
+
+        var childTasks = new List<Task<IIndividualList>>(Children.Count);
+        foreach (var child in Children)
+        {
+            var task = child.Process(operationResult, fitnessFunction);
+            if (task != null)
+                childTasks.Add(task);
+        }
+
+        if (childTasks.Count == 0)
+            return await operationResult;
 
         return await childTasks.Last();
     }

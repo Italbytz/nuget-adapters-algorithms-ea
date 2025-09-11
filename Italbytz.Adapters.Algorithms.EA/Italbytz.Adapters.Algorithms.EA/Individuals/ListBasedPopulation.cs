@@ -5,15 +5,15 @@ using Italbytz.AI;
 namespace Italbytz.EA.Individuals;
 
 /// <inheritdoc cref="IIndividualList" />
-public class Population : IIndividualList
+public class ListBasedPopulation : IIndividualList
 {
     private readonly List<IIndividual> _individuals = [];
 
-    public Population()
+    public ListBasedPopulation()
     {
     }
 
-    public Population(int capacity)
+    public ListBasedPopulation(int capacity)
     {
         _individuals = new List<IIndividual>(capacity);
     }
@@ -32,6 +32,16 @@ public class Population : IIndividualList
     {
         return _individuals[
             ThreadSafeRandomNetCore.LocalRandom.Next(_individuals.Count)];
+    }
+
+    public void AddRange(IEnumerable<IIndividual> individuals)
+    {
+        _individuals.AddRange(individuals);
+    }
+
+    public void Add(IIndividualList individuals)
+    {
+        _individuals.AddRange(individuals);
     }
 
     /// <inheritdoc />

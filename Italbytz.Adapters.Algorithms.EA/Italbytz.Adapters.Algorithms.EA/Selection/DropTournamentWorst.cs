@@ -26,9 +26,18 @@ public class DropTournamentWorst : AbstractSelection
             IIndividual? unfittest = null;
             var unfittestIndex = -1;
 
-            for (var j = 0; j < TournamentSize; j++)
+            // Select distinct indices for the tournament
+            var tournamentIndices = new HashSet<int>();
+            while (tournamentIndices.Count < TournamentSize)
             {
-                var selectedIndex = rnd.Next(count);
+                var candidateIndex = rnd.Next(count);
+                if (!selected[candidateIndex] &&
+                    !tournamentIndices.Contains(candidateIndex))
+                    tournamentIndices.Add(candidateIndex);
+            }
+
+            foreach (var selectedIndex in tournamentIndices)
+            {
                 var individual = individualList[selectedIndex];
 
                 if (unfittest == null || individual.LatestKnownFitness.Sum() <

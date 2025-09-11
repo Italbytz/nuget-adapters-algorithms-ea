@@ -15,7 +15,7 @@ public class UniformSelection : ISelection
     public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
     {
-        var result = new Population();
+        var result = new ListBasedPopulation();
         var population = individuals.Result;
         for (var i = 0; i < Size; i++)
             result.Add(population.GetRandomIndividual());

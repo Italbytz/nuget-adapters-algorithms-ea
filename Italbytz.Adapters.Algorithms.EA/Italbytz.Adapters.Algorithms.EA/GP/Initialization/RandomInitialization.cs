@@ -14,7 +14,7 @@ public class RandomInitialization(IGeneticProgram gp) : IInitialization
     public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
     {
-        var result = new Population();
+        var result = new ListBasedPopulation();
         var searchSpace = gp.SearchSpace;
         for (var i = 0; i < Size; i++)
             result

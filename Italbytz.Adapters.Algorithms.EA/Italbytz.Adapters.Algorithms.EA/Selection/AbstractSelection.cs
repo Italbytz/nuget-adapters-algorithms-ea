@@ -17,7 +17,7 @@ public abstract class AbstractSelection : GraphOperator
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)
     {
         var individualList = individuals.Result;
-        var newPopulation = new Population();
+        var newPopulation = new ListBasedPopulation();
         // Update LatestKnownFitness
         foreach (var individual in individualList)
             individual.LatestKnownFitness ??=

@@ -17,7 +17,7 @@ public class BestModelForEachSizeSelection : ISelection
     public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
     {
-        var population = new Population();
+        var population = new ListBasedPopulation();
         var individualList = individuals.Result.ToList();
 
         var groupedIndividuals =
