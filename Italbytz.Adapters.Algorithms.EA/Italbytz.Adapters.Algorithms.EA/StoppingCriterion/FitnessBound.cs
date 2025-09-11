@@ -1,7 +1,6 @@
 using System;
-using Italbytz.EA.StoppingCriterion;
 
-namespace Italbytz.EA.GP.StoppingCriterion;
+namespace Italbytz.EA.StoppingCriterion;
 
 public class FitnessBound : IStoppingCriterion
 {

@@ -4,14 +4,13 @@ using Italbytz.EA.Fitness;
 using Italbytz.EA.Graph.Common;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
-using Italbytz.EA.StoppingCriterion;
 using GenerationStoppingCriterion =
     Italbytz.EA.StoppingCriterion.GenerationStoppingCriterion;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
 [TestClass]
-public class TinyGpTests
+public class LogicGpTests
 {
     private readonly double[][] _features =
         Enumerable.Range(0, 63)
@@ -22,10 +21,10 @@ public class TinyGpTests
         .Select(i => Math.Sin(0.1 * i)).ToArray();
 
     [TestMethod]
-    public async Task TestTinyGp()
+    public async Task TestLogicGp()
     {
         ThreadSafeRandomNetCore.Seed = 42;
-        var tinyGp = new EvolutionaryAlgorithm
+        var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction = new AbsoluteDeviation(_features, _labels),
             SearchSpace = new TinyGpSearchSpace
@@ -37,21 +36,20 @@ public class TinyGpTests
                 MinRandom = -5,
                 MaxRandom = 5
             },
-            AlgorithmGraph = new TinyGPGraph()
+            AlgorithmGraph = new LogicGPGeccoGraph()
         };
-        tinyGp.Initialization = new RandomInitialization(tinyGp)
+        logicGp.Initialization = new RandomInitialization(logicGp)
         {
             Size = 10000
         };
 
-        tinyGp.StoppingCriteria =
+        logicGp.StoppingCriteria =
         [
-            new GenerationStoppingCriterion(tinyGp)
+            new GenerationStoppingCriterion(logicGp)
             {
-                Limit = 50
-            },
-            new FitnessBound()
+                Limit = 100000
+            }
         ];
-        await tinyGp.Run();
+        await logicGp.Run();
     }
 }

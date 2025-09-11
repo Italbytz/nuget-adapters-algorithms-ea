@@ -27,6 +27,21 @@ public class ListBasedPopulation : IIndividualList
         _individuals.Add(individual);
     }
 
+    public void RemoveAt(int index)
+    {
+        _individuals.RemoveAt(index);
+    }
+
+    public void Clear()
+    {
+        _individuals.Clear();
+    }
+
+    public bool Remove(IIndividual individual)
+    {
+        return _individuals.Remove(individual);
+    }
+
     /// <inheritdoc />
     public IIndividual GetRandomIndividual()
     {
