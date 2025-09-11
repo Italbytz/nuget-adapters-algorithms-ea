@@ -12,7 +12,7 @@ public class TinyGpSearchSpace : ISearchSpace
         Constants = new double[NumberConst];
         for (var i = 0; i < NumberConst; i++)
             Constants[i] =
-                ThreadSafeRandomNetCore.LocalRandom.NextDouble() *
+                ThreadSafeRandomNetCore.Shared.NextDouble() *
                 (MaxRandom - MinRandom) + MinRandom;
     }
 

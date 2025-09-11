@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Italbytz.Adapters.Algorithms.AI" Version="9.10.0"/>
+        <PackageReference Include="Italbytz.Adapters.Algorithms.AI" Version="9.11.0" />
         <PackageReference Include="Italbytz.ML" Version="9.11.1"/>
         <PackageReference Include="Italbytz.Ports.Algorithms.EA" Version="9.3.3"/>
     </ItemGroup>

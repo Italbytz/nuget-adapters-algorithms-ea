@@ -25,7 +25,7 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
     public void Mutate(double mutationProbability)
     {
         for (var i = 0; i < Program.Length; i++)
-            if (ThreadSafeRandomNetCore.LocalRandom.NextDouble() <
+            if (ThreadSafeRandomNetCore.Shared.NextDouble() <
                 mutationProbability)
             {
                 if (Program[i] < FSET_START) // leaf
@@ -89,7 +89,7 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
     {
         while (true)
         {
-            var random = ThreadSafeRandomNetCore.LocalRandom;
+            var random = ThreadSafeRandomNetCore.Shared;
             var growPrimitive = random.Next(2) == 0;
 
             if (pos >= maxLen) return -1;
@@ -118,7 +118,7 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
     private static char CreateRandomFunctionNode()
     {
         var functionType =
-            ThreadSafeRandomNetCore.LocalRandom.Next(FSET_END - FSET_START +
+            ThreadSafeRandomNetCore.Shared.Next(FSET_END - FSET_START +
                 1) + FSET_START;
         return (char)functionType;
     }
@@ -126,11 +126,11 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
     private static char CreateRandomLeaf(int variableCount, int numberConst)
     {
         if (numberConst == 0 ||
-            ThreadSafeRandomNetCore.LocalRandom.Next(2) == 0)
-            return (char)ThreadSafeRandomNetCore.LocalRandom
+            ThreadSafeRandomNetCore.Shared.Next(2) == 0)
+            return (char)ThreadSafeRandomNetCore.Shared
                 .Next(variableCount);
         return (char)(variableCount +
-                      ThreadSafeRandomNetCore.LocalRandom.Next(numberConst));
+                      ThreadSafeRandomNetCore.Shared.Next(numberConst));
     }
 
     public override string ToString()

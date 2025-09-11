@@ -24,10 +24,10 @@ public class TinyGpCrossover : GraphOperator
                 throw new InvalidOperationException(
                     "Individual's genotype is not TinyGpGenotype");
             var xo1Start =
-                ThreadSafeRandomNetCore.LocalRandom.Next(parent.Size);
+                ThreadSafeRandomNetCore.Shared.Next(parent.Size);
             var xo1End = parentGenotype.Traverse(xo1Start);
             var xo2Start =
-                ThreadSafeRandomNetCore.LocalRandom.Next(offspring.Size);
+                ThreadSafeRandomNetCore.Shared.Next(offspring.Size);
             var xo2End = offspringGenotype.Traverse(xo2Start);
             var newProgram = new char[xo1Start + (xo2End - xo2Start) +
                                       (parent.Size - xo1End)];

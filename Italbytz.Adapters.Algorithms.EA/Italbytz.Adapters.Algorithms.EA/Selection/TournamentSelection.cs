@@ -16,7 +16,7 @@ public class TournamentSelection : AbstractSelection
         var individualList =
             individuals as List<IIndividual> ?? individuals.ToList();
         var selectedIndividuals = new IIndividual[noOfIndividualsToSelect];
-        var rnd = ThreadSafeRandomNetCore.LocalRandom;
+        var rnd = ThreadSafeRandomNetCore.Shared;
 
         if (noOfIndividualsToSelect > 1000) // Schwellenwert anpassen
             Parallel.For(0, noOfIndividualsToSelect, i =>

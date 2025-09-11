@@ -18,7 +18,7 @@ public class BitString : ISearchSpace
     public IGenotype GetRandomGenotype()
     {
         var bs = new BitArray(Dimension);
-        var random = ThreadSafeRandomNetCore.LocalRandom;
+        var random = ThreadSafeRandomNetCore.Shared;
         for (var i = 0; i < Dimension; i++) bs[i] = random.NextDouble() < 0.5;
         return new BitStringGenotype(bs, Dimension);
     }

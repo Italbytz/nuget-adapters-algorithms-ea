@@ -46,7 +46,7 @@ public class ListBasedPopulation : IIndividualList
     public IIndividual GetRandomIndividual()
     {
         return _individuals[
-            ThreadSafeRandomNetCore.LocalRandom.Next(_individuals.Count)];
+            ThreadSafeRandomNetCore.Shared.Next(_individuals.Count)];
     }
 
     public void AddRange(IEnumerable<IIndividual> individuals)
