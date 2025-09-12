@@ -6,6 +6,11 @@ namespace Italbytz.EA.Searchspace;
 
 public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
 {
+    public LogicGpPolynomial(List<IMonomial<TCategory>> monomials)
+    {
+        Monomials = monomials;
+    }
+
     public object Clone()
     {
         throw new NotImplementedException();

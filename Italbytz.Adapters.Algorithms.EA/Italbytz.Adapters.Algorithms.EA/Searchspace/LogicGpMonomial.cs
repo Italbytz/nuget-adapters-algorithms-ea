@@ -6,6 +6,11 @@ namespace Italbytz.EA.Searchspace;
 
 public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
 {
+    public LogicGpMonomial(List<ILiteral<TCategory>> literals)
+    {
+        Literals = literals;
+    }
+
     public object Clone()
     {
         throw new NotImplementedException();

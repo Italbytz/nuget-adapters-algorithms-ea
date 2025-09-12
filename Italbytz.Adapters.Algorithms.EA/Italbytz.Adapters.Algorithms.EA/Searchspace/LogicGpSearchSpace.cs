@@ -22,7 +22,7 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
 
     public IGenotype GetRandomGenotype()
     {
-        throw new NotImplementedException();
+        return LogicGpGenotype<TCategory>.GenerateRandomGenotype(Literals);
     }
 
     public IIndividualList GetAStartingPopulation()
