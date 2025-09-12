@@ -15,7 +15,7 @@ public class LogicGPGeccoGraph : OperatorGraph
             NoOfIndividualsToSelect = 2
         };
         Start.AddChildren(selectionForCrossover);
-        var crossover = new TinyGpCrossover();
+        var crossover = new LogicGpCrossover();
         var selectionsForMutation = new UniformSelection[5];
         for (var i = 0; i < selectionsForMutation.Length; i++)
         {
@@ -26,16 +26,21 @@ public class LogicGPGeccoGraph : OperatorGraph
             Start.AddChildren(selectionsForMutation[i]);
         }
 
-        var mutations = new StandardMutation[5];
-        for (var i = 0; i < mutations.Length; i++)
-        {
-            mutations[i] = new StandardMutation
-            {
-                MutationProbability = 0.1
-            };
-            selectionsForMutation[i].AddChildren(mutations[i]);
-        }
-
+        var deleteLiteralMutation = new DeleteLiteral();
+        selectionsForMutation[0].AddChildren(deleteLiteralMutation);
+        deleteLiteralMutation.AddChildren(Finish);
+        var deleteMonomialMutation = new DeleteMonomial();
+        selectionsForMutation[1].AddChildren(deleteMonomialMutation);
+        deleteMonomialMutation.AddChildren(Finish);
+        var insertLiteralMutation = new InsertLiteral();
+        selectionsForMutation[2].AddChildren(insertLiteralMutation);
+        insertLiteralMutation.AddChildren(Finish);
+        var insertMonomialMutation = new InsertMonomial();
+        selectionsForMutation[3].AddChildren(insertMonomialMutation);
+        insertMonomialMutation.AddChildren(Finish);
+        var replaceLiteralMutation = new ReplaceLiteral();
+        selectionsForMutation[4].AddChildren(replaceLiteralMutation);
+        replaceLiteralMutation.AddChildren(Finish);
         selectionForCrossover.AddChildren(crossover);
         var finalSelection = new DropTournamentWorst
         {
@@ -43,8 +48,6 @@ public class LogicGPGeccoGraph : OperatorGraph
         };
         crossover.AddChildren(finalSelection);
         Start.AddChildren(finalSelection);
-        for (var i = 0; i < mutations.Length; i++)
-            mutations[i].AddChildren(finalSelection);
         Finish = new Finish();
     }
 }

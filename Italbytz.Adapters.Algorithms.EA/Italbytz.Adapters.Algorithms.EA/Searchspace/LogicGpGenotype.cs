@@ -1,18 +1,56 @@
 using System;
 using System.Collections.Generic;
 using Italbytz.AI;
+using Italbytz.EA.Crossover;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.Mutation;
 using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>
+public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
+    ILogicGpMutable, ILogicGpCrossable
 {
     private readonly IPolynomial<TCategory> _polynomial;
 
     private LogicGpGenotype(IPolynomial<TCategory> polynomial)
     {
         _polynomial = polynomial;
+    }
+
+    public void CrossWith(ILogicGpCrossable parentGenotype)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeleteRandomLiteral()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsEmpty()
+    {
+        return _polynomial.Monomials.Count == 0;
+    }
+
+    public void DeleteRandomMonomial()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void InsertRandomLiteral()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void InsertRandomMonomial()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ReplaceRandomLiteral()
+    {
+        throw new NotImplementedException();
     }
 
     public object Clone()
