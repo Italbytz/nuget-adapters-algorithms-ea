@@ -10,6 +10,7 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
 {
     private readonly bool[] _bitSet;
     private readonly IList<TCategory> _categories;
+    private readonly int _feature;
     private readonly LogicGpLiteralType _literalType;
 
     public LogicGpLiteral(int feature,
@@ -19,6 +20,7 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
     {
         Label = $"F{feature}";
         _categories = categories.ToList();
+        _feature = feature;
         _literalType = literalType;
         _bitSet = new bool[_categories.Count];
         for (var i = 0; i < _categories.Count; i++)
@@ -28,6 +30,13 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
     public int CompareTo(ILiteral<TCategory>? other)
     {
         throw new NotImplementedException();
+    }
+
+    public bool Evaluate(TCategory[] input)
+    {
+        var value = input[_feature];
+        var index = _categories.IndexOf(value);
+        return index > -1 && index < _bitSet.Length && _bitSet[index];
     }
 
     public void GeneratePredictions(List<TCategory> data)

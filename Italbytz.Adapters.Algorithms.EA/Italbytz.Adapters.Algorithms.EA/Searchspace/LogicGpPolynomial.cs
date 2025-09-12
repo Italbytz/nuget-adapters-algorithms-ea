@@ -16,6 +16,11 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
         throw new NotImplementedException();
     }
 
+    public double[] Evaluate(TCategory[] input)
+    {
+        throw new NotImplementedException();
+    }
+
     public IMonomial<TCategory> GetRandomMonomial()
     {
         throw new NotImplementedException();

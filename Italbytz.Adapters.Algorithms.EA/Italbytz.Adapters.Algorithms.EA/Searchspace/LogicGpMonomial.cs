@@ -16,6 +16,11 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
         throw new NotImplementedException();
     }
 
+    public double[] Evaluate(TCategory[] input)
+    {
+        throw new NotImplementedException();
+    }
+
     public void RandomizeWeights(bool restricted)
     {
         throw new NotImplementedException();
