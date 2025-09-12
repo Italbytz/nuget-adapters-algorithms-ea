@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
@@ -15,7 +16,11 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
 
     public object Clone()
     {
-        throw new NotImplementedException();
+        return new LogicGpMonomial<TCategory>(Literals)
+        {
+            Weights = new float[Weights.Length].Select((_, i) => Weights[i])
+                .ToArray()
+        };
     }
 
     public void RandomizeWeights(bool restricted)

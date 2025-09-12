@@ -26,26 +26,27 @@ public class LogicGPGeccoGraph : OperatorGraph
             Start.AddChildren(selectionsForMutation[i]);
         }
 
-        var deleteLiteralMutation = new DeleteLiteral();
-        selectionsForMutation[0].AddChildren(deleteLiteralMutation);
-        deleteLiteralMutation.AddChildren(Finish);
-        var deleteMonomialMutation = new DeleteMonomial();
-        selectionsForMutation[1].AddChildren(deleteMonomialMutation);
-        deleteMonomialMutation.AddChildren(Finish);
-        var insertLiteralMutation = new InsertLiteral();
-        selectionsForMutation[2].AddChildren(insertLiteralMutation);
-        insertLiteralMutation.AddChildren(Finish);
-        var insertMonomialMutation = new InsertMonomial();
-        selectionsForMutation[3].AddChildren(insertMonomialMutation);
-        insertMonomialMutation.AddChildren(Finish);
-        var replaceLiteralMutation = new ReplaceLiteral();
-        selectionsForMutation[4].AddChildren(replaceLiteralMutation);
-        replaceLiteralMutation.AddChildren(Finish);
-        selectionForCrossover.AddChildren(crossover);
         var finalSelection = new DropTournamentWorst
         {
             NoOfIndividualsToSelect = 10000
         };
+
+        var deleteLiteralMutation = new DeleteLiteral();
+        selectionsForMutation[0].AddChildren(deleteLiteralMutation);
+        deleteLiteralMutation.AddChildren(finalSelection);
+        var deleteMonomialMutation = new DeleteMonomial();
+        selectionsForMutation[1].AddChildren(deleteMonomialMutation);
+        deleteMonomialMutation.AddChildren(finalSelection);
+        var insertLiteralMutation = new InsertLiteral();
+        selectionsForMutation[2].AddChildren(insertLiteralMutation);
+        insertLiteralMutation.AddChildren(finalSelection);
+        var insertMonomialMutation = new InsertMonomial();
+        selectionsForMutation[3].AddChildren(insertMonomialMutation);
+        insertMonomialMutation.AddChildren(finalSelection);
+        var replaceLiteralMutation = new ReplaceLiteral();
+        selectionsForMutation[4].AddChildren(replaceLiteralMutation);
+        replaceLiteralMutation.AddChildren(finalSelection);
+        selectionForCrossover.AddChildren(crossover);
         crossover.AddChildren(finalSelection);
         Start.AddChildren(finalSelection);
         Finish = new Finish();

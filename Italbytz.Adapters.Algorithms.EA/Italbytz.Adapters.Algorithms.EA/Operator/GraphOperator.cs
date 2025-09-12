@@ -74,6 +74,12 @@ public abstract class GraphOperator : IGraphOperator
 
         if (childTasks.Count == 0)
             return await operationResult;
+        /*var childResults = await Task.WhenAny(childTasks);
+
+        return childResults.IsCompletedSuccessfully
+            ? await childResults
+            : await operationResult;
+*/
 
         return await childTasks.Last();
     }

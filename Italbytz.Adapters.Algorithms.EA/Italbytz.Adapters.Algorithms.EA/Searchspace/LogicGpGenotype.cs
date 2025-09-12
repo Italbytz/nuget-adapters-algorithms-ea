@@ -11,21 +11,36 @@ namespace Italbytz.EA.Searchspace;
 public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     ILogicGpMutable, ILogicGpCrossable
 {
+    private readonly List<ILiteral<TCategory>> _literals;
     private readonly IPolynomial<TCategory> _polynomial;
 
-    private LogicGpGenotype(IPolynomial<TCategory> polynomial)
+    private LogicGpGenotype(IPolynomial<TCategory> polynomial,
+        List<ILiteral<TCategory>> literals)
     {
         _polynomial = polynomial;
+        _literals = literals;
     }
 
     public void CrossWith(ILogicGpCrossable parentGenotype)
     {
-        throw new NotImplementedException();
+        if (parentGenotype is not LogicGpGenotype<TCategory> parent)
+            throw new InvalidOperationException(
+                "Parent genotype is not of the same type");
+        var monomial =
+            (IMonomial<TCategory>)parent._polynomial
+                .GetRandomMonomial().Clone();
+        _polynomial.Monomials.Add(monomial);
+        LatestKnownFitness = null;
     }
 
     public void DeleteRandomLiteral()
     {
-        throw new NotImplementedException();
+        var monomial = GetRandomMonomial();
+        monomial.Literals.RemoveAt(
+            ThreadSafeRandomNetCore.Shared.Next(monomial.Literals.Count));
+        if (monomial.Literals.Count == 0)
+            _polynomial.Monomials.Remove(monomial);
+        LatestKnownFitness = null;
     }
 
     public bool IsEmpty()
@@ -35,27 +50,44 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public void DeleteRandomMonomial()
     {
-        throw new NotImplementedException();
+        _polynomial.Monomials.RemoveAt(
+            ThreadSafeRandomNetCore.Shared.Next(
+                _polynomial.Monomials.Count));
+        LatestKnownFitness = null;
     }
 
     public void InsertRandomLiteral()
     {
-        throw new NotImplementedException();
+        var monomial = GetRandomMonomial();
+        monomial.Literals.Add(_literals[
+            ThreadSafeRandomNetCore.Shared.Next(_literals.Count)]);
+        LatestKnownFitness = null;
     }
 
     public void InsertRandomMonomial()
     {
-        throw new NotImplementedException();
+        var literal =
+            _literals[ThreadSafeRandomNetCore.Shared.Next(_literals.Count)];
+        var monomial = new LogicGpMonomial<TCategory>([literal]);
+        _polynomial.Monomials.Add(monomial);
+        LatestKnownFitness = null;
     }
 
     public void ReplaceRandomLiteral()
     {
-        throw new NotImplementedException();
+        var monomial = GetRandomMonomial();
+        var literalIndex =
+            ThreadSafeRandomNetCore.Shared.Next(monomial.Literals.Count);
+        monomial.Literals[literalIndex] =
+            _literals[ThreadSafeRandomNetCore.Shared.Next(_literals.Count)];
+        LatestKnownFitness = null;
     }
 
     public object Clone()
     {
-        throw new NotImplementedException();
+        var clonedPolynomial =
+            (IPolynomial<TCategory>)_polynomial.Clone();
+        return new LogicGpGenotype<TCategory>(clonedPolynomial, _literals);
     }
 
     public double[]? LatestKnownFitness { get; set; }
@@ -77,6 +109,11 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
         return maxIndex.ToString();
     }
 
+    private IMonomial<TCategory> GetRandomMonomial()
+    {
+        return _polynomial.GetRandomMonomial();
+    }
+
     public static IGenotype GenerateRandomGenotype<TCategory>(
         List<ILiteral<TCategory>> literals)
     {
@@ -84,6 +121,6 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
             literals[ThreadSafeRandomNetCore.Shared.Next(literals.Count)];
         var monomial = new LogicGpMonomial<TCategory>([literal]);
         var polynomial = new LogicGpPolynomial<TCategory>([monomial]);
-        return new LogicGpGenotype<TCategory>(polynomial);
+        return new LogicGpGenotype<TCategory>(polynomial, literals);
     }
 }

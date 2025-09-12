@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Italbytz.AI;
 using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
@@ -19,7 +20,10 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
 
     public object Clone()
     {
-        throw new NotImplementedException();
+        var monomials =
+            Monomials.Select(monomial =>
+                (IMonomial<TCategory>)monomial.Clone());
+        return new LogicGpPolynomial<TCategory>(monomials.ToList());
     }
 
     public float[] Evaluate(TCategory[] input)
@@ -37,7 +41,8 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
 
     public IMonomial<TCategory> GetRandomMonomial()
     {
-        throw new NotImplementedException();
+        var random = ThreadSafeRandomNetCore.Shared;
+        return Monomials[random.Next(Monomials.Count)];
     }
 
     public void UpdatePredictions()
