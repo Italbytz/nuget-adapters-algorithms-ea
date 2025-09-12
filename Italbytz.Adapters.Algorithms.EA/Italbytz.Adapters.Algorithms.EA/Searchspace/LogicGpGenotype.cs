@@ -21,7 +21,7 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>
     }
 
     public double[]? LatestKnownFitness { get; set; }
-    public int Size { get; }
+    public int Size => _polynomial.Size;
 
     public double PredictValue(float[] features)
     {
@@ -30,8 +30,13 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>
 
     public string PredictClass(TCategory[] features)
     {
-        double[] result = _polynomial.Evaluate(features);
-        throw new NotImplementedException();
+        var result = _polynomial.Evaluate(features);
+        var maxIndex = 0;
+        for (var i = 1; i < result.Length; i++)
+            if (result[i] > result[maxIndex])
+                maxIndex = i;
+        maxIndex++;
+        return maxIndex.ToString();
     }
 
     public static IGenotype GenerateRandomGenotype<TCategory>(

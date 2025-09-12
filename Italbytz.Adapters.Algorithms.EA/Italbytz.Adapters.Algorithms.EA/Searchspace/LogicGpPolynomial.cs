@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
@@ -11,14 +12,27 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
         Monomials = monomials;
     }
 
+    public int Size
+    {
+        get { return Monomials.Sum(monomial => monomial.Size); }
+    }
+
     public object Clone()
     {
         throw new NotImplementedException();
     }
 
-    public double[] Evaluate(TCategory[] input)
+    public float[] Evaluate(TCategory[] input)
     {
-        throw new NotImplementedException();
+        var result = new[] { 0.0f, 0.0f, 0.0f };
+        foreach (var monomial in Monomials)
+        {
+            var monomialResult = monomial.Evaluate(input);
+            for (var i = 0; i < result.Length; i++)
+                result[i] += monomialResult[i];
+        }
+
+        return result;
     }
 
     public IMonomial<TCategory> GetRandomMonomial()
@@ -38,5 +52,4 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
 
     public List<IMonomial<TCategory>> Monomials { get; set; }
     public float[][] Predictions { get; set; }
-    public int Size { get; }
 }
