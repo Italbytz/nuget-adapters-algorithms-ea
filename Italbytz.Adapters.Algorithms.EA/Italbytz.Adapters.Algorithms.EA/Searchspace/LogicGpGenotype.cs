@@ -36,6 +36,12 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     public void DeleteRandomLiteral()
     {
         var monomial = GetRandomMonomial();
+        if (monomial.Literals.Count == 0)
+        {
+            _polynomial.Monomials.Remove(monomial);
+            return;
+        }
+
         monomial.Literals.RemoveAt(
             ThreadSafeRandomNetCore.Shared.Next(monomial.Literals.Count));
         if (monomial.Literals.Count == 0)
@@ -76,6 +82,13 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     public void ReplaceRandomLiteral()
     {
         var monomial = GetRandomMonomial();
+        if (monomial.Literals.Count == 0)
+        {
+            _polynomial.Monomials.Remove(monomial);
+            InsertRandomMonomial();
+            return;
+        }
+
         var literalIndex =
             ThreadSafeRandomNetCore.Shared.Next(monomial.Literals.Count);
         monomial.Literals[literalIndex] =
