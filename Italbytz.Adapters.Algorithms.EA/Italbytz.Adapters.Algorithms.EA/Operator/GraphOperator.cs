@@ -65,14 +65,15 @@ public abstract class GraphOperator : IGraphOperator
             return await Children[0].Process(operationResult, fitnessFunction);
 
         Task<IIndividualList>? task = null;
+        Task<IIndividualList>? chosenTask = null;
         foreach (var child in Children)
         {
             task = child.Process(operationResult, fitnessFunction);
-            if (child is Finish)
-                return await task;
+            if (task?.Result == null) continue;
+            chosenTask = task;
         }
 
-        return await task;
+        return await chosenTask;
     }
 
     public virtual Task<IIndividualList> Operate(
