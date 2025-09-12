@@ -7,7 +7,7 @@ using static Italbytz.EA.Searchspace.TinyGpPrimitive;
 
 namespace Italbytz.EA.Searchspace;
 
-public class TinyGpGenotype : IPredictingGenotype, IMutable
+public class TinyGpGenotype : IPredictingGenotype<string>, IMutable
 {
     public TinyGpGenotype(char[] program, double[] constants, int variableCount)
     {
@@ -54,7 +54,7 @@ public class TinyGpGenotype : IPredictingGenotype, IMutable
         return Run(features, ref pc);
     }
 
-    public string PredictClass(float[] features)
+    public string PredictClass(string[] features)
     {
         throw new NotImplementedException();
     }

@@ -3,12 +3,12 @@ using Italbytz.EA.Individuals;
 
 namespace Italbytz.EA.Fitness;
 
-public class LogicGpPareto : IStaticMultiObjectiveFitnessFunction
+public class LogicGpPareto<TCategory> : IStaticMultiObjectiveFitnessFunction
 {
-    private readonly float[][] _features;
-    private readonly string[] _labels;
+    private readonly TCategory[][] _features;
+    private readonly TCategory[] _labels;
 
-    public LogicGpPareto(float[][] features, string[] labels)
+    public LogicGpPareto(TCategory[][] features, TCategory[] labels)
     {
         _features = features;
         _labels = labels;
@@ -16,7 +16,7 @@ public class LogicGpPareto : IStaticMultiObjectiveFitnessFunction
 
     public double[] Evaluate(IIndividual individual)
     {
-        if (individual.Genotype is not IPredictingGenotype genotype)
+        if (individual.Genotype is not IPredictingGenotype<TCategory> genotype)
             throw new ArgumentException(
                 "Expected genotype of type IPredictingGenotype");
         var featuresLength = _features.Length;
