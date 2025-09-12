@@ -64,18 +64,15 @@ public abstract class GraphOperator : IGraphOperator
         if (Children.Count == 1)
             return await Children[0].Process(operationResult, fitnessFunction);
 
-        var childTasks = new List<Task<IIndividualList>>(Children.Count);
+        Task<IIndividualList>? task = null;
         foreach (var child in Children)
         {
-            var task = child.Process(operationResult, fitnessFunction);
-            if (task != null)
-                childTasks.Add(task);
+            task = child.Process(operationResult, fitnessFunction);
+            if (child is Finish)
+                return await task;
         }
 
-        if (childTasks.Count == 0)
-            return await operationResult;
-
-        return await childTasks.Last();
+        return await task;
     }
 
     public virtual Task<IIndividualList> Operate(
