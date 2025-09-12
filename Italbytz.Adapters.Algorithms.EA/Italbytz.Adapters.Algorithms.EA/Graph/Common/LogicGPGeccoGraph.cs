@@ -50,5 +50,6 @@ public class LogicGPGeccoGraph : OperatorGraph
         crossover.AddChildren(finalSelection);
         Start.AddChildren(finalSelection);
         Finish = new Finish();
+        finalSelection.AddChildren(Finish);
     }
 }
