@@ -48,13 +48,26 @@ public class TinyGpGenotype : IPredictingGenotype<string>, IMutable
     public double[]? LatestKnownFitness { get; set; }
     public int Size => Program.Length;
 
-    public double PredictValue(float[] features)
+    public float PredictValue(float[] features)
     {
         var pc = 0;
-        return Run(features, ref pc);
+        return (float)Run(features, ref pc);
+    }
+
+    public float[] PredictValues(float[][] features, float[] labels)
+    {
+        var results = new float[features.Length];
+        for (var i = 0; i < features.Length; i++)
+            results[i] = PredictValue(features[i]);
+        return results;
     }
 
     public string PredictClass(string[] features)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string[] PredictClass(string[][] features, string[] labels)
     {
         throw new NotImplementedException();
     }

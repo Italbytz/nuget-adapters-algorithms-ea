@@ -106,7 +106,12 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     public double[]? LatestKnownFitness { get; set; }
     public int Size => _polynomial.Size;
 
-    public double PredictValue(float[] features)
+    public float PredictValue(float[] features)
+    {
+        throw new NotImplementedException();
+    }
+
+    public float[] PredictValues(float[][] features, float[] labels)
     {
         throw new NotImplementedException();
     }
@@ -120,6 +125,11 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
                 maxIndex = i;
         maxIndex++;
         return maxIndex.ToString();
+    }
+
+    public string[] PredictClass(TCategory[][] features, string[] labels)
+    {
+        throw new NotImplementedException();
     }
 
     private IMonomial<TCategory> GetRandomMonomial()

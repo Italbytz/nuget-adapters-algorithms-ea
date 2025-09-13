@@ -6,12 +6,13 @@ using Italbytz.EA.Individuals;
 namespace Italbytz.EA.Fitness;
 
 public class LogicGpPareto<TCategory> : IStaticMultiObjectiveFitnessFunction
+    where TCategory : notnull
 {
     private readonly TCategory[][] _features;
-    private readonly TCategory[] _labels;
+    private readonly string[] _labels;
     private Dictionary<string, int> _labelToIndexMap;
 
-    public LogicGpPareto(TCategory[][] features, TCategory[] labels)
+    public LogicGpPareto(TCategory[][] features, string[] labels)
     {
         _features = features;
         _labels = labels;
@@ -34,9 +35,9 @@ public class LogicGpPareto<TCategory> : IStaticMultiObjectiveFitnessFunction
         for (var i = 0; i < featuresLength; i++)
         {
             var prediction = genotype.PredictClass(_features[i]);
-            var labelStr = _labels[i]?.ToString();
+            var labelStr = _labels[i];
 
-            if (prediction == labelStr && !string.IsNullOrEmpty(labelStr))
+            if (prediction == labelStr)
             {
                 // Caching der Index-Berechnung
                 if (!_labelToIndexMap.TryGetValue(labelStr, out var index))

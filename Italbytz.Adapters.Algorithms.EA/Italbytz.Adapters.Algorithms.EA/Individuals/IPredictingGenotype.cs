@@ -2,6 +2,10 @@ namespace Italbytz.EA.Individuals;
 
 public interface IPredictingGenotype<TCategory> : IGenotype
 {
-    double PredictValue(float[] features);
+    float PredictValue(float[] features);
+
+    float[] PredictValues(float[][] features, float[] labels);
     string PredictClass(TCategory[] features);
+
+    string[] PredictClass(TCategory[][] features, string[] labels);
 }
