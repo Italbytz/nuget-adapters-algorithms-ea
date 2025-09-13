@@ -25,10 +25,11 @@ public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
         double totalAbsoluteDeviation = 0;
         var featuresLength = _features.Length;
 
-        var predictions = genotype.PredictValues(_features, _labels);
-
         for (var i = 0; i < featuresLength; i++)
-            totalAbsoluteDeviation += Math.Abs(predictions[i] - _labels[i]);
+        {
+            var prediction = genotype.PredictValue(_features[i]);
+            totalAbsoluteDeviation += Math.Abs(prediction - _labels[i]);
+        }
 
         // Since lower absolute deviation is better, we return its negative
         return [-totalAbsoluteDeviation];
