@@ -21,6 +21,8 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
         _literals = literals;
     }
 
+    public Weighting Weighting { get; set; } = Weighting.Fixed;
+
     public void CrossWith(ILogicGpCrossable parentGenotype)
     {
         if (parentGenotype is not LogicGpGenotype<TCategory> parent)
@@ -130,6 +132,11 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     public string[] PredictClass(TCategory[][] features, string[] labels)
     {
         throw new NotImplementedException();
+    }
+
+    public override string ToString()
+    {
+        return _polynomial.ToString() ?? string.Empty;
     }
 
     private IMonomial<TCategory> GetRandomMonomial()

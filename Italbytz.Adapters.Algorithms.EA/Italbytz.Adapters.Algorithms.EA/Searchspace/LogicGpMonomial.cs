@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
@@ -52,5 +54,17 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
         }
 
         return allLiteralsTrue ? Weights : CounterWeights;
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.Append("  ");
+        sb.Append(string.Join(" |  ", Weights.Select(w => w.ToString("F2",
+            CultureInfo.InvariantCulture))));
+        sb.Append(" | ");
+        sb.Append(string.Join("", Literals));
+        sb.Append(" |");
+        return sb.ToString();
     }
 }

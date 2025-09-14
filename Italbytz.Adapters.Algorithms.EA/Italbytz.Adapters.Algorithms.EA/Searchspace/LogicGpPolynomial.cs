@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Italbytz.AI;
 using Italbytz.EA.SearchSpace;
 
@@ -12,6 +14,8 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
     {
         Monomials = monomials;
     }
+
+    public float[] Weights { get; set; } = [1.0f, 1.0f, 0.0f];
 
     public int Size
     {
@@ -57,4 +61,20 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
 
     public List<IMonomial<TCategory>> Monomials { get; set; }
     public float[][] Predictions { get; set; }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.Append("\n|");
+        for (var i = 0; i < Weights.Length; i++) sb.Append($" $w_{i}$ |");
+        sb.Append(" Condition                                   |\n|");
+        for (var i = 0; i < Weights.Length; i++) sb.Append(" ----- |");
+        sb.Append(" ------------------------------------------- |\n|  ");
+        sb.Append(string.Join(" |  ", Weights.Select(w => w.ToString("F2",
+            CultureInfo.InvariantCulture))));
+        sb.Append(" | None below fulfilled                        |\n|");
+        sb.Append(string.Join("\n|", Monomials));
+        sb.Append('\n');
+        return sb.ToString();
+    }
 }
