@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Italbytz.AI;
 using Italbytz.EA.Crossover;
 using Italbytz.EA.Individuals;
@@ -13,13 +14,14 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     ILogicGpMutable, ILogicGpCrossable
 {
     private readonly List<ILiteral<TCategory>> _literals;
-    private readonly IPolynomial<TCategory> _polynomial;
+    public readonly IPolynomial<TCategory> Polynomial;
 
     private LogicGpGenotype(IPolynomial<TCategory> polynomial,
-        List<ILiteral<TCategory>> literals)
+        List<ILiteral<TCategory>> literals, Weighting weighting)
     {
-        _polynomial = polynomial;
+        Polynomial = polynomial;
         _literals = literals;
+        Weighting = weighting;
     }
 
     public Weighting Weighting { get; set; } = Weighting.Fixed;
@@ -29,68 +31,69 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public void CrossWith(ILogicGpCrossable parentGenotype)
     {
+        if (LatestKnownFitness != null) throw new InvalidOperationException();
         if (parentGenotype is not LogicGpGenotype<TCategory> parent)
             throw new InvalidOperationException(
                 "Parent genotype is not of the same type");
         var monomial =
-            (IMonomial<TCategory>)parent._polynomial
+            (IMonomial<TCategory>)parent.Polynomial
                 .GetRandomMonomial().Clone();
-        _polynomial.Monomials.Add(monomial);
-        LatestKnownFitness = null;
+        Polynomial.Monomials.Add(monomial);
     }
 
     public void DeleteRandomLiteral()
     {
+        if (LatestKnownFitness != null) throw new InvalidOperationException();
         var monomial = GetRandomMonomial();
         if (monomial.Literals.Count == 0)
         {
-            _polynomial.Monomials.Remove(monomial);
+            Polynomial.Monomials.Remove(monomial);
             return;
         }
 
         monomial.Literals.RemoveAt(
             ThreadSafeRandomNetCore.Shared.Next(monomial.Literals.Count));
         if (monomial.Literals.Count == 0)
-            _polynomial.Monomials.Remove(monomial);
-        LatestKnownFitness = null;
+            Polynomial.Monomials.Remove(monomial);
     }
 
     public bool IsEmpty()
     {
-        return _polynomial.Monomials.Count == 0;
+        return Polynomial.Size == 0;
     }
 
     public void DeleteRandomMonomial()
     {
-        _polynomial.Monomials.RemoveAt(
+        if (LatestKnownFitness != null) throw new InvalidOperationException();
+        Polynomial.Monomials.RemoveAt(
             ThreadSafeRandomNetCore.Shared.Next(
-                _polynomial.Monomials.Count));
-        LatestKnownFitness = null;
+                Polynomial.Monomials.Count));
     }
 
     public void InsertRandomLiteral()
     {
+        if (LatestKnownFitness != null) throw new InvalidOperationException();
         var monomial = GetRandomMonomial();
         monomial.Literals.Add(_literals[
             ThreadSafeRandomNetCore.Shared.Next(_literals.Count)]);
-        LatestKnownFitness = null;
     }
 
     public void InsertRandomMonomial()
     {
+        if (LatestKnownFitness != null) throw new InvalidOperationException();
         var literal =
             _literals[ThreadSafeRandomNetCore.Shared.Next(_literals.Count)];
         var monomial = new LogicGpMonomial<TCategory>([literal]);
-        _polynomial.Monomials.Add(monomial);
-        LatestKnownFitness = null;
+        Polynomial.Monomials.Add(monomial);
     }
 
     public void ReplaceRandomLiteral()
     {
+        if (LatestKnownFitness != null) throw new InvalidOperationException();
         var monomial = GetRandomMonomial();
         if (monomial.Literals.Count == 0)
         {
-            _polynomial.Monomials.Remove(monomial);
+            Polynomial.Monomials.Remove(monomial);
             InsertRandomMonomial();
             return;
         }
@@ -99,18 +102,18 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
             ThreadSafeRandomNetCore.Shared.Next(monomial.Literals.Count);
         monomial.Literals[literalIndex] =
             _literals[ThreadSafeRandomNetCore.Shared.Next(_literals.Count)];
-        LatestKnownFitness = null;
     }
 
     public object Clone()
     {
         var clonedPolynomial =
-            (IPolynomial<TCategory>)_polynomial.Clone();
-        return new LogicGpGenotype<TCategory>(clonedPolynomial, _literals);
+            (IPolynomial<TCategory>)Polynomial.Clone();
+        return new LogicGpGenotype<TCategory>(clonedPolynomial, _literals,
+            Weighting);
     }
 
     public double[]? LatestKnownFitness { get; set; }
-    public int Size => _polynomial.Size;
+    public int Size => Polynomial.Size;
 
     public float PredictValue(float[] features)
     {
@@ -124,7 +127,7 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public int PredictClass(TCategory[] features)
     {
-        var result = _polynomial.Evaluate(features);
+        var result = Polynomial.Evaluate(features);
         var chosenIndex = PredictionStrategy switch
         {
             PredictionStrategy.Max => MaxIndex(result),
@@ -139,34 +142,31 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     {
         if (Weighting != Weighting.Fixed) ComputeWeights(features, labels);
         var results = new int[features.Length];
-        for (var i = 0; i < features.Length; i++)
-            results[i] = PredictClass(features[i]);
+        Parallel.For(0, features.Length,
+            i => { results[i] = PredictClass(features[i]); });
         return results;
     }
 
     private void ComputeWeights(TCategory[][] features, int[] labels)
     {
         var classes = labels.Max() + 1;
-        if (_polynomial.Monomials.Count == 0) return;
-        //var predictions = new bool[features.Length][];
-        var counts = new int[_polynomial.Monomials.Count + 1][];
-        var counterCounts = new int[_polynomial.Monomials.Count + 1][];
+        if (Polynomial.Monomials.Count == 0) return;
+        var counts = new int[Polynomial.Monomials.Count + 1][];
+        var counterCounts = new int[Polynomial.Monomials.Count + 1][];
         for (var i = 0; i < features.Length; i++)
         {
-            //predictions[i] = new bool[_polynomial.Monomials.Count + 1];
             var allFalse = true;
-            for (var j = 0; j < _polynomial.Monomials.Count; j++)
+            for (var j = 0; j < Polynomial.Monomials.Count; j++)
             {
                 if (counts[j] == null)
                     counts[j] = new int[classes];
                 if (counterCounts[j] == null)
                     counterCounts[j] = new int[classes];
-                var monomial = _polynomial.Monomials[j];
+                var monomial = Polynomial.Monomials[j];
                 var prediction = monomial.EvaluateLiterals(features[i]);
                 if (prediction)
                 {
                     counts[j][labels[i]]++;
-                    //predictions[i][j] = true;
                     allFalse = false;
                 }
                 else
@@ -181,45 +181,54 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
                 counterCounts[^1] = new int[classes];
             if (allFalse)
                 counts[^1][labels[i]]++;
-            //predictions[i][^1] = true;
             else
                 counterCounts[^1][labels[i]]++;
         }
 
-        for (var i = 0; i < _polynomial.Monomials.Count; i++)
+        for (var i = 0; i < Polynomial.Monomials.Count; i++)
         {
-            var monomial = _polynomial.Monomials[i];
+            var monomial = Polynomial.Monomials[i];
             var count = counts[i];
             var counterCount = counterCounts[i];
             monomial.Weights = ComputeDistributionWeights(count, counterCount);
         }
 
-        _polynomial.Weights =
+        Polynomial.Weights =
             ComputeDistributionWeights(counts[^1], counterCounts[^1]);
     }
 
     private float[] ComputeDistributionWeights(int[] count, int[] counterCount)
     {
-        var inDistribution = count.Select(c => (float)c).ToArray();
-        var outDistribution = counterCount.Select(c => (float)c).ToArray();
-        var sum = inDistribution.Sum();
-        if (sum == 0)
-            sum = 1;
+        var inDistribution = new float[count.Length];
+        var outDistribution = new float[counterCount.Length];
+
+        float sum = 0;
+        for (var i = 0; i < count.Length; i++)
+        {
+            inDistribution[i] = count[i];
+            sum += inDistribution[i];
+        }
+
+        if (sum == 0) sum = 1;
         for (var j = 0; j < inDistribution.Length; j++)
             inDistribution[j] /= sum;
 
-        sum = outDistribution.Sum();
-        if (sum == 0)
-            sum = 1;
+        sum = 0;
+        for (var i = 0; i < counterCount.Length; i++)
+        {
+            outDistribution[i] = counterCount[i];
+            sum += outDistribution[i];
+        }
+
+        if (sum == 0) sum = 1;
         for (var j = 0; j < outDistribution.Length; j++)
             outDistribution[j] /= sum;
 
         var newWeights = new float[count.Length];
         for (var j = 0; j < newWeights.Length; j++)
-            if (outDistribution[j] == 0)
-                newWeights[j] = inDistribution[j];
-            else
-                newWeights[j] = inDistribution[j] / outDistribution[j];
+            newWeights[j] = outDistribution[j] == 0
+                ? inDistribution[j]
+                : inDistribution[j] / outDistribution[j];
 
         return newWeights;
     }
@@ -262,12 +271,12 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public override string ToString()
     {
-        return _polynomial.ToString() ?? string.Empty;
+        return Polynomial.ToString() ?? string.Empty;
     }
 
     private IMonomial<TCategory> GetRandomMonomial()
     {
-        return _polynomial.GetRandomMonomial();
+        return Polynomial.GetRandomMonomial();
     }
 
     public static IGenotype GenerateRandomGenotype<TCategory>(
@@ -277,9 +286,6 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
             literals[ThreadSafeRandomNetCore.Shared.Next(literals.Count)];
         var monomial = new LogicGpMonomial<TCategory>([literal]);
         var polynomial = new LogicGpPolynomial<TCategory>([monomial]);
-        return new LogicGpGenotype<TCategory>(polynomial, literals)
-        {
-            Weighting = weighting
-        };
+        return new LogicGpGenotype<TCategory>(polynomial, literals, weighting);
     }
 }

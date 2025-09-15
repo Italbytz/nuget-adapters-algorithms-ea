@@ -7,6 +7,8 @@ namespace Italbytz.EA.Selection;
 
 public class DropWorst : AbstractSelection
 {
+    public override bool FitnessBasedSelection { get; } = true;
+
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individualList, int noOfIndividualsToSelect)
     {

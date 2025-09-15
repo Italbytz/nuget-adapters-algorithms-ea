@@ -6,6 +6,8 @@ namespace Italbytz.EA.Selection;
 
 public class ParetoFrontSelection : AbstractSelection
 {
+    public override bool FitnessBasedSelection { get; } = true;
+
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individualList, int noOfIndividualsToSelect)
     {

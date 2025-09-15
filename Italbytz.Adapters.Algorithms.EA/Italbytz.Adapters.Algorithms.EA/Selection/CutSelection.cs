@@ -6,6 +6,8 @@ namespace Italbytz.EA.Selection;
 
 public class CutSelection : AbstractSelection
 {
+    public override bool FitnessBasedSelection { get; } = true;
+
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individualList, int noOfIndividualsToSelect)
     {

@@ -18,7 +18,7 @@ public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
 
     double[] IFitnessFunction.Evaluate(IIndividual individual)
     {
-        if (individual.Genotype is not IPredictingGenotype<string> genotype)
+        if (individual.Genotype is not IPredictingGenotype<int> genotype)
             throw new ArgumentException(
                 "Expected genotype of type IPredictingGenotype");
 

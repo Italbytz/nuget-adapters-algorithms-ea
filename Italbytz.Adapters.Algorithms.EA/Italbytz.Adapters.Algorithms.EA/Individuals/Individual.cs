@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 
 namespace Italbytz.EA.Individuals;
@@ -9,7 +10,10 @@ public class Individual : IIndividual
     public Individual(IGenotype genotype, IIndividual[]? parents)
     {
         Genotype = genotype;
+        Parents = parents;
     }
+
+    public IIndividual[]? Parents { get; set; }
 
     /// <inheritdoc />
     public IGenotype Genotype { get; }
@@ -40,14 +44,18 @@ public class Individual : IIndividual
     /// <inheritdoc />
     public object Clone()
     {
-        return new Individual((IGenotype)Genotype.Clone(), null);
+        return new Individual((IGenotype)Genotype.Clone(), [this])
+        {
+            Generation = Generation
+        };
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
-        return Genotype + $" Gen {Generation} " +
-               $"Fitness {string.Join(",", LatestKnownFitness ?? Array.Empty<double>())}" ??
+        return Genotype +
+               $" Gen {Generation} " +
+               $"Fitness {string.Join(",", (LatestKnownFitness ?? Array.Empty<double>()).Select(f => f.ToString(CultureInfo.InvariantCulture)))}" ??
                string.Empty;
     }
 }

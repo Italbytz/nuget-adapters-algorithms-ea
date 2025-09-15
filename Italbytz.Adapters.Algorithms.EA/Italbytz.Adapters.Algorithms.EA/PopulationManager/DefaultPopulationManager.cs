@@ -17,7 +17,9 @@ public class DefaultPopulationManager : IPopulationManager
 
     public string GetPopulationInfo()
     {
-        return Population?.GetRandomIndividual().ToString() ??
+        /*return Population?.GetRandomIndividual().ToString() ??
+               "Population not initialized.";*/
+        return Population?.ToString() ??
                "Population not initialized.";
     }
 }

@@ -35,8 +35,6 @@ public class EvolutionaryAlgorithm
         var stop = false;
         while (!stop)
         {
-            Console.Out.WriteLine(((DefaultPopulationManager)PopulationManager)
-                .GetPopulationInfo());
             stop = StoppingCriteria.Any(sc => sc.IsMet());
             if (stop) continue;
             var newPopulation = await AlgorithmGraph.Process(Population);
@@ -44,6 +42,8 @@ public class EvolutionaryAlgorithm
             foreach (var individual in newPopulation)
                 individual.Generation = Generation;
             PopulationManager.Population = newPopulation;
+            Console.Out.WriteLine(((DefaultPopulationManager)PopulationManager)
+                .GetPopulationInfo());
         }
     }
 }

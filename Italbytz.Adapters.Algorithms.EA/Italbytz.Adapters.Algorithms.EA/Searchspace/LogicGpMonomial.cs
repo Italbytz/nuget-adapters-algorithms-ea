@@ -16,10 +16,21 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
 
     public object Clone()
     {
-        return new LogicGpMonomial<TCategory>(Literals)
+        // Create a new list with cloned literals
+        var literalsCopy = Literals.Select(l => l)
+            .ToList();
+
+        // Copy weights for better performance
+        float[] weightsCopy = null;
+        if (Weights != null)
         {
-            Weights = new float[Weights.Length].Select((_, i) => Weights[i])
-                .ToArray()
+            weightsCopy = new float[Weights.Length];
+            Array.Copy(Weights, weightsCopy, Weights.Length);
+        }
+
+        return new LogicGpMonomial<TCategory>(literalsCopy)
+        {
+            Weights = weightsCopy
         };
     }
 
@@ -34,7 +45,7 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
     }
 
     public List<ILiteral<TCategory>> Literals { get; set; }
-    public float[] Weights { get; set; } = [1.0f, 1.0f, 0.0f];
+    public float[] Weights { get; set; }
     public float[][] Predictions { get; set; }
     public int Size => Literals.Count;
 
@@ -56,9 +67,13 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
     public override string ToString()
     {
         var sb = new StringBuilder();
-        sb.Append("  ");
-        sb.Append(string.Join(" |  ", Weights.Select(w => w.ToString("F2",
-            CultureInfo.InvariantCulture))));
+        if (Weights != null)
+        {
+            sb.Append("  ");
+            sb.Append(string.Join(" |  ", Weights.Select(w => w.ToString("F2",
+                CultureInfo.InvariantCulture))));
+        }
+
         sb.Append(" | ");
         sb.Append(string.Join("", Literals));
         sb.Append(" |");

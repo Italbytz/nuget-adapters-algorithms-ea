@@ -9,6 +9,8 @@ public class DropTournamentWorst : AbstractSelection
 {
     public int TournamentSize { get; set; } = 2;
 
+    public override bool FitnessBasedSelection { get; } = true;
+
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individualList, int noOfIndividualsToSelect)
     {

@@ -15,7 +15,7 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
         Monomials = monomials;
     }
 
-    public float[] Weights { get; set; } = [1.0f, 1.0f, 0.0f];
+    public float[] Weights { get; set; }
 
     public int Size
     {
@@ -32,17 +32,34 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
 
     public float[] Evaluate(TCategory[] input)
     {
-        var result = new[] { 0.0f, 0.0f, 0.0f };
-        foreach (var monomial in Monomials)
+        // Early return if no monomials
+        if (Monomials.Count == 0)
+            return Weights;
+
+        // Pre-allocate result array based on first monomial result
+        var firstMonomialResult = Monomials[0].Evaluate(input);
+        var resultLength = firstMonomialResult.Length;
+        var result = new float[resultLength];
+
+        // Add first result directly
+        Array.Copy(firstMonomialResult, result, resultLength);
+
+        // Process remaining monomials
+        for (var m = 1; m < Monomials.Count; m++)
         {
-            var monomialResult = monomial.Evaluate(input);
-            for (var i = 0; i < result.Length; i++)
+            var monomialResult = Monomials[m].Evaluate(input);
+            for (var i = 0; i < resultLength; i++)
                 result[i] += monomialResult[i];
         }
 
-        if (result.Sum() == 0.0f) return Weights;
+        // Check if sum is zero and return weights instead
+        if (Weights == null)
+        {
+            Console.WriteLine("S");
+            Console.WriteLine("S");
+        }
 
-        return result;
+        return result.Sum() == 0.0f ? Weights : result;
     }
 
     public IMonomial<TCategory> GetRandomMonomial()
@@ -68,13 +85,17 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
     {
         var sb = new StringBuilder();
         sb.Append("\n|");
-        for (var i = 0; i < Weights.Length; i++) sb.Append($" $w_{i}$ |");
-        sb.Append(" Condition                                   |\n|");
-        for (var i = 0; i < Weights.Length; i++) sb.Append(" ----- |");
-        sb.Append(" ------------------------------------------- |\n|  ");
-        sb.Append(string.Join(" |  ", Weights.Select(w => w.ToString("F2",
-            CultureInfo.InvariantCulture))));
-        sb.Append(" | None below fulfilled                        |\n|");
+        if (Weights != null)
+        {
+            for (var i = 0; i < Weights.Length; i++) sb.Append($" $w_{i}$ |");
+            sb.Append(" Condition                                   |\n|");
+            for (var i = 0; i < Weights.Length; i++) sb.Append(" ----- |");
+            sb.Append(" ------------------------------------------- |\n|  ");
+            sb.Append(string.Join(" |  ", Weights.Select(w => w.ToString("F2",
+                CultureInfo.InvariantCulture))));
+            sb.Append(" | None below fulfilled                        |\n|");
+        }
+
         sb.Append(string.Join("\n|", Monomials));
         sb.Append('\n');
         return sb.ToString();

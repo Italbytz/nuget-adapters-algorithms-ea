@@ -25,15 +25,26 @@ public class LogicGpPareto<TCategory> : IStaticMultiObjectiveFitnessFunction
 
         var featuresLength = _features.Length;
         var objectives = new double[NumberOfObjectives];
+        var missedObjectives = new int[NumberOfObjectives - 1];
 
         var predictions = genotype.PredictClasses(_features, _labels);
 
+        int label;
         for (var i = 0; i < featuresLength; i++)
-            if (predictions[i] == _labels[i])
-                objectives[_labels[i]]++;
+        {
+            label = _labels[i];
+            if (predictions[i] == label)
+                objectives[label]++;
+            else
+                missedObjectives[label]++;
+        }
+
+        for (var i = 0; i < NumberOfObjectives - 1; i++)
+            if (objectives[i] + missedObjectives[i] > 0)
+                objectives[i] /= objectives[i] + missedObjectives[i];
+
 
         objectives[^1] = -individual.Size;
-        individual.LatestKnownFitness = objectives;
 
         return objectives;
     }

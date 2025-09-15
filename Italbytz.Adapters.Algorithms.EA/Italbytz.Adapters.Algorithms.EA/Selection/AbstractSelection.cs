@@ -8,6 +8,7 @@ namespace Italbytz.EA.Selection;
 
 public abstract class AbstractSelection : GraphOperator
 {
+    public abstract bool FitnessBasedSelection { get; }
     public override int MaxParents { get; } = int.MaxValue;
     public int NoOfIndividualsToSelect { get; init; } = 1;
     public double RatioOfIndividualsToSelect { get; init; } = 0.5;
@@ -18,10 +19,14 @@ public abstract class AbstractSelection : GraphOperator
     {
         var individualList = individuals.Result;
         var newPopulation = new ListBasedPopulation();
-        // Update LatestKnownFitness
-        foreach (var individual in individualList)
-            individual.LatestKnownFitness ??=
-                fitnessFunction.Evaluate(individual);
+        if (FitnessBasedSelection)
+            foreach (var individual in individualList)
+                lock (individual)
+                {
+                    individual.LatestKnownFitness ??=
+                        fitnessFunction.Evaluate(individual);
+                }
+
         var calculatedNoOfIndividualsToSelect = NoOfIndividualsToSelect;
         if (UseRatio)
             calculatedNoOfIndividualsToSelect =

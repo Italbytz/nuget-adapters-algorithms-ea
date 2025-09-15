@@ -10,6 +10,8 @@ public class TournamentSelection : AbstractSelection
 {
     public int TournamentSize { get; set; } = 2;
 
+    public override bool FitnessBasedSelection { get; } = true;
+
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individuals, int noOfIndividualsToSelect)
     {
