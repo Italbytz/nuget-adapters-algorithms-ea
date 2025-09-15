@@ -14,8 +14,6 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
         Literals = literals;
     }
 
-    public float[] CounterWeights { get; set; } = [0.0f, 0.0f, 1.0f];
-
     public object Clone()
     {
         return new LogicGpMonomial<TCategory>(Literals)
@@ -42,18 +40,17 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
 
     public float[] Evaluate(TCategory[] input)
     {
-        var allLiteralsTrue = true;
-        foreach (var literal in Literals)
-        {
-            var literalResult = literal.Evaluate(input);
-            if (!literalResult)
-            {
-                allLiteralsTrue = false;
-                break;
-            }
-        }
+        var counterWeights = new float[Weights.Length];
+        return EvaluateLiterals(input) ? Weights : counterWeights;
+    }
 
-        return allLiteralsTrue ? Weights : CounterWeights;
+    public bool EvaluateLiterals(TCategory[] input)
+    {
+        foreach (var literal in Literals)
+            if (!literal.Evaluate(input))
+                return false;
+
+        return true;
     }
 
     public override string ToString()

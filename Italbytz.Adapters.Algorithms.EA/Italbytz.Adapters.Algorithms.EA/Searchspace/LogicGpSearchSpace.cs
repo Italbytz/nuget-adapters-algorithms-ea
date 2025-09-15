@@ -18,11 +18,14 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
         GenerateLiterals();
     }
 
+    public Weighting Weighting { get; set; } = Weighting.Fixed;
+
     public List<ILiteral<TCategory>> Literals { get; set; }
 
     public IGenotype GetRandomGenotype()
     {
-        return LogicGpGenotype<TCategory>.GenerateRandomGenotype(Literals);
+        return LogicGpGenotype<TCategory>.GenerateRandomGenotype(Literals,
+            Weighting);
     }
 
     public IIndividualList GetAStartingPopulation()

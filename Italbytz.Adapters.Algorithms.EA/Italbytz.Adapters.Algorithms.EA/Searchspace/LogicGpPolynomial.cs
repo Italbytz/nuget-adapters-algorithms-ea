@@ -40,6 +40,8 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
                 result[i] += monomialResult[i];
         }
 
+        if (result.Sum() == 0.0f) return Weights;
+
         return result;
     }
 

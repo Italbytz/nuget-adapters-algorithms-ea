@@ -26,7 +26,7 @@ public class LogicGPGeccoGraph : OperatorGraph
             Start.AddChildren(selectionsForMutation[i]);
         }
 
-        var finalSelection = new DropTournamentWorst
+        var finalSelection = new ParetoFrontSelection()
         {
             NoOfIndividualsToSelect = 10000
         };
