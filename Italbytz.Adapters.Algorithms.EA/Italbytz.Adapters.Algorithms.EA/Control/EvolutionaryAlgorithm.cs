@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Italbytz.EA.Fitness;
@@ -26,7 +25,7 @@ public class EvolutionaryAlgorithm
     public int Generation { get; set; }
     public required OperatorGraph AlgorithmGraph { get; set; }
 
-    public async Task Run()
+    public async Task<IIndividualList> Run()
     {
         AlgorithmGraph.Check();
         AlgorithmGraph.FitnessFunction = FitnessFunction;
@@ -42,8 +41,10 @@ public class EvolutionaryAlgorithm
             foreach (var individual in newPopulation)
                 individual.Generation = Generation;
             PopulationManager.Population = newPopulation;
-            Console.Out.WriteLine(((DefaultPopulationManager)PopulationManager)
-                .GetPopulationInfo());
+            /*Console.Out.WriteLine(((DefaultPopulationManager)PopulationManager)
+                .GetPopulationInfo());*/
         }
+
+        return PopulationManager.Population;
     }
 }

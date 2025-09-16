@@ -1,16 +1,11 @@
 using Italbytz.AI;
-using Italbytz.EA.Control;
-using Italbytz.EA.Fitness;
-using Italbytz.EA.Graph.Common;
-using Italbytz.EA.Initialization;
-using Italbytz.EA.Searchspace;
-using GenerationStoppingCriterion =
-    Italbytz.EA.StoppingCriterion.GenerationStoppingCriterion;
+using Italbytz.EA;
+using Italbytz.EA.StoppingCriterion;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
 [TestClass]
-public class LogicGpTests
+public class GeneticProgramTests
 {
     private readonly int[][] _features =
     [
@@ -321,31 +316,61 @@ public class LogicGpTests
     ];
 
     [TestMethod]
-    public async Task TestLogicGp()
+    public async Task TestGeneticProgram()
     {
         ThreadSafeRandomNetCore.Seed = 42;
-        var logicGp = new EvolutionaryAlgorithm
+        var gp = new GeneticProgram
         {
-            FitnessFunction = new LogicGpPareto<int>(_features, _labels),
-            SearchSpace = new LogicGpSearchSpace<int>(_features, _labels)
+            FitnessFunction = null,
+            SelectionForOperator = null,
+            SelectionForSurvival = null,
+            Mutations = null,
+            Crossovers = null,
+            Initialization = null,
+            PopulationManager = null,
+            SearchSpace = null,
+            StoppingCriteria = new IStoppingCriterion[]
             {
-                Weighting = Weighting.Computed
             },
-            AlgorithmGraph = new LogicGPGeccoGraph()
+            TrainingData = null
         };
-        logicGp.Initialization = new RandomInitialization(logicGp)
-        {
-            Size = 10
-        };
+        /*
+         * randomInitialization.Size = 2;
+           generationStoppingCriterion.Limit = generations;
+           selection.Size = 6;
+           gp.SelectionForOperator = selection;
+           gp.SelectionForSurvival = paretoFrontSelection;
+           gp.PopulationManager = populationManager;
+           gp.TrainingData = trainData;
+           gp.Initialization = UseFullInitialization
+               ? completeInitialization
+               : randomInitialization;
+           gp.Crossovers = [new LogicGpCrossover()];
+           gp.Mutations =
+           [
+               new DeleteLiteral(), new InsertLiteral(),
+               new InsertMonomial(), new ReplaceLiteral(), new DeleteMonomial()
+           ];
 
-        logicGp.StoppingCriteria =
-        [
-            new GenerationStoppingCriterion(logicGp)
-            {
-                Limit = 10000
-            }
-        ];
-        var population = await logicGp.Run();
-        Console.Out.WriteLine(population);
+           IMutation? weightMutation = WeightMutationToUse switch
+           {
+               WeightMutation.None => null,
+               WeightMutation.Restricted => new ChangeWeightsRestricted(),
+               WeightMutation.Unrestricted => new ChangeWeightsUnrestricted(),
+               _ => null
+           };
+
+           if (weightMutation != null)
+               ((IList)gp.Mutations).Add(weightMutation);
+           fitnessFunction.LabelColumnName = data.Label;
+           ((LogicGpPareto)fitnessFunction).Labels = data.Labels;
+           gp.FitnessFunction = fitnessFunction;
+           searchSpace.OutputColumn =
+               IDataViewExtensions.GetColumnAsString(trainData, labelColumnName)
+                   .ToList();
+           searchSpace.UsedWeighting = UsedWeighting;
+           gp.SearchSpace = searchSpace;
+           gp.StoppingCriteria = [generationStoppingCriterion];
+         */
     }
 }
