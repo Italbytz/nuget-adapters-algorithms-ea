@@ -357,7 +357,10 @@ public class LogicGpTests
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction =
-                new LogicGpPareto<int>(_trainingFeatures, _trainingLabels),
+                new LogicGpPareto<int>(_trainingFeatures, _trainingLabels)
+                {
+                    MaxSize = int.MaxValue
+                },
             SearchSpace =
                 new LogicGpSearchSpace<int>(_trainingFeatures, _trainingLabels)
                 {

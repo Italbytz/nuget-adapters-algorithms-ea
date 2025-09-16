@@ -17,12 +17,17 @@ public class LogicGpPareto<TCategory> : IStaticMultiObjectiveFitnessFunction
         NumberOfObjectives = labels.Max() + 2;
     }
 
+    public int MaxSize { get; set; } = int.MaxValue;
+
     public double[] Evaluate(IIndividual individual)
     {
         if (individual.Genotype is not IPredictingGenotype<TCategory> genotype)
             throw new ArgumentException(
                 "Expected genotype of type IPredictingGenotype");
-
+        var size = individual.Size;
+        if (size > MaxSize)
+            return Enumerable.Repeat(double.NegativeInfinity,
+                NumberOfObjectives).ToArray();
         var featuresLength = _features.Length;
         var objectives = new double[NumberOfObjectives];
         var missedObjectives = new int[NumberOfObjectives - 1];
@@ -44,7 +49,7 @@ public class LogicGpPareto<TCategory> : IStaticMultiObjectiveFitnessFunction
                 objectives[i] /= objectives[i] + missedObjectives[i];
 
 
-        objectives[^1] = -individual.Size;
+        objectives[^1] = -size;
 
         return objectives;
     }
