@@ -11,7 +11,7 @@ using Italbytz.EA.SearchSpace;
 namespace Italbytz.EA.Searchspace;
 
 public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
-    ILogicGpMutable, ILogicGpCrossable
+    ILogicGpMutable, ILogicGpCrossable, IFreezable
 {
     private readonly List<ILiteral<TCategory>> _literals;
     public readonly IPolynomial<TCategory> Polynomial;
@@ -28,6 +28,11 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public PredictionStrategy PredictionStrategy { get; set; } =
         PredictionStrategy.Max;
+
+    public void Freeze()
+    {
+        Weighting = Weighting.Fixed;
+    }
 
     public void CrossWith(ILogicGpCrossable parentGenotype)
     {

@@ -1,3 +1,4 @@
+using System;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 
@@ -6,6 +7,14 @@ namespace Italbytz.EA.PopulationManager;
 /// <inheritdoc cref="IPopulationManager" />
 public class DefaultPopulationManager : IPopulationManager
 {
+    public void Freeze()
+    {
+        if (Population == null)
+            throw new InvalidOperationException(
+                "Population is not initialized.");
+        Population.Freeze();
+    }
+
     /// <inheritdoc />
     public IIndividualList? Population { get; set; }
 

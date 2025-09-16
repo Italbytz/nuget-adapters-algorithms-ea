@@ -1,4 +1,3 @@
-using Italbytz.AI;
 using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Graph.Common;
@@ -324,7 +323,7 @@ public class LogicGpTests
     [TestCategory("FixedSeed")]
     public async Task TestLogicGp()
     {
-        ThreadSafeRandomNetCore.Seed = 42;
+        //ThreadSafeRandomNetCore.Seed = 42;
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction = new LogicGpPareto<int>(_features, _labels),
@@ -343,7 +342,7 @@ public class LogicGpTests
         [
             new GenerationStoppingCriterion(logicGp)
             {
-                Limit = 100
+                Limit = 10000
             }
         ];
         var population = await logicGp.Run();

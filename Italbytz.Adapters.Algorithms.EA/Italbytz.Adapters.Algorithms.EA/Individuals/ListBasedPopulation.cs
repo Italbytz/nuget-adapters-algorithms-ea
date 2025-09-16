@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Italbytz.AI;
 
 namespace Italbytz.EA.Individuals;
@@ -16,6 +17,13 @@ public class ListBasedPopulation : IIndividualList
     public ListBasedPopulation(int capacity)
     {
         _individuals = new List<IIndividual>(capacity);
+    }
+
+    public void Freeze()
+    {
+        if (_individuals.First().Genotype is not IFreezable freezable) return;
+        foreach (var individual in _individuals)
+            (individual.Genotype as IFreezable)?.Freeze();
     }
 
     public int Count => _individuals.Count;
