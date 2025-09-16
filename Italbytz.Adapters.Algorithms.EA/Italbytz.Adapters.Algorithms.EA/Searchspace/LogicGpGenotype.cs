@@ -195,11 +195,32 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
             var monomial = Polynomial.Monomials[i];
             var count = counts[i];
             var counterCount = counterCounts[i];
-            monomial.Weights = ComputeDistributionWeights(count, counterCount);
+            var computedWeights =
+                ComputeDistributionWeights(count, counterCount);
+            if (Weighting == Weighting.ComputedBinary)
+            {
+                var maxIndex =
+                    Array.IndexOf(computedWeights, computedWeights.Max());
+                for (var j = 0; j < computedWeights.Length; j++)
+                    computedWeights[j] = j == maxIndex ? 1.0f : 0.0f;
+            }
+
+            monomial.Weights = computedWeights;
+        }
+
+        var computedPolynomialWeights =
+            ComputeDistributionWeights(counts[^1], counterCounts[^1]);
+        if (Weighting == Weighting.ComputedBinary)
+        {
+            var maxIndex =
+                Array.IndexOf(computedPolynomialWeights,
+                    computedPolynomialWeights.Max());
+            for (var j = 0; j < computedPolynomialWeights.Length; j++)
+                computedPolynomialWeights[j] = j == maxIndex ? 1.0f : 0.0f;
         }
 
         Polynomial.Weights =
-            ComputeDistributionWeights(counts[^1], counterCounts[^1]);
+            computedPolynomialWeights;
     }
 
     private float[] ComputeDistributionWeights(int[] count, int[] counterCount)
