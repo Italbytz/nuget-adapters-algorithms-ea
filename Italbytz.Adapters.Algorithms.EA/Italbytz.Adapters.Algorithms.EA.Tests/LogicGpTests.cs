@@ -2,6 +2,7 @@ using Italbytz.AI;
 using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Graph.Common;
+using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
 using GenerationStoppingCriterion =
@@ -386,7 +387,17 @@ public class LogicGpTests
         population.Freeze();
         var fitness = new LogicGpPareto<int>(_testFeatures, _testLabels);
         foreach (var individual in population)
-            individual.LatestKnownFitness = fitness.Evaluate(individual);
+        {
+            var newFitness = fitness.Evaluate(individual);
+            if (individual.Genotype is IValidatableGenotype genotype)
+            {
+                genotype.TrainingFitness = individual.LatestKnownFitness;
+                genotype.ValidationFitness = newFitness;
+            }
+
+            individual.LatestKnownFitness = newFitness;
+        }
+
         Console.Out.WriteLine(population);
     }
 }

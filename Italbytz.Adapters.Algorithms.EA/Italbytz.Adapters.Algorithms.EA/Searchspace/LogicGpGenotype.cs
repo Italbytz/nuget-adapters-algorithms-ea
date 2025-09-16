@@ -11,7 +11,7 @@ using Italbytz.EA.SearchSpace;
 namespace Italbytz.EA.Searchspace;
 
 public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
-    ILogicGpMutable, ILogicGpCrossable, IFreezable
+    ILogicGpMutable, ILogicGpCrossable, IFreezable, IValidatableGenotype
 {
     private readonly List<ILiteral<TCategory>> _literals;
     public readonly IPolynomial<TCategory> Polynomial;
@@ -151,6 +151,9 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
             i => { results[i] = PredictClass(features[i]); });
         return results;
     }
+
+    public double[]? TrainingFitness { get; set; }
+    public double[]? ValidationFitness { get; set; }
 
     private void ComputeWeights(TCategory[][] features, int[] labels)
     {
