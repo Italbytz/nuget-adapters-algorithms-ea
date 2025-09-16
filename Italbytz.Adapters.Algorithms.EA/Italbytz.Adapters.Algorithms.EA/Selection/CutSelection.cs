@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.EA.Individuals;
@@ -14,5 +15,10 @@ public class CutSelection : AbstractSelection
         return individualList
             .OrderByDescending(i => i.LatestKnownFitness.Sum())
             .Take(noOfIndividualsToSelect);
+    }
+
+    public override object Clone()
+    {
+        throw new NotImplementedException();
     }
 }

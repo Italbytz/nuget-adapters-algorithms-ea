@@ -10,7 +10,7 @@ public abstract class AbstractSelection : GraphOperator
 {
     public abstract bool FitnessBasedSelection { get; }
     public override int MaxParents { get; } = int.MaxValue;
-    public int NoOfIndividualsToSelect { get; init; } = 1;
+    public int NoOfIndividualsToSelect { get; set; } = 1;
     public double RatioOfIndividualsToSelect { get; init; } = 0.5;
     public bool UseRatio { get; init; } = false;
 

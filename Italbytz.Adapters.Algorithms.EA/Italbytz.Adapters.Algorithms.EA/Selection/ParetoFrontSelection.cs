@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.EA.Individuals;
@@ -44,5 +45,10 @@ public class ParetoFrontSelection : AbstractSelection
         var population = new ListBasedPopulation();
         foreach (var individual in individualList) population.Add(individual);
         return population;
+    }
+
+    public override object Clone()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,19 +1,24 @@
+using System;
 using System.Threading.Tasks;
-using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Initialization;
 
 /// <inheritdoc cref="IInitialization" />
-public class CompleteInitialization(EvolutionaryAlgorithm schedule)
+public class CompleteInitialization(ISearchSpace searchSpace)
     : IInitialization
 {
     public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
     {
-        var searchSpace = schedule.SearchSpace;
         var population = searchSpace.GetAStartingPopulation();
         return Task.FromResult(population);
+    }
+
+    public object Clone()
+    {
+        throw new NotImplementedException();
     }
 }

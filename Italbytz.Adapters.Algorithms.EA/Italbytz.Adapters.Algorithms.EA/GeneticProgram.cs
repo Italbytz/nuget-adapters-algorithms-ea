@@ -1,57 +1,57 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Italbytz.EA.Crossover;
+using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
+using Italbytz.EA.Graph.Common;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
-using Italbytz.EA.Mutation;
 using Italbytz.EA.PopulationManager;
 using Italbytz.EA.SearchSpace;
-using Italbytz.EA.Selection;
 using Italbytz.EA.StoppingCriterion;
-using Microsoft.ML;
 
 namespace Italbytz.EA;
 
 /// <inheritdoc cref="IGeneticProgram" />
-public class GeneticProgram : IGeneticProgram
+public class GeneticProgram : IGeneticProgram, IGenerationProvider
 {
+    private EvolutionaryAlgorithm _ea;
+
     /// <inheritdoc />
     public required IFitnessFunction FitnessFunction { get; set; }
 
     /// <inheritdoc />
-    public required ISelection SelectionForOperator { get; set; }
+    public required IGraphOperator SelectionForOperator { get; set; }
 
     /// <inheritdoc />
-    public required ISelection SelectionForSurvival { get; set; }
+    public required IGraphOperator SelectionForSurvival { get; set; }
 
     /// <inheritdoc />
-    public required List<IMutation> Mutations { get; set; }
+    public required List<IGraphOperator> Mutations { get; set; }
 
     /// <inheritdoc />
-    public required List<ICrossover> Crossovers { get; set; }
+    public required List<IGraphOperator> Crossovers { get; set; }
 
     /// <inheritdoc />
-    public required IInitialization Initialization { get; set; }
+    public IInitialization Initialization { get; set; }
 
     /// <inheritdoc />
     public required IPopulationManager PopulationManager { get; set; }
 
     /// <inheritdoc />
-    public required ISearchSpace SearchSpace { get; set; }
+    public ISearchSpace SearchSpace { get; set; }
 
     /// <inheritdoc />
-    public required IStoppingCriterion[] StoppingCriteria { get; set; }
-
-    /// <inheritdoc />
-    public required IDataView TrainingData { get; set; }
+    public IStoppingCriterion[] StoppingCriteria { get; set; }
 
     /// <inheritdoc />
     public IIndividualList Population => PopulationManager.Population;
 
     /// <inheritdoc />
-    public int Generation { get; set; }
+    public int Generation
+    {
+        get => _ea.Generation;
+        set => _ea.Generation = value;
+    }
 
     /// <inheritdoc />
     public void InitPopulation()
@@ -61,61 +61,20 @@ public class GeneticProgram : IGeneticProgram
     }
 
     /// <inheritdoc />
-    public IIndividualList Run()
+    public Task<IIndividualList> Run()
     {
-        InitPopulation();
-        var stop = false;
-        while (!stop)
+        _ea = new EvolutionaryAlgorithm
         {
-            stop = StoppingCriteria.Any(sc => sc.IsMet());
-            if (stop) continue;
-            var newPopulation = new ListBasedPopulation();
-            foreach (var crossover in Crossovers)
-            {
-                SelectionForOperator.Size = 2;
-                var selected = SelectionForOperator
-                    .Process(Task.FromResult(Population), null).Result;
-                var children = crossover
-                    .Process(Task.FromResult(selected), null).Result;
-                foreach (var child in children)
-                    newPopulation.Add(child);
-            }
-
-            foreach (var mutation in Mutations)
-            {
-                SelectionForOperator.Size = 1;
-                var selected = SelectionForOperator.Process(
-                    Task.FromResult(Population), null);
-                var mutated = mutation.Process(selected, null);
-                foreach (var mutant in mutated.Result)
-                    newPopulation.Add(mutant);
-            }
-
-            Generation++;
-            foreach (var individual in newPopulation)
-                individual.Generation = Generation;
-            foreach (var individual in PopulationManager.Population)
-                newPopulation.Add(individual);
-            PopulationManager.Population = newPopulation;
-
-            UpdatePopulationFitness();
-
-            var newGeneration =
-                SelectionForSurvival.Process(Task.FromResult(Population), null);
-            PopulationManager.Population = newGeneration.Result;
-        }
-
-        return PopulationManager.Population;
-    }
-
-    private void UpdatePopulationFitness()
-    {
-        foreach (var individual in Population)
-        {
-            if (individual.LatestKnownFitness != null) continue;
-            var fitness =
-                FitnessFunction.Evaluate(individual); //, TrainingData);
-            individual.LatestKnownFitness = fitness;
-        }
+            FitnessFunction = FitnessFunction,
+            SearchSpace = SearchSpace,
+            Initialization = Initialization,
+            PopulationManager = PopulationManager,
+            StoppingCriteria = StoppingCriteria
+        };
+        _ea.AlgorithmGraph = new GenericGPGraph(
+            SelectionForOperator,
+            Mutations,
+            Crossovers, SelectionForSurvival);
+        return _ea.Run();
     }
 }

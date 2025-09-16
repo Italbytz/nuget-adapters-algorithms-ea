@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.AI;
@@ -62,5 +63,10 @@ public class DropTournamentWorst : AbstractSelection
                 result.Add(individualList[i]);
 
         return result;
+    }
+
+    public override object Clone()
+    {
+        throw new NotImplementedException();
     }
 }

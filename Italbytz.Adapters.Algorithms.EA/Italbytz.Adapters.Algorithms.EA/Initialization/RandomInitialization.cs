@@ -1,11 +1,12 @@
+using System;
 using System.Threading.Tasks;
-using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Initialization;
 
-public class RandomInitialization(EvolutionaryAlgorithm schedule)
+public class RandomInitialization(ISearchSpace searchSpace)
     : IInitialization
 {
     public int Size { get; set; } = 1;
@@ -14,11 +15,15 @@ public class RandomInitialization(EvolutionaryAlgorithm schedule)
         IFitnessFunction fitnessFunction)
     {
         var result = new ListBasedPopulation();
-        var searchSpace = schedule.SearchSpace;
         for (var i = 0; i < Size; i++)
             result
                 .Add(new Individual(searchSpace.GetRandomGenotype(),
                     null));
         return Task.FromResult<IIndividualList>(result);
+    }
+
+    public object Clone()
+    {
+        throw new NotImplementedException();
     }
 }

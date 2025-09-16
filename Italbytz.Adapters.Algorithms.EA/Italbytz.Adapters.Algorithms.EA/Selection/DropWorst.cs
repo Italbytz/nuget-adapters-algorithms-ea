@@ -22,4 +22,9 @@ public class DropWorst : AbstractSelection
             $"Genotype {best.First().Genotype} Fitness: {best.First().Genotype.LatestKnownFitness.Sum()}");
         return best;
     }
+
+    public override object Clone()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -10,7 +10,7 @@ using Italbytz.EA.StoppingCriterion;
 
 namespace Italbytz.EA.Control;
 
-public class EvolutionaryAlgorithm
+public class EvolutionaryAlgorithm : IGenerationProvider
 {
     public required IFitnessFunction FitnessFunction { get; set; }
     public required ISearchSpace SearchSpace { get; set; }
@@ -22,8 +22,8 @@ public class EvolutionaryAlgorithm
     public IIndividualList Population => PopulationManager.Population;
 
     public IStoppingCriterion[] StoppingCriteria { get; set; }
+    public OperatorGraph AlgorithmGraph { get; set; }
     public int Generation { get; set; }
-    public required OperatorGraph AlgorithmGraph { get; set; }
 
     public async Task<IIndividualList> Run()
     {

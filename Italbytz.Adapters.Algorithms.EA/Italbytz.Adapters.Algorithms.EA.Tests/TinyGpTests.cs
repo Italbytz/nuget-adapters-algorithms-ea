@@ -39,7 +39,7 @@ public class TinyGpTests
             },
             AlgorithmGraph = new TinyGPGraph()
         };
-        tinyGp.Initialization = new RandomInitialization(tinyGp)
+        tinyGp.Initialization = new RandomInitialization(tinyGp.SearchSpace)
         {
             Size = 10000
         };

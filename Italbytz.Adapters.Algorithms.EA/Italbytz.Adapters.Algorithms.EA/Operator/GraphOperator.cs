@@ -76,6 +76,8 @@ public abstract class GraphOperator : IGraphOperator
         return await chosenTask;
     }
 
+    public abstract object Clone();
+
     public virtual Task<IIndividualList> Operate(
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)
     {

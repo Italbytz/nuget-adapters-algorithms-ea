@@ -15,4 +15,9 @@ public class UniformSelection : AbstractSelection
             result.Add(individualList.GetRandomIndividual());
         return result;
     }
+
+    public override object Clone()
+    {
+        return new UniformSelection();
+    }
 }

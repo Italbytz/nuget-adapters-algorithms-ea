@@ -333,7 +333,7 @@ public class LogicGpTests
             },
             AlgorithmGraph = new LogicGPGeccoGraph()
         };
-        logicGp.Initialization = new RandomInitialization(logicGp)
+        logicGp.Initialization = new RandomInitialization(logicGp.SearchSpace)
         {
             Size = 10
         };

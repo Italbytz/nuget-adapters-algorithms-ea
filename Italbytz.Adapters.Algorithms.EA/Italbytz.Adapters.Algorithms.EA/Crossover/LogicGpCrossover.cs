@@ -8,6 +8,11 @@ namespace Italbytz.EA.Crossover;
 
 public class LogicGpCrossover : GraphOperator
 {
+    public override object Clone()
+    {
+        throw new NotImplementedException();
+    }
+
     public override Task<IIndividualList> Operate(
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)
     {

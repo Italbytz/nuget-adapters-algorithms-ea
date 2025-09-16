@@ -1,5 +1,12 @@
 using Italbytz.AI;
 using Italbytz.EA;
+using Italbytz.EA.Crossover;
+using Italbytz.EA.Fitness;
+using Italbytz.EA.Initialization;
+using Italbytz.EA.Mutation;
+using Italbytz.EA.PopulationManager;
+using Italbytz.EA.Searchspace;
+using Italbytz.EA.Selection;
 using Italbytz.EA.StoppingCriterion;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
@@ -321,56 +328,37 @@ public class GeneticProgramTests
         ThreadSafeRandomNetCore.Seed = 42;
         var gp = new GeneticProgram
         {
-            FitnessFunction = null,
-            SelectionForOperator = null,
-            SelectionForSurvival = null,
-            Mutations = null,
-            Crossovers = null,
-            Initialization = null,
-            PopulationManager = null,
-            SearchSpace = null,
-            StoppingCriteria = new IStoppingCriterion[]
+            FitnessFunction = new LogicGpPareto<int>(_features, _labels),
+            SearchSpace = new LogicGpSearchSpace<int>(_features, _labels)
             {
+                Weighting = Weighting.Computed
             },
-            TrainingData = null
+            SelectionForOperator = new UniformSelection(),
+            SelectionForSurvival = new ParetoFrontSelection
+            {
+                NoOfIndividualsToSelect = 10000
+            },
+            Mutations =
+            [
+                new DeleteLiteral(), new InsertLiteral(),
+                new InsertMonomial(), new ReplaceLiteral(), new DeleteMonomial()
+            ],
+            Crossovers = [new LogicGpCrossover()],
+            PopulationManager = new DefaultPopulationManager()
         };
-        /*
-         * randomInitialization.Size = 2;
-           generationStoppingCriterion.Limit = generations;
-           selection.Size = 6;
-           gp.SelectionForOperator = selection;
-           gp.SelectionForSurvival = paretoFrontSelection;
-           gp.PopulationManager = populationManager;
-           gp.TrainingData = trainData;
-           gp.Initialization = UseFullInitialization
-               ? completeInitialization
-               : randomInitialization;
-           gp.Crossovers = [new LogicGpCrossover()];
-           gp.Mutations =
-           [
-               new DeleteLiteral(), new InsertLiteral(),
-               new InsertMonomial(), new ReplaceLiteral(), new DeleteMonomial()
-           ];
+        gp.Initialization = new RandomInitialization(gp.SearchSpace)
+        {
+            Size = 10
+        };
 
-           IMutation? weightMutation = WeightMutationToUse switch
-           {
-               WeightMutation.None => null,
-               WeightMutation.Restricted => new ChangeWeightsRestricted(),
-               WeightMutation.Unrestricted => new ChangeWeightsUnrestricted(),
-               _ => null
-           };
-
-           if (weightMutation != null)
-               ((IList)gp.Mutations).Add(weightMutation);
-           fitnessFunction.LabelColumnName = data.Label;
-           ((LogicGpPareto)fitnessFunction).Labels = data.Labels;
-           gp.FitnessFunction = fitnessFunction;
-           searchSpace.OutputColumn =
-               IDataViewExtensions.GetColumnAsString(trainData, labelColumnName)
-                   .ToList();
-           searchSpace.UsedWeighting = UsedWeighting;
-           gp.SearchSpace = searchSpace;
-           gp.StoppingCriteria = [generationStoppingCriterion];
-         */
+        gp.StoppingCriteria =
+        [
+            new GenerationStoppingCriterion(gp)
+            {
+                Limit = 100
+            }
+        ];
+        var population = await gp.Run();
+        Console.Out.WriteLine(population);
     }
 }

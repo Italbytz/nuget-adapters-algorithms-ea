@@ -8,6 +8,11 @@ namespace Italbytz.EA.Mutation;
 
 public class ReplaceLiteral : GraphOperator
 {
+    public override object Clone()
+    {
+        throw new NotImplementedException();
+    }
+
     public override Task<IIndividualList> Operate(
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)
     {

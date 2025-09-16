@@ -19,7 +19,8 @@ public class OnePlusOneEaGraphTests
             SearchSpace = new BitString(),
             AlgorithmGraph = new OnePlusOneEAGraph()
         };
-        onePlusOneEA.Initialization = new RandomInitialization(onePlusOneEA);
+        onePlusOneEA.Initialization =
+            new RandomInitialization(onePlusOneEA.SearchSpace);
         onePlusOneEA.StoppingCriteria =
         [
             new GenerationStoppingCriterion(onePlusOneEA)

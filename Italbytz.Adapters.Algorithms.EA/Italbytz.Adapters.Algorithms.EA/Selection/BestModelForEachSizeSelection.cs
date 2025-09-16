@@ -35,4 +35,9 @@ public class BestModelForEachSizeSelection : AbstractSelection
 
         return population;
     }
+
+    public override object Clone()
+    {
+        throw new NotImplementedException();
+    }
 }

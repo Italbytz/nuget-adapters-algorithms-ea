@@ -10,6 +10,11 @@ public class StandardMutation : GraphOperator
 {
     public double MutationProbability { get; set; } = 1.0 / 64.0;
 
+    public override object Clone()
+    {
+        throw new NotImplementedException();
+    }
+
     public override Task<IIndividualList> Operate(
         Task<IIndividualList> individuals, IFitnessFunction fitnessFunction)
     {
