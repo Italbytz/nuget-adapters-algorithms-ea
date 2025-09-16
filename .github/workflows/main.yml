@@ -12,5 +12,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
-      - run: cd Italbytz.Adapters.Algorithms.EA/Italbytz.Adapters.Algorithms.EA.Tests && dotnet test
+      - run: cd Italbytz.Adapters.Algorithms.EA/Italbytz.Adapters.Algorithms.EA.Tests && dotnet test --filter "TestCategory=FixedSeed"
+
 

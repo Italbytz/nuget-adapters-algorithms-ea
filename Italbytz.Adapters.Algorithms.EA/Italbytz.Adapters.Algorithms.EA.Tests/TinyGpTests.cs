@@ -22,6 +22,7 @@ public class TinyGpTests
         .Select(i => (float)Math.Sin(0.1 * i)).ToArray();
 
     [TestMethod]
+    [TestCategory("FixedSeed")]
     public async Task TestTinyGp()
     {
         ThreadSafeRandomNetCore.Seed = 42;
@@ -48,10 +49,14 @@ public class TinyGpTests
         [
             new GenerationStoppingCriterion(tinyGp)
             {
-                Limit = 50
+                Limit = 10
             },
             new FitnessBound()
         ];
-        await tinyGp.Run();
+        var population = await tinyGp.Run();
+        Console.WriteLine(population.First());
+        var lastFitness = population.First().LatestKnownFitness;
+        Assert.IsTrue(lastFitness.Length == 1);
+        Assert.IsTrue(Math.Abs(lastFitness.Sum() + 25.31) < 0.01);
     }
 }

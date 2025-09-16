@@ -11,8 +11,11 @@ namespace Italbytz.AI.Tests.Unit.Search.EA;
 public class OnePlusOneEaGraphTests
 {
     [TestMethod]
+    [TestCategory("FixedSeed")]
     public async Task TestOnePlusOneEA()
     {
+        // ToDo: Fix fixed seed for .NET Core
+        ThreadSafeRandomNetCore.Seed = 42;
         var onePlusOneEA = new EvolutionaryAlgorithm
         {
             FitnessFunction = new OneMax(),
@@ -24,7 +27,13 @@ public class OnePlusOneEaGraphTests
         onePlusOneEA.StoppingCriteria =
         [
             new GenerationStoppingCriterion(onePlusOneEA)
+            {
+                Limit = 100
+            }
         ];
-        await onePlusOneEA.Run();
+        var population = await onePlusOneEA.Run();
+        Console.WriteLine(population);
+        var lastFitness = population.First().LatestKnownFitness;
+        Assert.IsTrue(lastFitness.Length == 1);
     }
 }

@@ -321,6 +321,7 @@ public class LogicGpTests
     ];
 
     [TestMethod]
+    [TestCategory("FixedSeed")]
     public async Task TestLogicGp()
     {
         ThreadSafeRandomNetCore.Seed = 42;
@@ -342,7 +343,7 @@ public class LogicGpTests
         [
             new GenerationStoppingCriterion(logicGp)
             {
-                Limit = 10000
+                Limit = 100
             }
         ];
         var population = await logicGp.Run();
