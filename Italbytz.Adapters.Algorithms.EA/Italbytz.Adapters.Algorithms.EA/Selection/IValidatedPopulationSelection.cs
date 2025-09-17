@@ -1,6 +1,5 @@
 namespace Italbytz.EA.Selection;
 
-public class IValidatedPopulationSelection
+public interface IValidatedPopulationSelection
 {
-    
 }
