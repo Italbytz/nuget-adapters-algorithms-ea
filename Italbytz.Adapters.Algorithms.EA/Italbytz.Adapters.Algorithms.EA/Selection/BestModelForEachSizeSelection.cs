@@ -19,12 +19,12 @@ public class BestModelForEachSizeSelection : AbstractSelection
         foreach (var group in groupedIndividuals)
         {
             var bestIndividual = group.First();
-            var bestFitness = 0;
+            var bestFitness = 0.0;
             foreach (var individual in group)
             {
                 var fitness =
                     (individual.LatestKnownFitness ?? Array.Empty<double>())
-                    .Aggregate(0, (current, fitval) => (int)(current + fitval));
+                    .Aggregate(0.0, (current, fitval) => (fitval >= 0.0 ? current + fitval: current));
                 if (fitness <= bestFitness) continue;
                 bestFitness = fitness;
                 bestIndividual = individual;

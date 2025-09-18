@@ -53,14 +53,12 @@ public class GeccoRunStrategy : IRunStrategy
             var fitness = new LogicGpPareto<int>(convertedValidationFeatures, convertedValidationLabels);
             foreach (var individual in individuals.Result)
             {
+                var oldFitness = (double[])individual.LatestKnownFitness.Clone();
                 var newFitness = fitness.Evaluate(individual);
-                if (individual.Genotype is IValidatableGenotype genotype)
-                {
-                    genotype.TrainingFitness = individual.LatestKnownFitness;
-                    genotype.ValidationFitness = newFitness;
-                }
-
-                individual.LatestKnownFitness = newFitness;
+                if (individual.Genotype is not IValidatableGenotype genotype)
+                    continue;
+                genotype.TrainingFitness = oldFitness;
+                genotype.ValidationFitness = (double[])newFitness.Clone();
             }
             individualLists[foldIndex] = individuals.Result;
             foldIndex++;

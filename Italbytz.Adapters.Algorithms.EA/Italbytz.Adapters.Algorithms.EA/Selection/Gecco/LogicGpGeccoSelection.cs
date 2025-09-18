@@ -19,7 +19,7 @@ public class LogicGpGeccoSelection : IValidatedPopulationSelection
                     if (individual.Genotype is not IValidatableGenotype genotype)
                         throw new InvalidOperationException(
                             "Genotype does not implement IValidatableGenotype");
-                    individual.LatestKnownFitness = genotype.TrainingFitness;
+                    individual.LatestKnownFitness = (double[])genotype.ValidationFitness.Clone();
                 }
             
                 var filteringSelection = new BestModelForEachSizeSelection();
