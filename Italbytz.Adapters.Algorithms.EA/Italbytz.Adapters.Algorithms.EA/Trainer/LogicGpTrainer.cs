@@ -88,7 +88,6 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
         _model = RunStrategy.Run(input, _featureValueMappings,
             _labelMapping);
         Console.WriteLine(_model);
-        if (_model.Genotype is IFreezable genotype) genotype.Freeze();
     }
 
     private Dictionary<float, int>[] CreateFeatureValueMappings(

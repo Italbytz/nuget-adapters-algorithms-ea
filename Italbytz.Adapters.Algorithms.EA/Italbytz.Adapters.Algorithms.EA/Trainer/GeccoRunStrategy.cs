@@ -8,6 +8,7 @@ using Italbytz.EA.Graph.Common;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
+using Italbytz.EA.Selection;
 using Italbytz.EA.StoppingCriterion;
 using Italbytz.ML;
 using Microsoft.ML;
@@ -16,6 +17,7 @@ namespace Italbytz.EA.Trainer;
 
 public class GeccoRunStrategy : IRunStrategy
 {
+    public IValidatedPopulationSelection SelectionStrategy { get; set; } = new LogicGpGeccoSelection();
     private Dictionary<float, int>[] _featureValueMappings;
     private Dictionary<uint, int> _labelMapping;
 
@@ -23,34 +25,49 @@ public class GeccoRunStrategy : IRunStrategy
     {
         _featureValueMappings = featureValueMappings;
         _labelMapping = labelMapping;
-        var excerpt = input.GetDataExcerpt();
-        var features = excerpt.Features;
-        var labels = excerpt.Labels;
         
-        var convertedLabels = PrepareForLogicGp(labels);
-        var convertedFeatures = PrepareForLogicGp(features);
-        var individuals = RunLogicGp(convertedFeatures, convertedLabels);
-        return ChooseBestIndividual(individuals);
-    }
-    
-    private IIndividual? ChooseBestIndividual(Task<IIndividualList> individuals)
-    {
-        var population = individuals.Result;
-        IIndividual? bestIndividual = null;
-        var bestFitness = double.MinValue;
-        foreach (var individual in population)
+        const int k = 5; // Number of folds
+        var mlContext = ThreadSafeMLContext.LocalMLContext;
+        var cvResults = mlContext.Data.CrossValidationSplit(input);
+        var individualLists = new IIndividualList[k];
+        var foldIndex = 0;
+
+        foreach (var fold in cvResults)
         {
-            var fitness = individual.LatestKnownFitness.Sum();
-            if (fitness > bestFitness)
+            // Train
+            var trainSet = fold.TrainSet;
+            var trainExcerpt = trainSet.GetDataExcerpt();
+            var trainFeatures = trainExcerpt.Features;
+            var trainLabels = trainExcerpt.Labels;
+            var convertedTrainFeatures = PrepareForLogicGp(trainFeatures);
+            var convertedTrainLabels = PrepareForLogicGp(trainLabels);
+            var individuals = RunLogicGp(convertedTrainFeatures, convertedTrainLabels);
+            individuals.Result.Freeze();
+            // Validate
+            var validationSet = fold.TestSet;
+            var validationExcerpt = validationSet.GetDataExcerpt();
+            var validationFeatures = validationExcerpt.Features;
+            var validationLabels = validationExcerpt.Labels;
+            var convertedValidationFeatures = PrepareForLogicGp(validationFeatures);
+            var convertedValidationLabels = PrepareForLogicGp(validationLabels);
+            var fitness = new LogicGpPareto<int>(convertedValidationFeatures, convertedValidationLabels);
+            foreach (var individual in individuals.Result)
             {
-                bestFitness = fitness;
-                bestIndividual = individual;
+                var newFitness = fitness.Evaluate(individual);
+                if (individual.Genotype is IValidatableGenotype genotype)
+                {
+                    genotype.TrainingFitness = individual.LatestKnownFitness;
+                    genotype.ValidationFitness = newFitness;
+                }
+
+                individual.LatestKnownFitness = newFitness;
             }
+            individualLists[foldIndex] = individuals.Result;
+            foldIndex++;
         }
 
-        return bestIndividual;
+        return SelectionStrategy.Process(individualLists);
     }
-
     
 
     private int[][] PrepareForLogicGp(List<float[]> features)

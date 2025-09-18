@@ -33,7 +33,12 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     {
         Weighting = Weighting.Fixed;
     }
-
+    public string LiteralSignature()
+    {
+        var literals = Polynomial.GetAllLiterals();
+        literals.Sort();
+        return string.Join(" ", literals.Select(literal => literal.Label));
+    }
     public void CrossWith(ILogicGpCrossable parentGenotype)
     {
         if (LatestKnownFitness != null) throw new InvalidOperationException();
