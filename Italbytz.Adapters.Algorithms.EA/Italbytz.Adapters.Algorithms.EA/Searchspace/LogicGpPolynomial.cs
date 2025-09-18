@@ -67,15 +67,10 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
         var random = ThreadSafeRandomNetCore.Shared;
         return Monomials[random.Next(Monomials.Count)];
     }
-
-    public void UpdatePredictions()
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public List<ILiteral<TCategory>> GetAllLiterals()
     {
-        throw new NotImplementedException();
+        return Monomials.SelectMany(m => m.Literals).Distinct().ToList();
     }
 
     public List<IMonomial<TCategory>> Monomials { get; set; }

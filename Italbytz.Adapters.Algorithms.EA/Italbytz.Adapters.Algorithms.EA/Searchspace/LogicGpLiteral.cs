@@ -13,6 +13,7 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
     private readonly Dictionary<TCategory, int> _categoryIndexMap;
     private readonly int _feature;
     private readonly LogicGpLiteralType _literalType;
+    private readonly int _set;
 
     public LogicGpLiteral(int feature,
         IEnumerable<TCategory> categories,
@@ -23,6 +24,7 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
         _categories = categories.ToList();
         _feature = feature;
         _literalType = literalType;
+        _set = set;
         _bitSet = new bool[_categories.Count];
         _categoryIndexMap = new Dictionary<TCategory, int>(_categories.Count);
 
@@ -35,7 +37,21 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
 
     public int CompareTo(ILiteral<TCategory>? other)
     {
-        throw new NotImplementedException();
+        return Compare(this, other);
+    }
+    
+    private static int Compare(ILiteral<TCategory>? x, ILiteral<TCategory>? y)
+    {
+        if (x is null && y is null) return 0;
+        if (x is not LogicGpLiteral<TCategory> literal1) return -1;
+        if (y is not LogicGpLiteral<TCategory> literal2) return 1;
+        if (x.Label != y.Label)
+            return string.Compare(x.Label, y.Label, StringComparison.Ordinal);
+        if (literal1._set !=
+            literal2._set)
+            return literal1._set.CompareTo(
+                literal2._set);
+        return 0;
     }
 
     public bool Evaluate(TCategory[] input)
@@ -45,14 +61,24 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
             return index < _bitSet.Length && _bitSet[index];
         return false;
     }
-
-    public void GeneratePredictions(List<TCategory> data)
+    
+    public string Label { get; set; }
+    
+    public override bool Equals(object? obj)
     {
-        throw new NotImplementedException();
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        if (obj is not LogicGpLiteral<TCategory> other) return false;
+        if (other._literalType != _literalType) return false;
+        if (other.Label != Label) return false;
+        return other._set == _set;
     }
 
-    public bool[] Predictions { get; set; }
-    public string Label { get; set; }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_bitSet, Label);
+    }
 
     #region ToString
 

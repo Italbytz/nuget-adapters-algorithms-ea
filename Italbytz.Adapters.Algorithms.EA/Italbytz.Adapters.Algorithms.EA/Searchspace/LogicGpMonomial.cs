@@ -33,17 +33,7 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
             Weights = weightsCopy
         };
     }
-
-    public void RandomizeWeights(bool restricted)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void UpdatePredictions()
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public List<ILiteral<TCategory>> Literals { get; set; }
     public float[] Weights { get; set; }
     public float[][] Predictions { get; set; }
