@@ -7,11 +7,7 @@ namespace Italbytz.EA.Trainer;
 
 public interface IRunStrategy
 {
-    public int Classes { get;  }
-    
-    public Dictionary<int, uint> ReverseLabelMapping { get; }
-    
-    public Dictionary<float, int>[] FeatureValueMappings { get;  }
-
-    IIndividual Run(IDataView input);
+    IIndividual Run(IDataView input,
+        Dictionary<float, int>[] featureValueMappings,
+        Dictionary<uint, int> labelMapping);
 }

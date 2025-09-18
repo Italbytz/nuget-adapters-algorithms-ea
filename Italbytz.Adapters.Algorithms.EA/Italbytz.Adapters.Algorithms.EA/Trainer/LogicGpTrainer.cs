@@ -12,10 +12,12 @@ namespace Italbytz.EA.Trainer;
 public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
     where TOutput : class, new()
 {
-    private int _classes;
     private Dictionary<float, int>[] _featureValueMappings;
+    private Dictionary<uint, int> _labelMapping = new();
     private IIndividual? _model;
+    private Dictionary<int, float>[] _reverseFeatureValueMappings;
     private Dictionary<int, uint> _reverseLabelMapping;
+    private int _classes => _labelMapping.Count;
 
     public IRunStrategy RunStrategy { get; set; } = new GeccoRunStrategy();
 
@@ -78,11 +80,56 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
 
     protected override void PrepareForFit(IDataView input)
     {
-        _model = RunStrategy.Run(input);
-        _classes = RunStrategy.Classes;
-        _reverseLabelMapping = RunStrategy.ReverseLabelMapping;
-        _featureValueMappings = RunStrategy.FeatureValueMappings;
+        var excerpt = input.GetDataExcerpt();
+        var features = excerpt.Features;
+        var labels = excerpt.Labels;
+        _labelMapping = CreateLabelMapping(labels);
+        _featureValueMappings = CreateFeatureValueMappings(features);
+        _model = RunStrategy.Run(input, _featureValueMappings,
+            _labelMapping);
         Console.WriteLine(_model);
         if (_model.Genotype is IFreezable genotype) genotype.Freeze();
+    }
+
+    private Dictionary<float, int>[] CreateFeatureValueMappings(
+        List<float[]> features)
+    {
+        if (features.Count == 0)
+            return Array.Empty<Dictionary<float, int>>();
+
+        var columnCount = features[0].Length;
+        var mappings = new Dictionary<float, int>[columnCount];
+        _reverseFeatureValueMappings = new Dictionary<int, float>[columnCount];
+
+        for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
+        {
+            var columnValues =
+                features.Select(row => row[columnIndex]).ToArray();
+            var uniqueValues = new HashSet<float>(columnValues);
+            var categoryList = uniqueValues.OrderBy(c => c).ToList();
+            var mapping = new Dictionary<float, int>();
+            var reverseMapping = new Dictionary<int, float>();
+            for (var i = 0; i < categoryList.Count; i++)
+            {
+                mapping[categoryList[i]] = i;
+                reverseMapping[i] = categoryList[i];
+            }
+
+            mappings[columnIndex] = mapping;
+            _reverseFeatureValueMappings[columnIndex] = reverseMapping;
+        }
+
+        return mappings;
+    }
+
+    private Dictionary<uint, int> CreateLabelMapping(List<uint> labels)
+    {
+        var uniqueLabels = labels.Distinct().OrderBy(l => l).ToList();
+        var mapping = new Dictionary<uint, int>();
+        for (var i = 0; i < uniqueLabels.Count; i++)
+            mapping[uniqueLabels[i]] = i;
+        _reverseLabelMapping =
+            mapping.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        return mapping;
     }
 }
