@@ -13,7 +13,7 @@ using Microsoft.ML;
 
 namespace Italbytz.EA.Gecco;
 
-public class RunStrategy : IRunStrategy
+public class RunStrategy(int generations) : IRunStrategy
 {
     public IValidatedPopulationSelection SelectionStrategy { get; set; } = new FinalCandidatesSelection();
     private Dictionary<float, int>[] _featureValueMappings;
@@ -116,7 +116,7 @@ public class RunStrategy : IRunStrategy
         [
             new GenerationStoppingCriterion(logicGp)
             {
-                Limit = 100
+                Limit = generations
             }
         ];
         var population = logicGp.Run();

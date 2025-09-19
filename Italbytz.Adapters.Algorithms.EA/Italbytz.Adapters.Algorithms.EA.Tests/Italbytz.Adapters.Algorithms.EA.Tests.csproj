@@ -11,7 +11,7 @@
         <PackageReference Include="Microsoft.ML" Version="4.0.2"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
         <PackageReference Include="MSTest" Version="3.6.4"/>
-        <PackageReference Include="Italbytz.ML.UCIMLR" Version="9.1.2"/>
+        <PackageReference Include="Italbytz.ML.UCIMLR" Version="9.1.3"/>
     </ItemGroup>
 
     <ItemGroup>
