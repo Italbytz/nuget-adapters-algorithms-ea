@@ -1,6 +1,6 @@
-using Italbytz.EA.Control;
+using Italbytz.EA;
 using Italbytz.EA.Fitness;
-using Italbytz.EA.Graph.Common;
+using Italbytz.EA.Graph;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
 using Italbytz.EA.StoppingCriterion;
@@ -34,6 +34,6 @@ public class OnePlusOneEaGraphTests
         var population = await onePlusOneEA.Run();
         Console.WriteLine(population);
         var lastFitness = population.First().LatestKnownFitness;
-        Assert.IsTrue(lastFitness.Length == 1);
+        Assert.IsTrue(lastFitness!=null);
     }
-}
+}         

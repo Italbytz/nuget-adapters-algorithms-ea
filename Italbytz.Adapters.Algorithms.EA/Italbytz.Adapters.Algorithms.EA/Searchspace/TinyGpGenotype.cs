@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using Italbytz.AI;
+using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Mutation;
 using static Italbytz.EA.Searchspace.TinyGpPrimitive;
@@ -45,7 +46,7 @@ public class TinyGpGenotype : IPredictingGenotype<int>, IMutable
         return new TinyGpGenotype(newProgram, Constants, VariableCount);
     }
 
-    public double[]? LatestKnownFitness { get; set; }
+    public IFitnessValue? LatestKnownFitness { get; set; }
     public int Size => Program.Length;
 
     public float PredictValue(float[] features)

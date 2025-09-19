@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Italbytz.EA.Fitness;
 
 namespace Italbytz.EA.Individuals;
 
@@ -19,7 +20,7 @@ public class Individual : IIndividual
     public IGenotype Genotype { get; }
 
     /// <inheritdoc />
-    public double[]? LatestKnownFitness
+    public IFitnessValue? LatestKnownFitness
     {
         get => Genotype.LatestKnownFitness;
         set => Genotype.LatestKnownFitness = value;
@@ -38,7 +39,7 @@ public class Individual : IIndividual
         var otherFitness = otherIndividual.LatestKnownFitness;
         if (fitness == null || otherFitness == null)
             throw new InvalidOperationException("Fitness not set");
-        return !fitness.Where((t, i) => t < otherFitness[i]).Any();
+        return fitness.IsDominating(otherFitness);
     }
 
     /// <inheritdoc />
@@ -54,8 +55,8 @@ public class Individual : IIndividual
     public override string ToString()
     {
         return Genotype +
-               $" Gen {Generation} " +
-               $"Fitness {string.Join(",", (LatestKnownFitness ?? Array.Empty<double>()).Select(f => f.ToString(CultureInfo.InvariantCulture)))}" ??
+               $" Generation {Generation}, " +
+               $"Fitness {LatestKnownFitness}" ??
                string.Empty;
     }
 }

@@ -13,7 +13,7 @@ public class CutSelection : AbstractSelection
         IIndividualList individualList, int noOfIndividualsToSelect)
     {
         return individualList
-            .OrderByDescending(i => i.LatestKnownFitness.Sum())
+            .OrderByDescending(i => i.LatestKnownFitness)
             .Take(noOfIndividualsToSelect);
     }
 

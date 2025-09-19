@@ -1,7 +1,7 @@
 using Italbytz.AI;
-using Italbytz.EA.Control;
+using Italbytz.EA;
 using Italbytz.EA.Fitness;
-using Italbytz.EA.Graph.Common;
+using Italbytz.EA.Gecco;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
@@ -358,7 +358,7 @@ public class LogicGpTests
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction =
-                new LogicGpPareto<int>(_trainingFeatures, _trainingLabels)
+                new ClassPredictionsAndSize<int>(_trainingFeatures, _trainingLabels)
                 {
                     MaxSize = int.MaxValue
                 },
@@ -367,7 +367,7 @@ public class LogicGpTests
                 {
                     Weighting = Weighting.Computed
                 },
-            AlgorithmGraph = new LogicGPGeccoGraph()
+            AlgorithmGraph = new LogicGpGraph()
         };
         logicGp.Initialization = new RandomInitialization(logicGp.SearchSpace)
         {
@@ -385,7 +385,7 @@ public class LogicGpTests
         Console.Out.WriteLine(population);
         Console.Out.WriteLine("################");
         population.Freeze();
-        var fitness = new LogicGpPareto<int>(_testFeatures, _testLabels);
+        var fitness = new ClassPredictionsAndSize<int>(_testFeatures, _testLabels);
         foreach (var individual in population)
         {
             var newFitness = fitness.Evaluate(individual);

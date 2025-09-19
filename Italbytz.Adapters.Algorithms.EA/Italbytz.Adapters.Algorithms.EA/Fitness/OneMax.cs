@@ -4,13 +4,13 @@ using Italbytz.EA.Searchspace;
 
 namespace Italbytz.EA.Fitness;
 
-public class OneMax : IStaticSingleObjectiveFitnessFunction
+public class OneMax : IFitnessFunction
 {
-    public double[] Evaluate(IIndividual individual)
+    public IFitnessValue Evaluate(IIndividual individual)
     {
         var result = ((BitStringGenotype)individual.Genotype).BitArray;
         var count = result.Cast<bool>().Count(bit => bit);
-        return [count];
+        return new SingleFitnessValue(count);
     }
 
     public int NumberOfObjectives { get; }

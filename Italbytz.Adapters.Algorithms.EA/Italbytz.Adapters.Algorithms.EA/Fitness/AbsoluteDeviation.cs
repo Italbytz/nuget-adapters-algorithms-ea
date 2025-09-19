@@ -3,7 +3,7 @@ using Italbytz.EA.Individuals;
 
 namespace Italbytz.EA.Fitness;
 
-public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
+public class AbsoluteDeviation : IFitnessFunction
 {
     private readonly float[][] _features;
     private readonly float[] _labels;
@@ -16,7 +16,7 @@ public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
 
     public int NumberOfObjectives { get; } = 1;
 
-    double[] IFitnessFunction.Evaluate(IIndividual individual)
+    IFitnessValue IFitnessFunction.Evaluate(IIndividual individual)
     {
         if (individual.Genotype is not IPredictingGenotype<int> genotype)
             throw new ArgumentException(
@@ -32,6 +32,6 @@ public class AbsoluteDeviation : IStaticSingleObjectiveFitnessFunction
         }
 
         // Since lower absolute deviation is better, we return its negative
-        return [-totalAbsoluteDeviation];
+        return new SingleFitnessValue(-totalAbsoluteDeviation);
     }
 }

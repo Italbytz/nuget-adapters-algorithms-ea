@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 
 namespace Italbytz.EA.Selection;
@@ -19,13 +20,13 @@ public class BestModelForEachSizeSelection : AbstractSelection
         foreach (var group in groupedIndividuals)
         {
             var bestIndividual = group.First();
-            var bestFitness = 0.0;
+            IFitnessValue? bestFitness = null;
             foreach (var individual in group)
             {
-                var fitness =
-                    (individual.LatestKnownFitness ?? Array.Empty<double>())
-                    .Aggregate(0.0, (current, fitval) => (fitval >= 0.0 ? current + fitval: current));
-                if (fitness <= bestFitness) continue;
+                var fitness = individual.LatestKnownFitness;
+                if (fitness == null) continue;
+                if (bestFitness != null && fitness.CompareTo(bestFitness) <= 0)
+                    continue;
                 bestFitness = fitness;
                 bestIndividual = individual;
             }

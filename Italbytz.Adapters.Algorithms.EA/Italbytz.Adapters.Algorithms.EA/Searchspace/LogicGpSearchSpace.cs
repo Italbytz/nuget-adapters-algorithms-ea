@@ -24,7 +24,7 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
 
     public IGenotype GetRandomGenotype()
     {
-        return LogicGpGenotype<TCategory>.GenerateRandomGenotype(Literals,
+        return Genotype<TCategory>.GenerateRandomGenotype(Literals,
             Weighting);
     }
 
@@ -53,10 +53,10 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
             for (var i = 1; i < powerSetCount - 1; i++)
             {
                 var literalType = uniqueValues.Count <= 3
-                    ? LogicGpLiteralType.Dussault
-                    : LogicGpLiteralType.Rudell;
+                    ? SetLiteralType.Dussault
+                    : SetLiteralType.Rudell;
                 var literal =
-                    new LogicGpLiteral<TCategory>(columnIndex, categoryList, i,
+                    new SetLiteral<TCategory>(columnIndex, categoryList, i,
                         literalType);
                 Literals.Add(literal);
             }

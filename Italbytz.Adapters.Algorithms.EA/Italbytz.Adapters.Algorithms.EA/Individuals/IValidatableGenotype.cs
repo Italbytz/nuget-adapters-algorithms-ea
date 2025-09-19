@@ -1,7 +1,9 @@
+using Italbytz.EA.Fitness;
+
 namespace Italbytz.EA.Individuals;
 
 public interface IValidatableGenotype
 {
-    double[]? TrainingFitness { get; set; }
-    double[]? ValidationFitness { get; set; }
+    IFitnessValue? TrainingFitness { get; set; }
+    IFitnessValue? ValidationFitness { get; set; }
 }

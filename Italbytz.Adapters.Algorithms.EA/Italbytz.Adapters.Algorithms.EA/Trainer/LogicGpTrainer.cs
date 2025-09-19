@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Italbytz.EA.Gecco;
 using Italbytz.EA.Individuals;
 using Italbytz.ML;
 using Italbytz.ML.Trainers;
@@ -19,7 +20,7 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
     private Dictionary<int, uint> _reverseLabelMapping;
     private int _classes => _labelMapping.Count;
 
-    public IRunStrategy RunStrategy { get; set; } = new GeccoRunStrategy();
+    public IRunStrategy RunStrategy { get; set; } = new RunStrategy();
 
     protected override void Map(ClassificationInput input, TOutput output)
     {

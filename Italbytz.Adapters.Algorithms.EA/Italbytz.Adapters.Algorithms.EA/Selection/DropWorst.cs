@@ -16,10 +16,10 @@ public class DropWorst : AbstractSelection
             individualList.Count - noOfIndividualsToSelect;
         if (noOfIndividualsToDrop <= 0) return individualList;
         var best = individualList
-            .OrderByDescending(i => i.LatestKnownFitness.Sum())
+            .OrderByDescending(i => i.LatestKnownFitness)
             .Take(individualList.Count - noOfIndividualsToDrop);
-        Console.WriteLine(
-            $"Genotype {best.First().Genotype} Fitness: {best.First().Genotype.LatestKnownFitness.Sum()}");
+        /*Console.WriteLine(
+            $"Genotype {best.First().Genotype} Fitness: {best.First().Genotype.LatestKnownFitness}");*/
         return best;
     }
 

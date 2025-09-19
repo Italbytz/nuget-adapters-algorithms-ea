@@ -21,13 +21,13 @@ namespace Italbytz.EA.Selection;
 ///     selecting the best model.
 /// </remarks>
 /// <seealso cref="ISelection" />
-public class GeccoFinalModelSelection 
+public class FinalModelSelection 
 {
     public IIndividualList Process(IIndividualList individuals)
     {
         var allCandidates = individuals.ToList();
         var groups = allCandidates
-            .GroupBy(i => ((LogicGpGenotype<int>)i.Genotype).LiteralSignature())
+            .GroupBy(i => ((Genotype<int>)i.Genotype).LiteralSignature())
             .Where(group => group.Count() > 0)
             .OrderByDescending(group => group.FirstOrDefault().Size);
         var largestSize = groups.FirstOrDefault()!.FirstOrDefault().Size;
@@ -43,10 +43,10 @@ public class GeccoFinalModelSelection
             else
             {
                 var accumulatedFitness = group.Average(element =>
-                    element.LatestKnownFitness[0]
+                    element.LatestKnownFitness.ConsolidatedValue
                 );
                 var bestFitness = bestModels[groupSize - 1].Average(element =>
-                    element.LatestKnownFitness[0]
+                    element.LatestKnownFitness.ConsolidatedValue
                 );
                 if (accumulatedFitness > bestFitness)
                     bestModels[groupSize - 1] = group.ToList();
@@ -60,7 +60,7 @@ public class GeccoFinalModelSelection
         {
             if (bestModels[i] == null || bestModels[i].Count == 0) continue;
             var accumulatedFitness = bestModels[i].Average(element =>
-                element.LatestKnownFitness[0]
+                element.LatestKnownFitness.ConsolidatedValue
             );
             if (accumulatedFitness < bestAccuracy) continue;
             var bestSmallerFitness = 0.0;
@@ -69,10 +69,10 @@ public class GeccoFinalModelSelection
                 if (bestModels[k] == null || bestModels[k].Count == 0)
                     continue;
                 if (bestModels[k].Average(element =>
-                        element.LatestKnownFitness[0]
+                        element.LatestKnownFitness.ConsolidatedValue
                     ) > bestSmallerFitness)
                     bestSmallerFitness = bestModels[k].Average(element =>
-                        element.LatestKnownFitness[0]
+                        element.LatestKnownFitness.ConsolidatedValue
                     );
             }
 
@@ -83,15 +83,15 @@ public class GeccoFinalModelSelection
         }
 
         var bestFitnessInChosenGroup = chosenGroup.Max(element =>
-            element.LatestKnownFitness[0]
+            element.LatestKnownFitness
         );
         var chosenIndividual = chosenGroup.Where(element =>
-            element.LatestKnownFitness[0] == bestFitnessInChosenGroup
+            element.LatestKnownFitness.CompareTo(bestFitnessInChosenGroup) == 0
         ).ToList().FirstOrDefault();
 
 
         return new ListBasedPopulation { chosenIndividual };
     }
 
-    public int Size { get; set; }
+    
 }

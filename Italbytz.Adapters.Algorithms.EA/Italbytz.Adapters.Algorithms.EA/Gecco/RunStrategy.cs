@@ -1,23 +1,20 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
-using Italbytz.EA.Graph.Common;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
 using Italbytz.EA.Selection;
 using Italbytz.EA.StoppingCriterion;
+using Italbytz.EA.Trainer;
 using Italbytz.ML;
 using Microsoft.ML;
 
-namespace Italbytz.EA.Trainer;
+namespace Italbytz.EA.Gecco;
 
-public class GeccoRunStrategy : IRunStrategy
+public class RunStrategy : IRunStrategy
 {
-    public IValidatedPopulationSelection SelectionStrategy { get; set; } = new LogicGpGeccoSelection();
+    public IValidatedPopulationSelection SelectionStrategy { get; set; } = new FinalCandidatesSelection();
     private Dictionary<float, int>[] _featureValueMappings;
     private Dictionary<uint, int> _labelMapping;
 
@@ -50,15 +47,15 @@ public class GeccoRunStrategy : IRunStrategy
             var validationLabels = validationExcerpt.Labels;
             var convertedValidationFeatures = PrepareForLogicGp(validationFeatures);
             var convertedValidationLabels = PrepareForLogicGp(validationLabels);
-            var fitness = new LogicGpPareto<int>(convertedValidationFeatures, convertedValidationLabels);
+            var fitness = new ClassPredictionsAndSize<int>(convertedValidationFeatures, convertedValidationLabels);
             foreach (var individual in individuals.Result)
             {
-                var oldFitness = (double[])individual.LatestKnownFitness.Clone();
+                var oldFitness = (IFitnessValue?)individual.LatestKnownFitness.Clone();
                 var newFitness = fitness.Evaluate(individual);
                 if (individual.Genotype is not IValidatableGenotype genotype)
                     continue;
                 genotype.TrainingFitness = oldFitness;
-                genotype.ValidationFitness = (double[])newFitness.Clone();
+                genotype.ValidationFitness = (IFitnessValue?)newFitness.Clone();
             }
             individualLists[foldIndex] = individuals.Result;
             foldIndex++;
@@ -98,7 +95,7 @@ public class GeccoRunStrategy : IRunStrategy
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction =
-                new LogicGpPareto<int>(features, labels)
+                new ClassPredictionsAndSize<int>(features, labels)
                 {
                     MaxSize = int.MaxValue
                 },
@@ -107,7 +104,7 @@ public class GeccoRunStrategy : IRunStrategy
                 {
                     Weighting = Weighting.Computed
                 },
-            AlgorithmGraph = new LogicGPGeccoGraph()
+            AlgorithmGraph = new LogicGpGraph()
         };
         logicGp.Initialization = new RandomInitialization(logicGp.SearchSpace)
         {

@@ -6,19 +6,19 @@ using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
+public class SetLiteral<TCategory> : ILiteral<TCategory>
 {
     private readonly bool[] _bitSet;
     private readonly IList<TCategory> _categories;
     private readonly Dictionary<TCategory, int> _categoryIndexMap;
     private readonly int _feature;
-    private readonly LogicGpLiteralType _literalType;
+    private readonly SetLiteralType _literalType;
     private readonly int _set;
 
-    public LogicGpLiteral(int feature,
+    public SetLiteral(int feature,
         IEnumerable<TCategory> categories,
         int set,
-        LogicGpLiteralType literalType = LogicGpLiteralType.Rudell)
+        SetLiteralType literalType = SetLiteralType.Rudell)
     {
         Label = $"F{feature}";
         _categories = categories.ToList();
@@ -43,8 +43,8 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
     private static int Compare(ILiteral<TCategory>? x, ILiteral<TCategory>? y)
     {
         if (x is null && y is null) return 0;
-        if (x is not LogicGpLiteral<TCategory> literal1) return -1;
-        if (y is not LogicGpLiteral<TCategory> literal2) return 1;
+        if (x is not SetLiteral<TCategory> literal1) return -1;
+        if (y is not SetLiteral<TCategory> literal2) return 1;
         if (x.Label != y.Label)
             return string.Compare(x.Label, y.Label, StringComparison.Ordinal);
         if (literal1._set !=
@@ -69,7 +69,7 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        if (obj is not LogicGpLiteral<TCategory> other) return false;
+        if (obj is not SetLiteral<TCategory> other) return false;
         if (other._literalType != _literalType) return false;
         if (other.Label != Label) return false;
         return other._set == _set;
@@ -86,10 +86,10 @@ public class LogicGpLiteral<TCategory> : ILiteral<TCategory>
     {
         return _literalType switch
         {
-            LogicGpLiteralType.Dussault => ToDussaultString(),
-            LogicGpLiteralType.Rudell => ToRudellString(),
-            LogicGpLiteralType.Su => ToSuString(),
-            LogicGpLiteralType.LessGreater => ToLessGreaterString(),
+            SetLiteralType.Dussault => ToDussaultString(),
+            SetLiteralType.Rudell => ToRudellString(),
+            SetLiteralType.Su => ToSuString(),
+            SetLiteralType.LessGreater => ToLessGreaterString(),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

@@ -11,7 +11,7 @@ namespace Italbytz.EA.Searchspace;
 ///     contexts.
 ///     The available types are Dussault, Rudell, Su, and LessGreater.
 /// </remarks>
-public enum LogicGpLiteralType
+public enum SetLiteralType
 {
     Dussault,
     Rudell,

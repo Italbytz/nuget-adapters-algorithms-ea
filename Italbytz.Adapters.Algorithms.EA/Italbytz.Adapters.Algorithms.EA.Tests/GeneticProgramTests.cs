@@ -328,7 +328,7 @@ public class GeneticProgramTests
         ThreadSafeRandomNetCore.Seed = 42;
         var gp = new GeneticProgram
         {
-            FitnessFunction = new LogicGpPareto<int>(_features, _labels),
+            FitnessFunction = new ClassPredictionsAndSize<int>(_features, _labels),
             SearchSpace = new LogicGpSearchSpace<int>(_features, _labels)
             {
                 Weighting = Weighting.Computed
@@ -343,7 +343,7 @@ public class GeneticProgramTests
                 new DeleteLiteral(), new InsertLiteral(),
                 new InsertMonomial(), new ReplaceLiteral(), new DeleteMonomial()
             ],
-            Crossovers = [new LogicGpCrossover()],
+            Crossovers = [new StandardCrossover()],
             PopulationManager = new DefaultPopulationManager()
         };
         gp.Initialization = new RandomInitialization(gp.SearchSpace)

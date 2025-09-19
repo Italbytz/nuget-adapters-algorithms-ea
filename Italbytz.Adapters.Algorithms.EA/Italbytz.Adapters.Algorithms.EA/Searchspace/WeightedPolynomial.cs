@@ -8,9 +8,9 @@ using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
+public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
 {
-    public LogicGpPolynomial(List<IMonomial<TCategory>> monomials)
+    public WeightedPolynomial(List<IMonomial<TCategory>> monomials)
     {
         Monomials = monomials;
     }
@@ -27,7 +27,7 @@ public class LogicGpPolynomial<TCategory> : IPolynomial<TCategory>
         var monomials =
             Monomials.Select(monomial =>
                 (IMonomial<TCategory>)monomial.Clone());
-        return new LogicGpPolynomial<TCategory>(monomials.ToList());
+        return new WeightedPolynomial<TCategory>(monomials.ToList());
     }
 
     public float[] Evaluate(TCategory[] input)

@@ -3,7 +3,7 @@ using Italbytz.EA.Mutation;
 using Italbytz.EA.Operator;
 using Italbytz.EA.Selection;
 
-namespace Italbytz.EA.Graph.Common;
+namespace Italbytz.EA.Graph;
 
 public class TinyGPGraph : OperatorGraph
 {

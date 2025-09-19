@@ -4,19 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Italbytz.AI;
 using Italbytz.EA.Crossover;
+using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Mutation;
 using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
-    ILogicGpMutable, ILogicGpCrossable, IFreezable, IValidatableGenotype
+public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
+    ILogicGpMutable, ICrossable, IFreezable, IValidatableGenotype
 {
     private readonly List<ILiteral<TCategory>> _literals;
     public readonly IPolynomial<TCategory> Polynomial;
 
-    private LogicGpGenotype(IPolynomial<TCategory> polynomial,
+    private Genotype(IPolynomial<TCategory> polynomial,
         List<ILiteral<TCategory>> literals, Weighting weighting)
     {
         Polynomial = polynomial;
@@ -39,10 +40,10 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
         literals.Sort();
         return string.Join(" ", literals.Select(literal => literal.Label));
     }
-    public void CrossWith(ILogicGpCrossable parentGenotype)
+    public void CrossWith(ICrossable parentGenotype)
     {
         if (LatestKnownFitness != null) throw new InvalidOperationException();
-        if (parentGenotype is not LogicGpGenotype<TCategory> parent)
+        if (parentGenotype is not Genotype<TCategory> parent)
             throw new InvalidOperationException(
                 "Parent genotype is not of the same type");
         var monomial =
@@ -93,7 +94,7 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
         if (LatestKnownFitness != null) throw new InvalidOperationException();
         var literal =
             _literals[ThreadSafeRandomNetCore.Shared.Next(_literals.Count)];
-        var monomial = new LogicGpMonomial<TCategory>([literal]);
+        var monomial = new WeightedMonomial<TCategory>([literal]);
         Polynomial.Monomials.Add(monomial);
     }
 
@@ -118,11 +119,11 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     {
         var clonedPolynomial =
             (IPolynomial<TCategory>)Polynomial.Clone();
-        return new LogicGpGenotype<TCategory>(clonedPolynomial, _literals,
+        return new Genotype<TCategory>(clonedPolynomial, _literals,
             Weighting);
     }
 
-    public double[]? LatestKnownFitness { get; set; }
+    public IFitnessValue? LatestKnownFitness { get; set; }
     public int Size => Polynomial.Size;
 
     public float PredictValue(float[] features)
@@ -157,8 +158,8 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
         return results;
     }
 
-    public double[]? TrainingFitness { get; set; }
-    public double[]? ValidationFitness { get; set; }
+    public IFitnessValue? TrainingFitness { get; set; }
+    public IFitnessValue? ValidationFitness { get; set; }
 
     private void ComputeWeights(TCategory[][] features, int[] labels)
     {
@@ -318,8 +319,8 @@ public class LogicGpGenotype<TCategory> : IPredictingGenotype<TCategory>,
     {
         var literal =
             literals[ThreadSafeRandomNetCore.Shared.Next(literals.Count)];
-        var monomial = new LogicGpMonomial<TCategory>([literal]);
-        var polynomial = new LogicGpPolynomial<TCategory>([monomial]);
-        return new LogicGpGenotype<TCategory>(polynomial, literals, weighting);
+        var monomial = new WeightedMonomial<TCategory>([literal]);
+        var polynomial = new WeightedPolynomial<TCategory>([monomial]);
+        return new Genotype<TCategory>(polynomial, literals, weighting);
     }
 }

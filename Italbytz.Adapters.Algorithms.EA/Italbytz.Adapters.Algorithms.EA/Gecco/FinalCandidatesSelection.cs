@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.Selection;
 
-namespace Italbytz.EA.Selection;
+namespace Italbytz.EA.Gecco;
 
-public class LogicGpGeccoSelection : IValidatedPopulationSelection
+public class FinalCandidatesSelection : IValidatedPopulationSelection
 {
     public IIndividual Process(IIndividualList[] populations)
     {
@@ -19,7 +21,7 @@ public class LogicGpGeccoSelection : IValidatedPopulationSelection
                     if (individual.Genotype is not IValidatableGenotype genotype)
                         throw new InvalidOperationException(
                             "Genotype does not implement IValidatableGenotype");
-                    individual.LatestKnownFitness = (double[])genotype.ValidationFitness.Clone();
+                    individual.LatestKnownFitness = (IFitnessValue?)genotype.ValidationFitness.Clone();
                 }
             
                 var filteringSelection = new BestModelForEachSizeSelection();
@@ -31,22 +33,22 @@ public class LogicGpGeccoSelection : IValidatedPopulationSelection
             var candidatePopulation = new ListBasedPopulation();
             foreach (var candidate in allCandidates)
                 candidatePopulation.Add(candidate);
-            return new GeccoFinalModelSelection().Process(candidatePopulation)[0];
+            return new FinalModelSelection().Process(candidatePopulation)[0];
     }
 
     private IIndividual? ChooseBestIndividual(Task<IIndividualList> individuals)
     {
         var population = individuals.Result;
         IIndividual? bestIndividual = null;
-        var bestFitness = double.MinValue;
+        IFitnessValue? bestFitness = null;
         foreach (var individual in population)
         {
-            var fitness = individual.LatestKnownFitness.Sum();
-            if (fitness > bestFitness)
-            {
+            var fitness = individual.LatestKnownFitness;
+            if (fitness == null) continue;
+            if (bestFitness != null && fitness.CompareTo(bestFitness) <= 0)
+                continue;
                 bestFitness = fitness;
                 bestIndividual = individual;
-            }
         }
 
         return bestIndividual;

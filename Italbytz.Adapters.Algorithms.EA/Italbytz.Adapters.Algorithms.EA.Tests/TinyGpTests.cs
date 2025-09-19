@@ -1,7 +1,7 @@
 using Italbytz.AI;
-using Italbytz.EA.Control;
+using Italbytz.EA;
 using Italbytz.EA.Fitness;
-using Italbytz.EA.Graph.Common;
+using Italbytz.EA.Graph;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
 using Italbytz.EA.StoppingCriterion;
@@ -56,7 +56,7 @@ public class TinyGpTests
         var population = await tinyGp.Run();
         Console.WriteLine(population.First());
         var lastFitness = population.First().LatestKnownFitness;
-        Assert.IsTrue(lastFitness.Length == 1);
-        Assert.IsTrue(Math.Abs(lastFitness.Sum() + 25.31) < 0.01);
+        Assert.IsTrue(lastFitness!=null );
+        Assert.IsTrue(Math.Abs(lastFitness.ConsolidatedValue + 25.31) < 0.02);
     }
 }

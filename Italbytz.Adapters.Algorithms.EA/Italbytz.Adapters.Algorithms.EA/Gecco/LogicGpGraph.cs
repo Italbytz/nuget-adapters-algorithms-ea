@@ -1,13 +1,14 @@
 using Italbytz.EA.Crossover;
+using Italbytz.EA.Graph;
 using Italbytz.EA.Mutation;
 using Italbytz.EA.Operator;
 using Italbytz.EA.Selection;
 
-namespace Italbytz.EA.Graph.Common;
+namespace Italbytz.EA.Gecco;
 
-public class LogicGPGeccoGraph : OperatorGraph
+public class LogicGpGraph : OperatorGraph
 {
-    public LogicGPGeccoGraph()
+    public LogicGpGraph()
     {
         Start = new Start();
         var selectionForCrossover = new UniformSelection
@@ -15,7 +16,7 @@ public class LogicGPGeccoGraph : OperatorGraph
             NoOfIndividualsToSelect = 2
         };
         Start.AddChildren(selectionForCrossover);
-        var crossover = new LogicGpCrossover();
+        var crossover = new StandardCrossover();
         var selectionsForMutation = new UniformSelection[5];
         for (var i = 0; i < selectionsForMutation.Length; i++)
         {

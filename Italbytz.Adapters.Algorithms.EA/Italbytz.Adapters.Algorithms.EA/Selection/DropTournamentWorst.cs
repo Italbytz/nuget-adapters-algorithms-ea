@@ -43,8 +43,7 @@ public class DropTournamentWorst : AbstractSelection
             {
                 var individual = individualList[selectedIndex];
 
-                if (unfittest == null || individual.LatestKnownFitness.Sum() <
-                    unfittest.LatestKnownFitness.Sum())
+                if (unfittest == null || individual.LatestKnownFitness.CompareTo(unfittest.LatestKnownFitness) < 0)
                 {
                     unfittest = individual;
                     unfittestIndex = selectedIndex;

@@ -3,9 +3,9 @@ using Italbytz.EA.Searchspace;
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
 [TestClass]
-public class LogicGpLiteralTests
+public class SetLiteralTests
 {
-    private readonly List<LogicGpLiteral<string>> _literals = [];
+    private readonly List<SetLiteral<string>> _literals = [];
     
     public required HashSet<string> UniqueValues =
     [
@@ -27,16 +27,16 @@ public class LogicGpLiteralTests
                     continue;
                 set = set + (1 << (j - 1));
                 negativeset = ~set & ((1 << UniqueValues.Count) - 1);
-                var literal = new LogicGpLiteral<string>(0, 
+                var literal = new SetLiteral<string>(0, 
                     UniqueValues, set,
                     
-                    LogicGpLiteralType.Su);
+                    SetLiteralType.Su);
                 if (!_literals.Contains(literal))
                     _literals.Add(literal);
-                var negativeliteral = new LogicGpLiteral<string>(0, 
+                var negativeliteral = new SetLiteral<string>(0, 
                     UniqueValues, negativeset,
                     
-                    LogicGpLiteralType.Su);
+                    SetLiteralType.Su);
                 if (!_literals.Contains(negativeliteral))
                     _literals.Add(negativeliteral);
             }
@@ -70,15 +70,15 @@ public class LogicGpLiteralTests
             set = set + (1 << (i - 1));
             negativeset = negativeset + (1 << (UniqueValues.Count - i));
 
-            var literal = new LogicGpLiteral<string>(0, 
+            var literal = new SetLiteral<string>(0, 
                 UniqueValues, set,
                 
-                LogicGpLiteralType.LessGreater);
+                SetLiteralType.LessGreater);
             _literals.Add(literal);
-            var negativeliteral = new LogicGpLiteral<string>(0, 
+            var negativeliteral = new SetLiteral<string>(0, 
                 UniqueValues, negativeset,
                 
-                LogicGpLiteralType.LessGreater);
+                SetLiteralType.LessGreater);
             _literals.Add(negativeliteral);
         }
 
@@ -102,15 +102,15 @@ public class LogicGpLiteralTests
         {
             var set = 1 << (i - 1);
             var negativeset = ~set & ((1 << UniqueValues.Count) - 1);
-            var literal = new LogicGpLiteral<string>(0, 
+            var literal = new SetLiteral<string>(0, 
                 UniqueValues, set,
                 
-                LogicGpLiteralType.Dussault);
+                SetLiteralType.Dussault);
             _literals.Add(literal);
-            var negativeliteral = new LogicGpLiteral<string>(0, 
+            var negativeliteral = new SetLiteral<string>(0, 
                 UniqueValues, negativeset,
                 
-                LogicGpLiteralType.Dussault);
+                SetLiteralType.Dussault);
             _literals.Add(negativeliteral);
         }
 
@@ -135,7 +135,7 @@ public class LogicGpLiteralTests
         var powerSetCount = 1 << UniqueValues.Count;
         for (var i = 1; i < powerSetCount - 1; i++)
         {
-            var literal = new LogicGpLiteral<string>(0, 
+            var literal = new SetLiteral<string>(0, 
                 UniqueValues, i);
             _literals.Add(literal);
         }

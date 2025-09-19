@@ -8,7 +8,7 @@ using Italbytz.EA.PopulationManager;
 using Italbytz.EA.SearchSpace;
 using Italbytz.EA.StoppingCriterion;
 
-namespace Italbytz.EA.Control;
+namespace Italbytz.EA;
 
 public class EvolutionaryAlgorithm : IGenerationProvider
 {

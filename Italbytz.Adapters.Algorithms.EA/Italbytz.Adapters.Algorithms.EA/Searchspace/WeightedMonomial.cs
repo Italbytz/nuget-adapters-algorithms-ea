@@ -7,9 +7,9 @@ using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
+public class WeightedMonomial<TCategory> : IMonomial<TCategory>
 {
-    public LogicGpMonomial(List<ILiteral<TCategory>> literals)
+    public WeightedMonomial(List<ILiteral<TCategory>> literals)
     {
         Literals = literals;
     }
@@ -28,7 +28,7 @@ public class LogicGpMonomial<TCategory> : IMonomial<TCategory>
             Array.Copy(Weights, weightsCopy, Weights.Length);
         }
 
-        return new LogicGpMonomial<TCategory>(literalsCopy)
+        return new WeightedMonomial<TCategory>(literalsCopy)
         {
             Weights = weightsCopy
         };

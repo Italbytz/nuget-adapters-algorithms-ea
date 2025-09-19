@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Italbytz.AI;
+using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 
 namespace Italbytz.EA.Selection;
@@ -25,13 +26,13 @@ public class TournamentSelection : AbstractSelection
             Parallel.For(0, noOfIndividualsToSelect, i =>
             {
                 IIndividual? fittest = null;
-                var highestFitness = double.MinValue;
+                IFitnessValue? highestFitness = null;
                 for (var j = 0; j < TournamentSize; j++)
                 {
                     var individual =
                         individualList[rnd.Next(individualList.Count)];
-                    var fitness = individual.LatestKnownFitness.Sum();
-                    if (fittest == null || fitness > highestFitness)
+                    var fitness = individual.LatestKnownFitness;
+                    if (fittest == null || highestFitness == null || fitness.CompareTo(highestFitness) > 0)
                     {
                         fittest = individual;
                         highestFitness = fitness;
@@ -44,13 +45,13 @@ public class TournamentSelection : AbstractSelection
             for (var i = 0; i < noOfIndividualsToSelect; i++)
             {
                 IIndividual? fittest = null;
-                var highestFitness = double.MinValue;
+                IFitnessValue? highestFitness = null;
                 for (var j = 0; j < TournamentSize; j++)
                 {
                     var individual =
                         individualList[rnd.Next(individualList.Count)];
-                    var fitness = individual.LatestKnownFitness.Sum();
-                    if (fittest == null || fitness > highestFitness)
+                    var fitness = individual.LatestKnownFitness;
+                    if (fittest == null || highestFitness == null || fitness.CompareTo(highestFitness) > 0)
                     {
                         fittest = individual;
                         highestFitness = fitness;

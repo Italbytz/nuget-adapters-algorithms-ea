@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Mutation;
 
@@ -23,7 +24,7 @@ public class BitStringGenotype : IGenotype, IMutable
         return new BitStringGenotype(BitArray, _dimension);
     }
 
-    public double[]? LatestKnownFitness { get; set; }
+    public IFitnessValue? LatestKnownFitness { get; set; }
     public int Size { get; }
 
     public void Mutate(double mutationProbability)

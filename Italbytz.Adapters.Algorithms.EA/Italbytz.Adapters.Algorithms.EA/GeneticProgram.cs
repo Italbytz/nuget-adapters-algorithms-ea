@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Italbytz.EA.Control;
 using Italbytz.EA.Fitness;
-using Italbytz.EA.Graph.Common;
+using Italbytz.EA.Graph;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.PopulationManager;
