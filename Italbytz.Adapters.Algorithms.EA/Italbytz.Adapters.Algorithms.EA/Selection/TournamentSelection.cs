@@ -8,12 +8,13 @@ using Italbytz.EA.Individuals;
 
 namespace Italbytz.EA.Selection;
 
-public class TournamentSelection : AbstractSelection
+public abstract class TournamentSelection : AbstractSelection
 {
     public int TournamentSize { get; set; } = 2;
 
     public override bool FitnessBasedSelection { get; } = true;
 
+    public abstract bool UseDomination { get; }
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individuals, int noOfIndividualsToSelect)
     {
@@ -32,7 +33,7 @@ public class TournamentSelection : AbstractSelection
                     var individual =
                         individualList[rnd.Next(individualList.Count)];
                     var fitness = individual.LatestKnownFitness;
-                    if (fittest == null || highestFitness == null || fitness.CompareTo(highestFitness) > 0)
+                    if (fittest == null || highestFitness == null || (UseDomination && fitness.IsDominating(highestFitness)) || (!UseDomination && fitness.CompareTo(highestFitness) > 0))
                     {
                         fittest = individual;
                         highestFitness = fitness;
@@ -51,7 +52,7 @@ public class TournamentSelection : AbstractSelection
                     var individual =
                         individualList[rnd.Next(individualList.Count)];
                     var fitness = individual.LatestKnownFitness;
-                    if (fittest == null || highestFitness == null || fitness.CompareTo(highestFitness) > 0)
+                    if (fittest == null || highestFitness == null || (UseDomination && fitness.IsDominating(highestFitness)) || (!UseDomination && fitness.CompareTo(highestFitness) > 0))
                     {
                         fittest = individual;
                         highestFitness = fitness;

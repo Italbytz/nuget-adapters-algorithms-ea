@@ -16,7 +16,7 @@ public class TinyGPGraph : OperatorGraph
             NoOfIndividualsToSelect = 10000
         };
         Start.AddChildren(finalSelection);
-        var mutationSelection = new TournamentSelection
+        var mutationSelection = new FitnessTournamentSelection
         {
             UseRatio = true,
             RatioOfIndividualsToSelect = 0.1
@@ -28,7 +28,7 @@ public class TinyGPGraph : OperatorGraph
         };
         mutationSelection.AddChildren(mutation);
         mutation.AddChildren(finalSelection);
-        var crossoverSelection = new TournamentSelection
+        var crossoverSelection = new FitnessTournamentSelection
         {
             UseRatio = true,
             RatioOfIndividualsToSelect = 1.8 // 2 parents for 90 % of population
