@@ -110,35 +110,66 @@ public sealed class ConfusionMatrix : ICloneable
         return Counts[actualClassIndicatorIndex, predictedClassIndicatorIndex];
     }
 
-    public double GetMetric(Metric usedMetric)
+    public double[] GetPerClassMetric(Metric usedMetric)
     {
         return usedMetric switch
         {
-            Metric.F1Score => ComputeF1Macro(),
-            Metric.Precision => PerClassPrecision.Average(),
-            Metric.Recall => PerClassRecall.Average(),
+            Metric.F1Score => ComputePerClassF1Score(),
+            Metric.Precision => PerClassPrecision.ToArray(),
+            Metric.Recall => PerClassRecall.ToArray(),
+            Metric.MicroAccuracy => ComputePerClassMicroAccuracy(),
+            Metric.MacroAccuracy => ComputePerClassMacroAccuracy(),
             _ => throw new ArgumentOutOfRangeException(nameof(usedMetric),
                 usedMetric, null)
         };
     }
 
-    private double ComputeF1Macro()
+    private double[] ComputePerClassMacroAccuracy()
     {
-        double f1Sum = 0;
-        var classCount = NumberOfClasses;
+        var accuracies = new double[NumberOfClasses];
+        for (var i = 0; i < NumberOfClasses; i++)
+        {
+            var truePositives = Counts[i, i];
+            var falseNegatives = 0;
+            var falsePositives = 0;
+            for (var j = 0; j < NumberOfClasses; j++)
+                if (j != i)
+                {
+                    falseNegatives += Counts[i, j];
+                    falsePositives += Counts[j, i];
+                }
 
-        for (var i = 0; i < classCount; i++)
+            var total = truePositives + falseNegatives + falsePositives;
+            accuracies[i] = total == 0 ? 0 : truePositives / total;
+        }
+
+        return accuracies;
+    }
+
+    private double[] ComputePerClassMicroAccuracy()
+    {
+        var accuracies = new double[NumberOfClasses];
+        for (var i = 0; i < NumberOfClasses; i++) accuracies[i] = Counts[i, i];
+        return accuracies;
+    }
+
+    private double[] ComputePerClassF1Score()
+    {
+        var f1Scores = new double[NumberOfClasses];
+        for (var i = 0; i < NumberOfClasses; i++)
         {
             var dividend = PerClassPrecision[i] *
                            PerClassRecall[i];
             var divisor = PerClassPrecision[i] +
                           PerClassRecall[i];
-            if (divisor == 0) continue;
-            // Calculate F1 score for class i
-            f1Sum += 2 * (dividend /
-                          divisor);
+            if (divisor == 0)
+                f1Scores[i] = 0;
+            else
+                // Calculate F1 score for class i
+                f1Scores[i] = 2 * (dividend /
+                                   divisor);
         }
 
-        return f1Sum / classCount;
+        return f1Scores;
     }
 }

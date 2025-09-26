@@ -10,9 +10,7 @@ public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
     public static Metric UsedMetric { get; set; } = Metric.F1Score;
 
     public double[] Objectives { get; init; } =
-    {
-        matrix?.GetMetric(UsedMetric) ?? 0.0
-    };
+        matrix?.GetPerClassMetric(UsedMetric) ?? [0.0];
 
     public ConfusionMatrix? Matrix { get; } = matrix;
     public int Size { get; } = size;
