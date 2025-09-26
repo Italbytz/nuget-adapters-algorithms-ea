@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.EA.Control;
-using Italbytz.EA.Gecco;
 using Italbytz.EA.Individuals;
 using Italbytz.ML;
 using Italbytz.ML.Trainers;
@@ -14,22 +13,15 @@ namespace Italbytz.EA.Trainer;
 public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
     where TOutput : class, new()
 {
-    private readonly int _generations;
     private Dictionary<float, int>[] _featureValueMappings;
     private Dictionary<uint, int> _labelMapping = new();
     private IIndividual? _model;
     private Dictionary<int, float>[] _reverseFeatureValueMappings;
     private Dictionary<int, uint> _reverseLabelMapping;
 
-    public LogicGpTrainer(int generations = 100)
-    {
-        _generations = generations;
-        RunStrategy = new RunStrategy(generations);
-    }
-
     private int _classes => _labelMapping.Count;
 
-    public IRunStrategy RunStrategy { get; set; }
+    public required IRunStrategy RunStrategy { get; set; }
 
     protected override void Map(ClassificationInput input, TOutput output)
     {

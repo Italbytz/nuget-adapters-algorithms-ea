@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.EA.Individuals;
@@ -30,7 +29,19 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
 
     public IIndividualList GetAStartingPopulation()
     {
-        throw new NotImplementedException();
+        var result = new ListBasedPopulation();
+        foreach (var literal in Literals)
+        {
+            var monomial = new WeightedMonomial<TCategory>([literal]);
+            var polynomial = new WeightedPolynomial<TCategory>(
+                [monomial]);
+            var genotype =
+                new Genotype<TCategory>(polynomial, Literals, Weighting);
+            var individual = new Individual(genotype, null);
+            result.Add(individual);
+        }
+
+        return result;
     }
 
     private void GenerateLiterals()

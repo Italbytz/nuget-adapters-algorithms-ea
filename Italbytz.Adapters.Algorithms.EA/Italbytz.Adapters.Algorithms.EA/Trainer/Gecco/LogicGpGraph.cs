@@ -4,7 +4,7 @@ using Italbytz.EA.Mutation;
 using Italbytz.EA.Operator;
 using Italbytz.EA.Selection;
 
-namespace Italbytz.EA.Gecco;
+namespace Italbytz.EA.Trainer.Gecco;
 
 public class LogicGpGraph : OperatorGraph
 {
@@ -27,7 +27,7 @@ public class LogicGpGraph : OperatorGraph
             Start.AddChildren(selectionsForMutation[i]);
         }
 
-        var finalSelection = new ParetoFrontSelection()
+        var finalSelection = new ParetoFrontSelection
         {
             NoOfIndividualsToSelect = 10000
         };

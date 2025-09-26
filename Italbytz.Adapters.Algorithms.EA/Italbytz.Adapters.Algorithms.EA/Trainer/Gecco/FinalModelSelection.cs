@@ -1,10 +1,9 @@
-
 using System.Collections.Generic;
 using System.Linq;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Searchspace;
 
-namespace Italbytz.EA.Selection;
+namespace Italbytz.EA.Trainer.Gecco;
 
 /// <summary>
 ///     A class representing the final model selection process in the LogicGP
@@ -21,7 +20,7 @@ namespace Italbytz.EA.Selection;
 ///     selecting the best model.
 /// </remarks>
 /// <seealso cref="ISelection" />
-public class FinalModelSelection 
+public class FinalModelSelection
 {
     public IIndividualList Process(IIndividualList individuals)
     {
@@ -92,6 +91,4 @@ public class FinalModelSelection
 
         return new ListBasedPopulation { chosenIndividual };
     }
-
-    
 }

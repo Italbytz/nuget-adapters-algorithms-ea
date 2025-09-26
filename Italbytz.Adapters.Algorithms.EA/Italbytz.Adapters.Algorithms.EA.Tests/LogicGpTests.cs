@@ -1,10 +1,10 @@
 using Italbytz.AI;
 using Italbytz.EA;
 using Italbytz.EA.Fitness;
-using Italbytz.EA.Gecco;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
+using Italbytz.EA.Trainer.Gecco;
 using GenerationStoppingCriterion =
     Italbytz.EA.StoppingCriterion.GenerationStoppingCriterion;
 
@@ -358,7 +358,8 @@ public class LogicGpTests
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction =
-                new ClassPredictionsAndSize<int>(_trainingFeatures, _trainingLabels)
+                new ClassPredictionsAndSize<int>(_trainingFeatures,
+                    _trainingLabels)
                 {
                     MaxSize = int.MaxValue
                 },
@@ -385,7 +386,8 @@ public class LogicGpTests
         Console.Out.WriteLine(population);
         Console.Out.WriteLine("################");
         population.Freeze();
-        var fitness = new ClassPredictionsAndSize<int>(_testFeatures, _testLabels);
+        var fitness =
+            new ClassPredictionsAndSize<int>(_testFeatures, _testLabels);
         foreach (var individual in population)
         {
             var newFitness = fitness.Evaluate(individual);

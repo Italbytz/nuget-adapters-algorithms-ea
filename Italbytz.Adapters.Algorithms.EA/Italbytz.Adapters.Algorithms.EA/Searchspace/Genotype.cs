@@ -17,7 +17,7 @@ public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
     private readonly List<ILiteral<TCategory>> _literals;
     public readonly IPolynomial<TCategory> Polynomial;
 
-    private Genotype(IPolynomial<TCategory> polynomial,
+    public Genotype(IPolynomial<TCategory> polynomial,
         List<ILiteral<TCategory>> literals, Weighting weighting)
     {
         Polynomial = polynomial;
@@ -30,16 +30,6 @@ public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
     public PredictionStrategy PredictionStrategy { get; set; } =
         PredictionStrategy.Max;
 
-    public void Freeze()
-    {
-        Weighting = Weighting.Fixed;
-    }
-    public string LiteralSignature()
-    {
-        var literals = Polynomial.GetAllLiterals();
-        literals.Sort();
-        return string.Join(" ", literals.Select(literal => literal.Label));
-    }
     public void CrossWith(ICrossable parentGenotype)
     {
         if (LatestKnownFitness != null) throw new InvalidOperationException();
@@ -50,6 +40,11 @@ public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
             (IMonomial<TCategory>)parent.Polynomial
                 .GetRandomMonomial().Clone();
         Polynomial.Monomials.Add(monomial);
+    }
+
+    public void Freeze()
+    {
+        Weighting = Weighting.Fixed;
     }
 
     public void DeleteRandomLiteral()
@@ -160,6 +155,13 @@ public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public IFitnessValue? TrainingFitness { get; set; }
     public IFitnessValue? ValidationFitness { get; set; }
+
+    public string LiteralSignature()
+    {
+        var literals = Polynomial.GetAllLiterals();
+        literals.Sort();
+        return string.Join(" ", literals.Select(literal => literal.Label));
+    }
 
     private void ComputeWeights(TCategory[][] features, int[] labels)
     {
