@@ -358,7 +358,7 @@ public class LogicGpTests
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction =
-                new ClassPredictionsAndSize<int>(_trainingFeatures,
+                new ConfusionAndSizeFitnessFunction<int>(_trainingFeatures,
                     _trainingLabels)
                 {
                     MaxSize = int.MaxValue
@@ -387,7 +387,8 @@ public class LogicGpTests
         Console.Out.WriteLine("################");
         population.Freeze();
         var fitness =
-            new ClassPredictionsAndSize<int>(_testFeatures, _testLabels);
+            new ConfusionAndSizeFitnessFunction<int>(_testFeatures,
+                _testLabels);
         foreach (var individual in population)
         {
             var newFitness = fitness.Evaluate(individual);

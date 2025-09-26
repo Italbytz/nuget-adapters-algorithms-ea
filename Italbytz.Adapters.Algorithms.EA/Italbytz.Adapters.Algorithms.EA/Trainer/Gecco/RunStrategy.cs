@@ -49,7 +49,7 @@ public class RunStrategy(int generations) : CommonRunStrategy
             var convertedValidationFeatures =
                 PrepareForLogicGp(validationFeatures);
             var convertedValidationLabels = PrepareForLogicGp(validationLabels);
-            var fitness = new ClassPredictionsAndSize<int>(
+            var fitness = new ConfusionAndSizeFitnessFunction<int>(
                 convertedValidationFeatures, convertedValidationLabels);
             foreach (var individual in individuals.Result)
             {
@@ -75,7 +75,7 @@ public class RunStrategy(int generations) : CommonRunStrategy
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction =
-                new ClassPredictionsAndSize<int>(features, labels)
+                new ConfusionAndSizeFitnessFunction<int>(features, labels)
                 {
                     MaxSize = int.MaxValue
                 },

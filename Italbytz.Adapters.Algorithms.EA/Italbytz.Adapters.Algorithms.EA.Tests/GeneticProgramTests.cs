@@ -328,7 +328,8 @@ public class GeneticProgramTests
         ThreadSafeRandomNetCore.Seed = 42;
         var gp = new GeneticProgram
         {
-            FitnessFunction = new ClassPredictionsAndSize<int>(_features, _labels),
+            FitnessFunction =
+                new ConfusionAndSizeFitnessFunction<int>(_features, _labels),
             SearchSpace = new LogicGpSearchSpace<int>(_features, _labels)
             {
                 Weighting = Weighting.Computed

@@ -4,10 +4,17 @@ using System.Linq;
 
 namespace Italbytz.EA.Fitness;
 
-public class MultiObjectiveAndSizeFitnessValue(double[] objectives, int size)
+public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
     : IFitnessValue
 {
-    public double[] Objectives { get; } = objectives;
+    public static Metric UsedMetric { get; set; } = Metric.F1Score;
+
+    public double[] Objectives { get; init; } =
+    {
+        matrix?.GetMetric(UsedMetric) ?? 0.0
+    };
+
+    public ConfusionMatrix? Matrix { get; } = matrix;
     public int Size { get; } = size;
 
     public int CompareTo(IFitnessValue? other)
@@ -17,13 +24,14 @@ public class MultiObjectiveAndSizeFitnessValue(double[] objectives, int size)
 
     public object Clone()
     {
-        return new MultiObjectiveAndSizeFitnessValue(objectives.ToArray(),
+        return new ConfusionAndSizeFitnessValue(
+            (ConfusionMatrix?)Matrix?.Clone(),
             size);
     }
 
     public bool IsDominating(IFitnessValue otherFitnessValue)
     {
-        if (otherFitnessValue is not MultiObjectiveAndSizeFitnessValue other)
+        if (otherFitnessValue is not ConfusionAndSizeFitnessValue other)
             throw new ArgumentException(
                 "Expected fitness value of type MultiObjectiveAndSizeFitnessValue");
 
@@ -43,11 +51,11 @@ public class MultiObjectiveAndSizeFitnessValue(double[] objectives, int size)
 
     public double ConsolidatedValue => Objectives.Sum();
 
-    private int Compare(MultiObjectiveAndSizeFitnessValue fitnessValue,
+    private int Compare(ConfusionAndSizeFitnessValue fitnessValue,
         IFitnessValue? other)
     {
         if (other is null) return 1;
-        if (other is not MultiObjectiveAndSizeFitnessValue otherFitnessValue)
+        if (other is not ConfusionAndSizeFitnessValue otherFitnessValue)
             return -1;
 
         // First, compare based on objectives
