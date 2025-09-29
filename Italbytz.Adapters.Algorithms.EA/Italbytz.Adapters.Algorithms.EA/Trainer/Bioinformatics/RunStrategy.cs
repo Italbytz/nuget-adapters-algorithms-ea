@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
@@ -37,9 +38,8 @@ public class RunStrategy(int generations) : CommonRunStrategy
             var convertedTrainFeatures = PrepareForLogicGp(trainFeatures);
             var convertedTrainLabels = PrepareForLogicGp(trainLabels);
             var individuals =
-                RunLogicGp(convertedTrainFeatures, convertedTrainLabels,
-                    new LogicGpGraph(), new CompleteInitialization(),
-                    generations: generations);
+                RunSpecificLogicGp(convertedTrainFeatures,
+                    convertedTrainLabels);
             individuals.Result.Freeze();
             // Validate
             var validationSet = fold.TestSet;
@@ -67,5 +67,13 @@ public class RunStrategy(int generations) : CommonRunStrategy
         }
 
         return SelectionStrategy.Process(individualLists);
+    }
+
+    protected override Task<IIndividualList> RunSpecificLogicGp(
+        int[][] features, int[] labels)
+    {
+        return RunLogicGp(features, labels,
+            new LogicGpGraph(), new CompleteInitialization(),
+            generations: generations);
     }
 }

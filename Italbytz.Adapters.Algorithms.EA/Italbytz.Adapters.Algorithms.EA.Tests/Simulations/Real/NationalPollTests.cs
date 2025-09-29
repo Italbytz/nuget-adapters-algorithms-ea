@@ -48,7 +48,7 @@ public class NationalPollTests
         var trainer =
             new LogicGpMulticlassTrainer<TernaryClassificationOutput>
             {
-                RunStrategy = new RunStrategy(10000)
+                RunStrategy = new FlrwRunStrategy(10000)
             };
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
@@ -70,7 +70,7 @@ public class NationalPollTests
         var trainer =
             new LogicGpMulticlassTrainer<TernaryClassificationOutput>
             {
-                RunStrategy = new RunStrategy(10000)
+                RunStrategy = new FlrwRunStrategy(10000)
             };
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,

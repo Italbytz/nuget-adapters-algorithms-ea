@@ -44,6 +44,10 @@ public abstract class CommonRunStrategy : IRunStrategy
         return result;
     }
 
+    protected abstract Task<IIndividualList> RunSpecificLogicGp(
+        int[][] features,
+        int[] labels);
+
     protected virtual Task<IIndividualList> RunLogicGp(int[][] features,
         int[] labels, OperatorGraph algorithmGraph,
         IInitialization initialization,

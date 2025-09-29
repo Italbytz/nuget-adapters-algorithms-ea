@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
-using Italbytz.EA.Initialization;
 using Italbytz.EA.Selection;
 using Italbytz.ML;
 using Microsoft.ML;
 
 namespace Italbytz.EA.Trainer.Gecco;
 
-public class RunStrategy(int generations) : CommonRunStrategy
+public abstract class RunStrategy(int generations) : CommonRunStrategy
 {
     public IValidatedPopulationSelection SelectionStrategy { get; set; } =
         new FinalCandidatesSelection();
@@ -36,9 +35,8 @@ public class RunStrategy(int generations) : CommonRunStrategy
             var convertedTrainFeatures = PrepareForLogicGp(trainFeatures);
             var convertedTrainLabels = PrepareForLogicGp(trainLabels);
             var individuals =
-                RunLogicGp(convertedTrainFeatures, convertedTrainLabels,
-                    new LogicGpGraph(), new CompleteInitialization(),
-                    generations: generations);
+                RunSpecificLogicGp(convertedTrainFeatures,
+                    convertedTrainLabels);
             individuals.Result.Freeze();
             // Validate
             var validationSet = fold.TestSet;

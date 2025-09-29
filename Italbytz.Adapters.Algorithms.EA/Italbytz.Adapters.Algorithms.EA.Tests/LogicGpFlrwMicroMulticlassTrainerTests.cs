@@ -1,5 +1,4 @@
 using Italbytz.EA.Trainer;
-using Italbytz.EA.Trainer.Gecco;
 using Italbytz.ML;
 using Italbytz.ML.Data;
 using Italbytz.ML.ModelBuilder.Configuration;
@@ -7,11 +6,11 @@ using Italbytz.ML.ModelBuilder.Configuration;
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
 [TestClass]
-public class LogicGpTrainerTests
+public class LogicGpFlrwMicroMulticlassTrainerTests
 {
     private readonly IDataset _dataset;
 
-    public LogicGpTrainerTests()
+    public LogicGpFlrwMicroMulticlassTrainerTests()
     {
         _dataset = Data.Iris;
     }
@@ -20,10 +19,8 @@ public class LogicGpTrainerTests
     public async Task TestLogicGp()
     {
         var trainer =
-            new LogicGpMulticlassTrainer<TernaryClassificationOutput>
-            {
-                RunStrategy = new FlrwRunStrategy(10000)
-            };
+            new LogicGpFlrwMicroMulticlassTrainer<TernaryClassificationOutput>(
+                1000);
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
@@ -33,6 +30,6 @@ public class LogicGpTrainerTests
         var metrics = ThreadSafeMLContext.LocalMLContext
             .MulticlassClassification
             .Evaluate(predictions);
-        Assert.IsTrue(metrics.MacroAccuracy > 0.6);
+        Assert.IsTrue(metrics.MicroAccuracy > 0.6);
     }
 }
