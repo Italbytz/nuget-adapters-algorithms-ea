@@ -7,13 +7,13 @@ using Italbytz.EA.SearchSpace;
 namespace Italbytz.EA.Initialization;
 
 /// <inheritdoc cref="IInitialization" />
-public class CompleteInitialization(ISearchSpace searchSpace)
+public class CompleteInitialization
     : IInitialization
 {
     public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
     {
-        var population = searchSpace.GetAStartingPopulation();
+        var population = SearchSpace.GetAStartingPopulation();
         return Task.FromResult(population);
     }
 
@@ -21,4 +21,6 @@ public class CompleteInitialization(ISearchSpace searchSpace)
     {
         throw new NotImplementedException();
     }
+
+    public ISearchSpace SearchSpace { get; set; }
 }

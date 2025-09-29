@@ -370,9 +370,10 @@ public class LogicGpTests
                 },
             AlgorithmGraph = new LogicGpGraph()
         };
-        logicGp.Initialization = new RandomInitialization(logicGp.SearchSpace)
+        logicGp.Initialization = new RandomInitialization
         {
-            Size = 10
+            Size = 10,
+            SearchSpace = logicGp.SearchSpace
         };
 
         logicGp.StoppingCriteria =

@@ -6,10 +6,11 @@ using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Initialization;
 
-public class RandomInitialization(ISearchSpace searchSpace)
+public class RandomInitialization
     : IInitialization
 {
     public int Size { get; set; } = 1;
+    public ISearchSpace SearchSpace { get; set; }
 
     public Task<IIndividualList>? Process(Task<IIndividualList> individuals,
         IFitnessFunction fitnessFunction)
@@ -17,7 +18,7 @@ public class RandomInitialization(ISearchSpace searchSpace)
         var result = new ListBasedPopulation();
         for (var i = 0; i < Size; i++)
             result
-                .Add(new Individual(searchSpace.GetRandomGenotype(),
+                .Add(new Individual(SearchSpace.GetRandomGenotype(),
                     null));
         return Task.FromResult<IIndividualList>(result);
     }

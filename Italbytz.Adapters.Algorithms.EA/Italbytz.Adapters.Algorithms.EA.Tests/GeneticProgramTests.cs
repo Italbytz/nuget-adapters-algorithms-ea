@@ -347,9 +347,10 @@ public class GeneticProgramTests
             Crossovers = [new StandardCrossover()],
             PopulationManager = new DefaultPopulationManager()
         };
-        gp.Initialization = new RandomInitialization(gp.SearchSpace)
+        gp.Initialization = new RandomInitialization
         {
-            Size = 10
+            Size = 10,
+            SearchSpace = gp.SearchSpace
         };
 
         gp.StoppingCriteria =

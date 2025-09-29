@@ -40,9 +40,10 @@ public class TinyGpTests
             },
             AlgorithmGraph = new TinyGPGraph()
         };
-        tinyGp.Initialization = new RandomInitialization(tinyGp.SearchSpace)
+        tinyGp.Initialization = new RandomInitialization
         {
-            Size = 10000
+            Size = 10000,
+            SearchSpace = tinyGp.SearchSpace
         };
 
         tinyGp.StoppingCriteria =
@@ -56,7 +57,7 @@ public class TinyGpTests
         var population = await tinyGp.Run();
         Console.WriteLine(population.First());
         var lastFitness = population.First().LatestKnownFitness;
-        Assert.IsTrue(lastFitness!=null );
+        Assert.IsTrue(lastFitness != null);
         Assert.IsTrue(Math.Abs(lastFitness.ConsolidatedValue + 25.31) < 0.02);
     }
 }

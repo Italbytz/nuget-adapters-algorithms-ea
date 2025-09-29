@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
-using Italbytz.EA.Searchspace;
 using Italbytz.EA.Selection;
-using Italbytz.EA.StoppingCriterion;
 using Italbytz.ML;
 using Microsoft.ML;
 
@@ -39,7 +36,9 @@ public class RunStrategy(int generations) : CommonRunStrategy
             var convertedTrainFeatures = PrepareForLogicGp(trainFeatures);
             var convertedTrainLabels = PrepareForLogicGp(trainLabels);
             var individuals =
-                RunLogicGp(convertedTrainFeatures, convertedTrainLabels);
+                RunLogicGp(convertedTrainFeatures, convertedTrainLabels,
+                    new LogicGpGraph(), new CompleteInitialization(),
+                    generations: generations);
             individuals.Result.Freeze();
             // Validate
             var validationSet = fold.TestSet;
@@ -67,36 +66,5 @@ public class RunStrategy(int generations) : CommonRunStrategy
         }
 
         return SelectionStrategy.Process(individualLists);
-    }
-
-
-    private Task<IIndividualList> RunLogicGp(int[][] features, int[] labels)
-    {
-        var logicGp = new EvolutionaryAlgorithm
-        {
-            FitnessFunction =
-                new ConfusionAndSizeFitnessFunction<int>(features, labels)
-                {
-                    MaxSize = int.MaxValue
-                },
-            SearchSpace =
-                new LogicGpSearchSpace<int>(features, labels)
-                {
-                    Weighting = Weighting.Computed
-                },
-            AlgorithmGraph = new LogicGpGraph()
-        };
-        logicGp.Initialization =
-            new CompleteInitialization(logicGp.SearchSpace);
-
-        logicGp.StoppingCriteria =
-        [
-            new GenerationStoppingCriterion(logicGp)
-            {
-                Limit = generations
-            }
-        ];
-        var population = logicGp.Run();
-        return population;
     }
 }

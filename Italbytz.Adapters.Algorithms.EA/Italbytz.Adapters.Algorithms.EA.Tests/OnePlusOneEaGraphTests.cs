@@ -23,7 +23,10 @@ public class OnePlusOneEaGraphTests
             AlgorithmGraph = new OnePlusOneEAGraph()
         };
         onePlusOneEA.Initialization =
-            new RandomInitialization(onePlusOneEA.SearchSpace);
+            new RandomInitialization
+            {
+                SearchSpace = onePlusOneEA.SearchSpace
+            };
         onePlusOneEA.StoppingCriteria =
         [
             new GenerationStoppingCriterion(onePlusOneEA)
@@ -34,6 +37,6 @@ public class OnePlusOneEaGraphTests
         var population = await onePlusOneEA.Run();
         Console.WriteLine(population);
         var lastFitness = population.First().LatestKnownFitness;
-        Assert.IsTrue(lastFitness!=null);
+        Assert.IsTrue(lastFitness != null);
     }
-}         
+}
