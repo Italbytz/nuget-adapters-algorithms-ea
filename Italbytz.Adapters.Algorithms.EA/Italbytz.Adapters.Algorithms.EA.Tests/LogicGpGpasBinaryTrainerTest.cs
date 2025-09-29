@@ -1,5 +1,4 @@
 using Italbytz.EA.Trainer;
-using Italbytz.EA.Trainer.Gecco;
 using Italbytz.ML;
 using Italbytz.ML.Data;
 using Italbytz.ML.ModelBuilder.Configuration;
@@ -7,23 +6,20 @@ using Italbytz.ML.ModelBuilder.Configuration;
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
 [TestClass]
-public class LogicGpTrainerTests
+public class LogicGpGpasBinaryTrainerTest
 {
     private readonly IDataset _dataset;
 
-    public LogicGpTrainerTests()
+    public LogicGpGpasBinaryTrainerTest()
     {
-        _dataset = Data.Iris;
+        _dataset = Data.HeartDiseaseBinary;
     }
 
     [TestMethod]
     public async Task TestLogicGp()
     {
         var trainer =
-            new LogicGpMulticlassTrainer<TernaryClassificationOutput>
-            {
-                RunStrategy = new RunStrategy(10000)
-            };
+            new LogicGpGpasBinaryTrainer(1000);
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
@@ -31,8 +27,8 @@ public class LogicGpTrainerTests
         var model = pipeline.Fit(_dataset.DataView);
         var predictions = model.Transform(_dataset.DataView);
         var metrics = ThreadSafeMLContext.LocalMLContext
-            .MulticlassClassification
+            .BinaryClassification
             .Evaluate(predictions);
-        Assert.IsTrue(metrics.MacroAccuracy > 0.6);
+        Assert.IsTrue(metrics.Accuracy > 0.6);
     }
 }

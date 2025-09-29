@@ -25,8 +25,9 @@ public class LogicGpSpeedupTests
                 RunStrategy = new RunStrategy(100)
             };
         var pipeline = _dataset.BuildPipeline(
-            ThreadSafeMLContext.LocalMLContext, ScenarioType.Classification,
-            trainer, true);
+            ThreadSafeMLContext.LocalMLContext, trainer,
+            ScenarioType.Classification,
+            ProcessingType.FeatureBinningAndCustomLabelMapping);
         var model = pipeline.Fit(_dataset.DataView);
         var predictions = model.Transform(_dataset.DataView);
         var metrics = ThreadSafeMLContext.LocalMLContext

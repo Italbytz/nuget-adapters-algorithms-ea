@@ -50,7 +50,7 @@ public sealed class ConfusionMatrix : ICloneable
         PerClassRecall = recall.ToImmutableArray();
         Counts = confusionTableCounts;
 
-        NumberOfClasses = confusionTableCounts.Length;
+        NumberOfClasses = precision.Length;
     }
 
     /// <summary>
@@ -76,11 +76,6 @@ public sealed class ConfusionMatrix : ICloneable
     /// </summary>
     public int[,] Counts { get; }
 
-    /// <summary>
-    ///     The indicators of the predicted classes.
-    ///     It might be the classes names, or just indices of the predicted classes, if
-    ///     the name mapping is missing.
-    /// </summary>
     public int NumberOfClasses { get; }
 
     public object Clone()

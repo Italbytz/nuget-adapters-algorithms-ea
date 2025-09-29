@@ -21,7 +21,7 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
 
     private int _classes => _labelMapping.Count;
 
-    public required IRunStrategy RunStrategy { get; set; }
+    public IRunStrategy? RunStrategy { get; set; }
 
     protected override void Map(ClassificationInput input, TOutput output)
     {
@@ -54,12 +54,12 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
                     label;
                 binaryOutput.Score =
                     prediction == 1
-                        ? 0f
-                        : 1f;
+                        ? 1f
+                        : 0f;
                 binaryOutput.Probability =
                     prediction == 1
-                        ? 0f
-                        : 1f;
+                        ? 1f
+                        : 0f;
                 break;
             case IMulticlassClassificationOutput multiclassOutput:
             {
