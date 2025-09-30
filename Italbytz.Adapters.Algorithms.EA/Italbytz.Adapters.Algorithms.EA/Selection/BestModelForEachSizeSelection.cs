@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
@@ -30,6 +31,10 @@ public class BestModelForEachSizeSelection : AbstractSelection
                 bestFitness = fitness;
                 bestIndividual = individual;
             }
+
+            Console.WriteLine(((ConfusionAndSizeFitnessValue)bestFitness).Size +
+                              "," + bestFitness.ConsolidatedValue.ToString(
+                                  CultureInfo.InvariantCulture));
 
             population.Add(bestIndividual);
         }

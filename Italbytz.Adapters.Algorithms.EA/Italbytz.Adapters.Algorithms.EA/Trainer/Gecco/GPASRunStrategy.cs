@@ -12,7 +12,6 @@ public class GPASRunStrategy(int generations) : RunStrategy(generations)
     {
         return RunLogicGp(features, labels,
             new LogicGpGraph(), new RandomInitialization { Size = 2 },
-            weighting: Weighting.ComputedBinary, generations: generations,
-            minMaxWeight: 1.1);
+            weighting: Weighting.ComputedBinary, generations: generations);
     }
 }

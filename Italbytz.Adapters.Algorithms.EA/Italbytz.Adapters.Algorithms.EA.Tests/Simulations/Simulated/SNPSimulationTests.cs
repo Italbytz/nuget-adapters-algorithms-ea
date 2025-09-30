@@ -11,7 +11,7 @@ public class SNPSimulationTests
     public void TestSNP()
     {
         GPASSimulation(1, AppDomain.CurrentDomain.BaseDirectory,
-            new LogicGpGpasBinaryTrainer(100));
+            new LogicGpGpasBinaryTrainer(1000));
     }
 
     private void GPASSimulation(int simulation,
