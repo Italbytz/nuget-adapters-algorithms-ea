@@ -177,7 +177,7 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
         return string.Join(" ", literals.Select(literal => literal.Label));
     }
 
-    private void ComputeWeights(TCategory[][] features, int[] labels)
+    public void ComputeWeights(TCategory[][] features, int[] labels)
     {
         var classes = labels.Max() + 1;
         if (Polynomial.Monomials.Count == 0) return;

@@ -364,7 +364,7 @@ public class LogicGpTests
                     MaxSize = int.MaxValue
                 },
             SearchSpace =
-                new LogicGpSearchSpace<int>(_trainingFeatures)
+                new LogicGpSearchSpace<int>(_trainingFeatures, _trainingLabels)
                 {
                     Weighting = Weighting.Computed
                 },

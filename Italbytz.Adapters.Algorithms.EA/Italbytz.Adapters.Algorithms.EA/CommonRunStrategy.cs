@@ -26,7 +26,8 @@ public abstract class CommonRunStrategy : IRunStrategy
         int[] labels, OperatorGraph algorithmGraph,
         IInitialization initialization,
         int maxModelSize = int.MaxValue,
-        Weighting weighting = Weighting.Computed, int generations = 100)
+        Weighting weighting = Weighting.Computed, int generations = 100,
+        double minMaxWeight = 0.0)
     {
         var logicGp = new EvolutionaryAlgorithm
         {
@@ -36,7 +37,7 @@ public abstract class CommonRunStrategy : IRunStrategy
                     MaxSize = maxModelSize
                 },
             SearchSpace =
-                new LogicGpSearchSpace<int>(features)
+                new LogicGpSearchSpace<int>(features, labels, minMaxWeight)
                 {
                     Weighting = weighting
                 },

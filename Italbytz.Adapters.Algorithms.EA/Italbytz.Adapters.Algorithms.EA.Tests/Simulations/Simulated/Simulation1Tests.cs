@@ -58,10 +58,11 @@ public class Simulation1Tests
             MappingHelper.MapFeatures(features, featureMapping);
         var mappedLabels = MappingHelper.MapLabels(labels, labelMapping);
 
-        var searchSpace = new LogicGpSearchSpace<int>(mappedFeatures)
-        {
-            Weighting = Weighting.Computed
-        };
+        var searchSpace =
+            new LogicGpSearchSpace<int>(mappedFeatures, mappedLabels)
+            {
+                Weighting = Weighting.Computed
+            };
         var allLiterals = searchSpace.Literals;
 
 

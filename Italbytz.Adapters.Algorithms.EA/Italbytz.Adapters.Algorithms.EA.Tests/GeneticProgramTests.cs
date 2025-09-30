@@ -330,7 +330,7 @@ public class GeneticProgramTests
         {
             FitnessFunction =
                 new ConfusionAndSizeFitnessFunction<int>(_features, _labels),
-            SearchSpace = new LogicGpSearchSpace<int>(_features)
+            SearchSpace = new LogicGpSearchSpace<int>(_features, _labels)
             {
                 Weighting = Weighting.Computed
             },

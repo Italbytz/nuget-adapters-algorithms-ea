@@ -8,11 +8,14 @@ namespace Italbytz.EA.Searchspace;
 public class LogicGpSearchSpace<TCategory> : ISearchSpace
 {
     private readonly TCategory[][] _features;
+    private readonly int[] _labels;
 
-    public LogicGpSearchSpace(TCategory[][] features)
+    public LogicGpSearchSpace(TCategory[][] features, int[] labels,
+        double minMaxWeight = 0.0)
     {
         _features = features;
-        GenerateLiterals();
+        _labels = labels;
+        GenerateLiterals(minMaxWeight);
     }
 
     public Weighting Weighting { get; set; } = Weighting.Fixed;
@@ -43,7 +46,7 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
         return result;
     }
 
-    private void GenerateLiterals()
+    private void GenerateLiterals(double minMaxWeight = 0.0)
     {
         Literals = [];
         if (_features.Length == 0) return;
@@ -66,7 +69,20 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
                 var literal =
                     new SetLiteral<TCategory>(columnIndex, categoryList, i,
                         literalType);
-                Literals.Add(literal);
+                if (minMaxWeight > 0)
+                {
+                    var genotype =
+                        new PolynomialGenotype<TCategory>(literal, null,
+                            Weighting.Computed);
+                    genotype.ComputeWeights(_features, _labels);
+                    var weights = genotype.Polynomial.Monomials[0].Weights;
+                    if (weights.Any(t => t > minMaxWeight))
+                        Literals.Add(literal);
+                }
+                else
+                {
+                    Literals.Add(literal);
+                }
             }
         }
     }
