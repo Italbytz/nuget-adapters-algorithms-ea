@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.ML;
 
 namespace Italbytz.EA.Fitness;
 
@@ -14,36 +13,44 @@ namespace Italbytz.EA.Fitness;
 public sealed class ConfusionMatrix : ICloneable
 {
     /// <summary>
-    ///     The indicators of the predicted classes.
-    ///     It might be the classes names, or just indices of the predicted classes, if
-    ///     the name mapping is missing.
-    /// </summary>
-    internal IReadOnlyList<ReadOnlyMemory<char>> PredictedClassesIndicators;
-
-    /// <summary>
     ///     The confusion matrix as a structured type, built from the counts of the
-    ///     confusion table <see cref="IDataView" /> that the
-    ///     <see cref="BinaryClassifierEvaluator" /> or
-    ///     the <see cref="MulticlassClassificationEvaluator" /> constructor.
+    ///     confusion table .
     /// </summary>
-    /// <param name="host">The IHost instance. </param>
-    /// <param name="precision">The values of precision per class.</param>
-    /// <param name="recall">The vales of recall per class.</param>
     /// <param name="confusionTableCounts">
     ///     The counts of the confusion table. The actual classes values are in the
     ///     rows of the 2D array,
     ///     and the counts of the predicted classes are in the columns.
     /// </param>
-    /// <param name="labelNames">
-    ///     The predicted classes names, or the indexes of the
-    ///     classes, if the names are missing.
-    /// </param>
-    /// <param name="isSampled">Whether the classes are sampled.</param>
-    /// <param name="isBinary">
-    ///     Whether the confusion table is the result of a binary
-    ///     classification.
-    /// </param>
-    public ConfusionMatrix(double[] precision, double[] recall,
+    public ConfusionMatrix(
+        int[,] confusionTableCounts)
+    {
+        NumberOfClasses = confusionTableCounts.GetLength(0);
+        // Calculate precision and recall per class
+        var precisionPerClass = new double[NumberOfClasses];
+        var recallPerClass = new double[NumberOfClasses];
+        for (var i = 0; i < NumberOfClasses; i++)
+        {
+            var tp = confusionTableCounts[i, i];
+            var fp = 0;
+            var fn = 0;
+            // Unroll loop for small NumberOfObjectives for better performance
+            for (var j = 0; j < NumberOfClasses; j++)
+                if (j != i)
+                {
+                    fp += confusionTableCounts[j, i];
+                    fn += confusionTableCounts[i, j];
+                }
+
+            precisionPerClass[i] = tp + fp > 0 ? (double)tp / (tp + fp) : 0.0;
+            recallPerClass[i] = tp + fn > 0 ? (double)tp / (tp + fn) : 0.0;
+        }
+
+        PerClassPrecision = precisionPerClass.ToImmutableArray();
+        PerClassRecall = recallPerClass.ToImmutableArray();
+        Counts = confusionTableCounts;
+    }
+
+    internal ConfusionMatrix(double[] precision, double[] recall,
         int[,] confusionTableCounts)
     {
         PerClassPrecision = precision.ToImmutableArray();

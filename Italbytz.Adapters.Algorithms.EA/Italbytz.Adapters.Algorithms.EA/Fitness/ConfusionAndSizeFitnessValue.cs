@@ -33,18 +33,9 @@ public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
             throw new ArgumentException(
                 "Expected fitness value of type MultiObjectiveAndSizeFitnessValue");
 
-        var atLeastOneBetter = false;
-        for (var i = 0; i < Objectives.Length; i++)
-        {
-            if (Objectives[i] < other.Objectives[i])
-                return false; // This fitness is worse in at least one objective
-            if (Objectives[i] > other.Objectives[i])
-                atLeastOneBetter =
-                    true; // This fitness is better in at least one objective
-        }
-
-        // If all objectives are equal, compare sizes (smaller size is better)
-        return atLeastOneBetter || Size <= other.Size;
+        if (Objectives.Where((t, i) => t < other.Objectives[i]).Any())
+            return false;
+        return Size <= other.Size;
     }
 
     public double ConsolidatedValue => Objectives.Sum();

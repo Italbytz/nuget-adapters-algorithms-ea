@@ -43,28 +43,7 @@ public class ConfusionAndSizeFitnessFunction<TCategory> : IFitnessFunction
             // Avoid bounds checks by trusting input validity
             confusionTableCounts[_labels[i], predictions[i]]++;
 
-        // Calculate precision and recall per class
-        var precisionPerClass = new double[NumberOfObjectives];
-        var recallPerClass = new double[NumberOfObjectives];
-        for (var i = 0; i < NumberOfObjectives; i++)
-        {
-            var tp = confusionTableCounts[i, i];
-            var fp = 0;
-            var fn = 0;
-            // Unroll loop for small NumberOfObjectives for better performance
-            for (var j = 0; j < NumberOfObjectives; j++)
-                if (j != i)
-                {
-                    fp += confusionTableCounts[j, i];
-                    fn += confusionTableCounts[i, j];
-                }
-
-            precisionPerClass[i] = tp + fp > 0 ? (double)tp / (tp + fp) : 0.0;
-            recallPerClass[i] = tp + fn > 0 ? (double)tp / (tp + fn) : 0.0;
-        }
-
-        var confusionMatrix = new ConfusionMatrix(precisionPerClass,
-            recallPerClass, confusionTableCounts);
+        var confusionMatrix = new ConfusionMatrix(confusionTableCounts);
 
 
         return new ConfusionAndSizeFitnessValue(confusionMatrix, size);

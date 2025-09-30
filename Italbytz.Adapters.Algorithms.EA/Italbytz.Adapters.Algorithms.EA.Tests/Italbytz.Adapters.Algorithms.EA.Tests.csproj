@@ -22,4 +22,16 @@
         <ProjectReference Include="..\Italbytz.Adapters.Algorithms.EA\Italbytz.Adapters.Algorithms.EA.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="Data\Simulations\Simulation1\SNPglm_1.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation2\SNPglm_1.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation3\SNPglm_1.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>
