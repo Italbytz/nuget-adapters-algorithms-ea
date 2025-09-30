@@ -36,7 +36,7 @@ public abstract class CommonRunStrategy : IRunStrategy
                     MaxSize = maxModelSize
                 },
             SearchSpace =
-                new LogicGpSearchSpace<int>(features, labels)
+                new LogicGpSearchSpace<int>(features)
                 {
                     Weighting = weighting
                 },

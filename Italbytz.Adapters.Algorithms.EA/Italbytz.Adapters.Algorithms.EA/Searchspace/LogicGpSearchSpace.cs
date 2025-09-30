@@ -8,12 +8,10 @@ namespace Italbytz.EA.Searchspace;
 public class LogicGpSearchSpace<TCategory> : ISearchSpace
 {
     private readonly TCategory[][] _features;
-    private readonly TCategory[] _labels;
 
-    public LogicGpSearchSpace(TCategory[][] features, TCategory[] labels)
+    public LogicGpSearchSpace(TCategory[][] features)
     {
         _features = features;
-        _labels = labels;
         GenerateLiterals();
     }
 
@@ -47,9 +45,7 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
 
     private void GenerateLiterals()
     {
-        var uniqueLabelSet = new HashSet<TCategory>(_labels);
-        var uniqueLabels = uniqueLabelSet.OrderBy(c => c);
-        Literals = new List<ILiteral<TCategory>>();
+        Literals = [];
         if (_features.Length == 0) return;
 
         var columnCount = _features[0].Length;
