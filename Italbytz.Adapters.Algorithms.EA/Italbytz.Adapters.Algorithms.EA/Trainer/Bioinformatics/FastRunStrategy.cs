@@ -43,9 +43,12 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
                 foldIndex++;
             }
 
-            // Calculate average fitness for individuals of current size
             var avgFitness =
-                CalculateAverageFitness(individualLists, _currentMaxSize);
+                CalculateWorstBestFitness(individualLists, _currentMaxSize);
+
+            /* Calculate average fitness for individuals of current size
+            var avgFitness =
+                CalculateAverageFitness(individualLists, _currentMaxSize);*/
 
             // Check if we should increase the size or stop
 
@@ -64,6 +67,31 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
         }
 
         return null;
+    }
+
+    private double CalculateWorstBestFitness(IIndividualList[] individualLists,
+        int targetSize)
+    {
+        var worstBestFitness = double.MaxValue;
+
+        foreach (var list in individualLists)
+        {
+            var bestFitnessInList = double.MinValue;
+            foreach (var individual in list)
+                if (individual.Size == targetSize)
+                {
+                    var fitnessValue =
+                        individual.LatestKnownFitness.ConsolidatedValue;
+                    if (fitnessValue > bestFitnessInList)
+                        bestFitnessInList = fitnessValue;
+                }
+
+            if (bestFitnessInList < worstBestFitness)
+                worstBestFitness = bestFitnessInList;
+        }
+
+        // Return the average of best and worst fitness
+        return worstBestFitness;
     }
 
 
