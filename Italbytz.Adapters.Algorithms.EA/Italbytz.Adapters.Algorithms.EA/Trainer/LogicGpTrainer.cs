@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Italbytz.EA.Control;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.Searchspace;
 using Italbytz.ML;
 using Italbytz.ML.Trainers;
 using Microsoft.ML;
@@ -85,52 +86,12 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
         var excerpt = input.GetDataExcerpt();
         var features = excerpt.Features;
         var labels = excerpt.Labels;
-        _labelMapping = CreateLabelMapping(labels);
-        _featureValueMappings = CreateFeatureValueMappings(features);
+        (_labelMapping, _reverseLabelMapping) =
+            MappingHelper.CreateLabelMapping(labels);
+        (_featureValueMappings, _reverseFeatureValueMappings) =
+            MappingHelper.CreateFeatureValueMappings(features);
         _model = RunStrategy.Run(input, _featureValueMappings,
             _labelMapping);
         Console.WriteLine(_model);
-    }
-
-    private Dictionary<float, int>[] CreateFeatureValueMappings(
-        List<float[]> features)
-    {
-        if (features.Count == 0)
-            return Array.Empty<Dictionary<float, int>>();
-
-        var columnCount = features[0].Length;
-        var mappings = new Dictionary<float, int>[columnCount];
-        _reverseFeatureValueMappings = new Dictionary<int, float>[columnCount];
-
-        for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
-        {
-            var columnValues =
-                features.Select(row => row[columnIndex]).ToArray();
-            var uniqueValues = new HashSet<float>(columnValues);
-            var categoryList = uniqueValues.OrderBy(c => c).ToList();
-            var mapping = new Dictionary<float, int>();
-            var reverseMapping = new Dictionary<int, float>();
-            for (var i = 0; i < categoryList.Count; i++)
-            {
-                mapping[categoryList[i]] = i;
-                reverseMapping[i] = categoryList[i];
-            }
-
-            mappings[columnIndex] = mapping;
-            _reverseFeatureValueMappings[columnIndex] = reverseMapping;
-        }
-
-        return mappings;
-    }
-
-    private Dictionary<uint, int> CreateLabelMapping(List<uint> labels)
-    {
-        var uniqueLabels = labels.Distinct().OrderBy(l => l).ToList();
-        var mapping = new Dictionary<uint, int>();
-        for (var i = 0; i < uniqueLabels.Count; i++)
-            mapping[uniqueLabels[i]] = i;
-        _reverseLabelMapping =
-            mapping.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
-        return mapping;
     }
 }

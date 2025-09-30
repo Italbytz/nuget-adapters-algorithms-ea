@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
+using Italbytz.EA.Searchspace;
 using Italbytz.EA.Selection;
 using Italbytz.ML;
 using Microsoft.ML;
@@ -16,9 +17,6 @@ public abstract class RunStrategy(int generations) : CommonRunStrategy
         Dictionary<float, int>[] featureValueMappings,
         Dictionary<uint, int> labelMapping)
     {
-        FeatureValueMappings = featureValueMappings;
-        LabelMapping = labelMapping;
-
         const int k = 5; // Number of folds
         var mlContext = ThreadSafeMLContext.LocalMLContext;
         var cvResults = mlContext.Data.CrossValidationSplit(input);
@@ -32,8 +30,12 @@ public abstract class RunStrategy(int generations) : CommonRunStrategy
             var trainExcerpt = trainSet.GetDataExcerpt();
             var trainFeatures = trainExcerpt.Features;
             var trainLabels = trainExcerpt.Labels;
-            var convertedTrainFeatures = PrepareForLogicGp(trainFeatures);
-            var convertedTrainLabels = PrepareForLogicGp(trainLabels);
+            var convertedTrainFeatures = MappingHelper.MapFeatures(
+                trainFeatures,
+                featureValueMappings);
+            var convertedTrainLabels = MappingHelper.MapLabels(
+                trainLabels,
+                labelMapping);
             var individuals =
                 RunSpecificLogicGp(convertedTrainFeatures,
                     convertedTrainLabels);
@@ -44,8 +46,11 @@ public abstract class RunStrategy(int generations) : CommonRunStrategy
             var validationFeatures = validationExcerpt.Features;
             var validationLabels = validationExcerpt.Labels;
             var convertedValidationFeatures =
-                PrepareForLogicGp(validationFeatures);
-            var convertedValidationLabels = PrepareForLogicGp(validationLabels);
+                MappingHelper.MapFeatures(validationFeatures,
+                    featureValueMappings);
+            var convertedValidationLabels = MappingHelper.MapLabels(
+                validationLabels,
+                labelMapping);
             var fitness = new ConfusionAndSizeFitnessFunction<int>(
                 convertedValidationFeatures, convertedValidationLabels);
             foreach (var individual in individuals.Result)
