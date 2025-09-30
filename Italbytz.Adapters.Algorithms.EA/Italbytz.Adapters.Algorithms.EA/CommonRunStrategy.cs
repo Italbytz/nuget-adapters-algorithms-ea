@@ -7,6 +7,7 @@ using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Searchspace;
 using Italbytz.EA.StoppingCriterion;
+using Italbytz.ML;
 using Microsoft.ML;
 
 namespace Italbytz.EA;
@@ -55,5 +56,49 @@ public abstract class CommonRunStrategy : IRunStrategy
         ];
         var population = logicGp.Run();
         return population;
+    }
+
+    public IIndividualList TrainAndValidate(IDataView trainSet,
+        IDataView validationSet, Dictionary<float, int>[] featureValueMappings,
+        Dictionary<uint, int> labelMapping)
+    {
+        // Train
+        var trainExcerpt = trainSet.GetDataExcerpt();
+        var trainFeatures = trainExcerpt.Features;
+        var trainLabels = trainExcerpt.Labels;
+        var convertedTrainFeatures = MappingHelper.MapFeatures(
+            trainFeatures,
+            featureValueMappings);
+        var convertedTrainLabels = MappingHelper.MapLabels(
+            trainLabels,
+            labelMapping);
+        var individuals =
+            RunSpecificLogicGp(convertedTrainFeatures,
+                convertedTrainLabels);
+        individuals.Result.Freeze();
+        // Validate
+        var validationExcerpt = validationSet.GetDataExcerpt();
+        var validationFeatures = validationExcerpt.Features;
+        var validationLabels = validationExcerpt.Labels;
+        var convertedValidationFeatures =
+            MappingHelper.MapFeatures(validationFeatures,
+                featureValueMappings);
+        var convertedValidationLabels = MappingHelper.MapLabels(
+            validationLabels,
+            labelMapping);
+        var fitness = new ConfusionAndSizeFitnessFunction<int>(
+            convertedValidationFeatures, convertedValidationLabels);
+        foreach (var individual in individuals.Result)
+        {
+            var oldFitness =
+                (IFitnessValue?)individual.LatestKnownFitness.Clone();
+            var newFitness = fitness.Evaluate(individual);
+            if (individual.Genotype is not IValidatableGenotype genotype)
+                continue;
+            genotype.TrainingFitness = oldFitness;
+            genotype.ValidationFitness = (IFitnessValue?)newFitness.Clone();
+        }
+
+        return individuals.Result;
     }
 }

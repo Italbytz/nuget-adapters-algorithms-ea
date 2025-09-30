@@ -33,10 +33,9 @@ public class WeightedMonomial<TCategory> : IMonomial<TCategory>
             Weights = weightsCopy
         };
     }
-    
+
     public List<ILiteral<TCategory>> Literals { get; set; }
     public float[] Weights { get; set; }
-    public float[][] Predictions { get; set; }
     public int Size => Literals.Count;
 
     public float[] Evaluate(TCategory[] input)

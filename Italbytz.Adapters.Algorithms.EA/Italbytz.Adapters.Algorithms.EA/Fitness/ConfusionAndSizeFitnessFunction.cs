@@ -26,17 +26,27 @@ public class ConfusionAndSizeFitnessFunction<TCategory> : IFitnessFunction
         if (individual.Genotype is not IPredictingGenotype<TCategory> genotype)
             throw new ArgumentException(
                 "Expected genotype of type IPredictingGenotype");
+        // Initialize confusion matrix
+        var confusionTableCounts =
+            new int[NumberOfObjectives, NumberOfObjectives];
+
         var size = individual.Size;
         if (size > MaxSize)
-            return new ConfusionAndSizeFitnessValue(null, size);
+        {
+            // Generate bad confusion matrix for oversized individuals
+            for (var i = 0; i < NumberOfObjectives; i++)
+            for (var j = 0; j < NumberOfObjectives; j++)
+                if (i == j) confusionTableCounts[i, j] = 0;
+                else confusionTableCounts[i, j] = 1;
+
+            return new ConfusionAndSizeFitnessValue(
+                new ConfusionMatrix(confusionTableCounts), size);
+        }
+
         var featuresLength = _features.Length;
 
         // Predict classes for all features
         var predictions = genotype.PredictClasses(_features, _labels);
-
-        // Initialize confusion matrix
-        var confusionTableCounts =
-            new int[NumberOfObjectives, NumberOfObjectives];
 
         // Use Span for faster iteration if possible (C# 7.2+), otherwise keep as is
         for (var i = 0; i < featuresLength; i++)

@@ -160,7 +160,8 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public int[] PredictClasses(TCategory[][] features, int[] labels)
     {
-        if (Weighting != Weighting.Fixed) ComputeWeights(features, labels);
+        if (Polynomial.Weights == null || Weighting != Weighting.Fixed)
+            ComputeWeights(features, labels);
         var results = new int[features.Length];
         Parallel.For(0, features.Length,
             i => { results[i] = PredictClass(features[i]); });
@@ -179,6 +180,7 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
     public void ComputeWeights(TCategory[][] features, int[] labels)
     {
+        if (Weighting == Weighting.Fixed && Polynomial.Weights != null) return;
         var classes = labels.Max() + 1;
         if (Polynomial.Monomials.Count == 0) return;
         var counts = new int[Polynomial.Monomials.Count + 1][];
@@ -222,7 +224,7 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
             var counterCount = counterCounts[i];
             var computedWeights =
                 ComputeDistributionWeights(count, counterCount);
-            if (Weighting == Weighting.ComputedBinary)
+            if (Weighting is Weighting.ComputedBinary or Weighting.Fixed)
             {
                 var maxIndex =
                     Array.IndexOf(computedWeights, computedWeights.Max());
@@ -235,7 +237,7 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
 
         var computedPolynomialWeights =
             ComputeDistributionWeights(counts[^1], counterCounts[^1]);
-        if (Weighting == Weighting.ComputedBinary)
+        if (Weighting is Weighting.ComputedBinary or Weighting.Fixed)
         {
             var maxIndex =
                 Array.IndexOf(computedPolynomialWeights,
