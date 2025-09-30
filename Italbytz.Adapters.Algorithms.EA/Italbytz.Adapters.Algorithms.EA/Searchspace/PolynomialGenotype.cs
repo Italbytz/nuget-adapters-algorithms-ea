@@ -11,18 +11,32 @@ using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
+public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
     ILogicGpMutable, ICrossable, IFreezable, IValidatableGenotype
 {
     private readonly List<ILiteral<TCategory>> _literals;
     public readonly IPolynomial<TCategory> Polynomial;
 
-    public Genotype(IPolynomial<TCategory> polynomial,
+    public PolynomialGenotype(IPolynomial<TCategory> polynomial,
         List<ILiteral<TCategory>> literals, Weighting weighting)
     {
         Polynomial = polynomial;
         _literals = literals;
         Weighting = weighting;
+    }
+
+    public PolynomialGenotype(IMonomial<TCategory> monomial,
+        List<ILiteral<TCategory>> literals, Weighting weighting) : this(
+        new WeightedPolynomial<TCategory>([monomial]), literals,
+        weighting)
+    {
+    }
+
+    public PolynomialGenotype(ILiteral<TCategory> literal,
+        List<ILiteral<TCategory>> literals, Weighting weighting) : this(
+        new WeightedMonomial<TCategory>([literal]), literals,
+        weighting)
+    {
     }
 
     public Weighting Weighting { get; set; } = Weighting.Fixed;
@@ -33,7 +47,7 @@ public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
     public void CrossWith(ICrossable parentGenotype)
     {
         if (LatestKnownFitness != null) throw new InvalidOperationException();
-        if (parentGenotype is not Genotype<TCategory> parent)
+        if (parentGenotype is not PolynomialGenotype<TCategory> parent)
             throw new InvalidOperationException(
                 "Parent genotype is not of the same type");
         var monomial =
@@ -114,7 +128,7 @@ public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
     {
         var clonedPolynomial =
             (IPolynomial<TCategory>)Polynomial.Clone();
-        return new Genotype<TCategory>(clonedPolynomial, _literals,
+        return new PolynomialGenotype<TCategory>(clonedPolynomial, _literals,
             Weighting);
     }
 
@@ -323,6 +337,7 @@ public class Genotype<TCategory> : IPredictingGenotype<TCategory>,
             literals[ThreadSafeRandomNetCore.Shared.Next(literals.Count)];
         var monomial = new WeightedMonomial<TCategory>([literal]);
         var polynomial = new WeightedPolynomial<TCategory>([monomial]);
-        return new Genotype<TCategory>(polynomial, literals, weighting);
+        return new PolynomialGenotype<TCategory>(polynomial, literals,
+            weighting);
     }
 }

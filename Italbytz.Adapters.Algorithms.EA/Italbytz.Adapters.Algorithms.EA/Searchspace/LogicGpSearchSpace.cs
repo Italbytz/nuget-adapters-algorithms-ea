@@ -23,7 +23,7 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
 
     public IGenotype GetRandomGenotype()
     {
-        return Genotype<TCategory>.GenerateRandomGenotype(Literals,
+        return PolynomialGenotype<TCategory>.GenerateRandomGenotype(Literals,
             Weighting);
     }
 
@@ -36,7 +36,8 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
             var polynomial = new WeightedPolynomial<TCategory>(
                 [monomial]);
             var genotype =
-                new Genotype<TCategory>(polynomial, Literals, Weighting);
+                new PolynomialGenotype<TCategory>(polynomial, Literals,
+                    Weighting);
             var individual = new Individual(genotype, null);
             result.Add(individual);
         }
