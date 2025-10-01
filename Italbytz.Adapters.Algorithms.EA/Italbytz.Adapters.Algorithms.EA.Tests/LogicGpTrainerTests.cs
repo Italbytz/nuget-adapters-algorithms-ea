@@ -1,5 +1,4 @@
 using Italbytz.EA.Trainer;
-using Italbytz.EA.Trainer.Gecco;
 using Italbytz.ML;
 using Italbytz.ML.Data;
 using Italbytz.ML.ModelBuilder.Configuration;
@@ -20,10 +19,8 @@ public class LogicGpTrainerTests
     public async Task TestLogicGp()
     {
         var trainer =
-            new LogicGpMulticlassTrainer<TernaryClassificationOutput>
-            {
-                RunStrategy = new FlrwRunStrategy(10000)
-            };
+            new LogicGpFlcwMacroMulticlassTrainer<TernaryClassificationOutput>(
+                10000);
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,

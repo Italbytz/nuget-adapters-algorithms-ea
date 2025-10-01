@@ -1,5 +1,4 @@
 using Italbytz.EA.Trainer;
-using Italbytz.EA.Trainer.Bioinformatics;
 using Italbytz.ML;
 using Italbytz.ML.Data;
 using Italbytz.ML.ModelBuilder.Configuration;
@@ -20,10 +19,8 @@ public class LogicGpSpeedupTests
     public void TestNewTrainer()
     {
         var trainer =
-            new LogicGpMulticlassTrainer<TernaryClassificationOutput>
-            {
-                RunStrategy = new RunStrategy(100)
-            };
+            new LogicGpRlcwMulticlassTrainer<TernaryClassificationOutput>(
+                100, 100, 1.1);
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,

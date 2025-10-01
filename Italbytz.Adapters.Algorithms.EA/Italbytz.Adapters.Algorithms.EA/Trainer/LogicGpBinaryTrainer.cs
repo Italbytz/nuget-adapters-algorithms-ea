@@ -2,7 +2,7 @@ using Italbytz.ML;
 
 namespace Italbytz.EA.Trainer;
 
-public class LogicGpBinaryTrainer : LogicGpTrainer<
+public abstract class LogicGpBinaryTrainer : LogicGpTrainer<
     BinaryClassificationOutput>
 {
 }

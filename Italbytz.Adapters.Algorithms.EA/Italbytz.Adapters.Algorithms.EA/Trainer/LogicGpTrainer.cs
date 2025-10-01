@@ -11,12 +11,13 @@ using Microsoft.ML.Data;
 
 namespace Italbytz.EA.Trainer;
 
-public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
+public abstract class LogicGpTrainer<TOutput> :
+    CustomClassificationTrainer<TOutput>, IInterpretableTrainer
     where TOutput : class, new()
+
 {
     private Dictionary<float, int>[] _featureValueMappings;
     private Dictionary<uint, int> _labelMapping = new();
-    private IIndividual? _model;
     private Dictionary<int, float>[] _reverseFeatureValueMappings;
     private Dictionary<int, uint> _reverseLabelMapping;
 
@@ -24,9 +25,12 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
 
     public IRunStrategy? RunStrategy { get; set; }
 
+    public IIndividualList FinalPopulation { get; set; }
+    public IIndividual Model { get; set; }
+
     protected override void Map(ClassificationInput input, TOutput output)
     {
-        if (_model == null)
+        if (Model == null)
             throw new InvalidOperationException("Model is not trained.");
         var featureArray = input.Features.ToArray();
         var intFeatures = new int[featureArray.Length];
@@ -41,7 +45,7 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
             intFeatures[i] = intValue;
         }
 
-        if (_model.Genotype is not IPredictingGenotype<int> genotype)
+        if (Model.Genotype is not IPredictingGenotype<int> genotype)
             throw new InvalidOperationException(
                 "Model genotype does not support prediction.");
         var prediction = genotype.PredictClass(intFeatures);
@@ -90,8 +94,7 @@ public class LogicGpTrainer<TOutput> : CustomClassificationTrainer<TOutput>
             MappingHelper.CreateLabelMapping(labels);
         (_featureValueMappings, _reverseFeatureValueMappings) =
             MappingHelper.CreateFeatureValueMappings(features);
-        _model = RunStrategy.Run(input, _featureValueMappings,
+        Model = RunStrategy.Run(input, _featureValueMappings,
             _labelMapping);
-        Console.WriteLine(_model);
     }
 }

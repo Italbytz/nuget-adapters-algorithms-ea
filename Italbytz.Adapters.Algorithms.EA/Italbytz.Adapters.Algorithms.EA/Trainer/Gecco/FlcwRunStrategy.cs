@@ -4,7 +4,7 @@ using Italbytz.EA.Initialization;
 
 namespace Italbytz.EA.Trainer.Gecco;
 
-public class FlrwRunStrategy(int generations, double minMaxWeight = 0.0)
+public class FlcwRunStrategy(int generations, double minMaxWeight = 0.0)
     : RunStrategy(generations, minMaxWeight)
 {
     protected override Task<IIndividualList> RunSpecificLogicGp(
