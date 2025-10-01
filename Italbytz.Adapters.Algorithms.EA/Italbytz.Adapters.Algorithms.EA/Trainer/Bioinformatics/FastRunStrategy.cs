@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
@@ -11,7 +10,10 @@ using Microsoft.ML;
 
 namespace Italbytz.EA.Trainer.Bioinformatics;
 
-public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
+public class FastRunStrategy(
+    int phase1Generations,
+    int phase2Generations,
+    double minMaxWeight = 0.0)
     : CommonRunStrategy
 {
     private const int MaximumSize = 50;
@@ -33,10 +35,12 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
         _currentMaxSize = 1;
         const int k = 5; // Number of folds
         var cvResults = mlContext.Data.CrossValidationSplit(input);
+        IIndividualList[] individualLists;
+        int foldIndex;
         while (fitnessIncrease)
         {
-            var individualLists = new IIndividualList[k];
-            var foldIndex = 0;
+            individualLists = new IIndividualList[k];
+            foldIndex = 0;
 
             foreach (var fold in cvResults)
             {
@@ -46,7 +50,8 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
             }
 
             var avgFitness =
-                CalculateWorstBestFitness(individualLists, _currentMaxSize);
+                DetermineDesiredBestIndividualAndFitness(individualLists,
+                    _currentMaxSize, false).Item2;
 
             // Check if we should increase the size or stop
             if (_currentMaxSize >= MaximumSize ||
@@ -65,40 +70,54 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
 
         // Phase 2: Determine model 
         sizeDetermination = false;
-        var individuals = TrainAndValidate(input, input, featureValueMappings,
-            labelMapping);
+        individualLists = new IIndividualList[k];
+        foldIndex = 0;
 
-        var bestIndividual = individuals
-            //.Where(ind => ind.Size == _currentMaxSize)
-            .OrderByDescending(ind => ind.LatestKnownFitness.ConsolidatedValue)
-            .FirstOrDefault();
+        foreach (var fold in cvResults)
+        {
+            individualLists[foldIndex] = TrainAndValidate(fold.TrainSet,
+                fold.TestSet, featureValueMappings, labelMapping);
+            foldIndex++;
+        }
+
+        var bestIndividual =
+            DetermineDesiredBestIndividualAndFitness(individualLists,
+                _currentMaxSize).Item1;
 
         return bestIndividual;
     }
 
-    private double CalculateWorstBestFitness(IIndividualList[] individualLists,
-        int targetSize)
+    private (IIndividual, double) DetermineDesiredBestIndividualAndFitness(
+        IIndividualList[] individualLists,
+        int targetSize, bool bestOfAll = true)
     {
-        var worstBestFitness = double.MaxValue;
+        var chosenBestFitness = bestOfAll ? double.MinValue : double.MaxValue;
+        IIndividual? chosenBestIndividual = null;
 
         foreach (var list in individualLists)
         {
             var bestFitnessInList = double.MinValue;
+            IIndividual? bestIndividualInList = null;
             foreach (var individual in list)
                 if (individual.Size == targetSize)
                 {
                     var fitnessValue =
                         individual.LatestKnownFitness.ConsolidatedValue;
-                    if (fitnessValue > bestFitnessInList)
-                        bestFitnessInList = fitnessValue;
+                    if (!(fitnessValue > bestFitnessInList)) continue;
+                    bestFitnessInList = fitnessValue;
+                    bestIndividualInList = individual;
                 }
 
-            if (bestFitnessInList < worstBestFitness)
-                worstBestFitness = bestFitnessInList;
+            Console.WriteLine(bestIndividualInList.ToString());
+            if ((bestFitnessInList < chosenBestFitness && !bestOfAll) || (
+                    bestFitnessInList > chosenBestFitness && bestOfAll))
+            {
+                chosenBestFitness = bestFitnessInList;
+                chosenBestIndividual = bestIndividualInList;
+            }
         }
 
-        // Return the average of best and worst fitness
-        return worstBestFitness;
+        return (chosenBestIndividual, chosenBestFitness);
     }
 
 
@@ -126,7 +145,9 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
         return RunLogicGp(features, labels,
             new Gecco.LogicGpGraph(), new CompleteInitialization(),
             _currentMaxSize,
-            generations: sizeDetermination ? 250 : generations,
+            generations: sizeDetermination
+                ? phase1Generations
+                : phase2Generations,
             minMaxWeight: minMaxWeight);
     }
 }

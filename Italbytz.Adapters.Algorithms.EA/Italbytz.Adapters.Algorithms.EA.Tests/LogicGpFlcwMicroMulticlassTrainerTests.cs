@@ -6,11 +6,11 @@ using Italbytz.ML.ModelBuilder.Configuration;
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
 [TestClass]
-public class LogicGpFlrwMicroMulticlassTrainerTests
+public class LogicGpFlcwMicroMulticlassTrainerTests
 {
     private readonly IDataset _dataset;
 
-    public LogicGpFlrwMicroMulticlassTrainerTests()
+    public LogicGpFlcwMicroMulticlassTrainerTests()
     {
         _dataset = Data.Iris;
     }
@@ -19,7 +19,7 @@ public class LogicGpFlrwMicroMulticlassTrainerTests
     public async Task TestLogicGp()
     {
         var trainer =
-            new LogicGpFlrwMicroMulticlassTrainer<TernaryClassificationOutput>(
+            new LogicGpFlcwMicroMulticlassTrainer<TernaryClassificationOutput>(
                 1000);
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
