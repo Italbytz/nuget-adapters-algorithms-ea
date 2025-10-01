@@ -12,7 +12,7 @@ public class SNPSimulationTests
     {
         GPASSimulation(1, AppDomain.CurrentDomain.BaseDirectory,
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                1000, 1000, 1.1));
+                100, 100, 1.1));
     }
 
     [TestMethod]

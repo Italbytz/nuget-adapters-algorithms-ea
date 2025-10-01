@@ -105,10 +105,11 @@ public class RlcwRunStrategy(
                         validatable)
                         throw new ArgumentException(
                             "Expected genotype of type IValidatableGenotype");
-                    var trainingFitnessValue =
-                        validatable.TrainingFitness.ConsolidatedValue;
-                    if (!(trainingFitnessValue > bestFitnessInList)) continue;
-                    bestFitnessInList = trainingFitnessValue;
+                    var fitnessValue =
+                        //validatable.TrainingFitness.ConsolidatedValue +
+                        validatable.ValidationFitness.ConsolidatedValue;
+                    if (!(fitnessValue > bestFitnessInList)) continue;
+                    bestFitnessInList = fitnessValue;
                     bestIndividualInList = individual;
                 }
 
@@ -118,7 +119,7 @@ public class RlcwRunStrategy(
                     "Expected genotype of type IValidatableGenotype");
             var validationFitnessValue =
                 validatableBest.ValidationFitness.ConsolidatedValue;
-            Console.WriteLine(bestIndividualInList.ToString());
+            //Console.WriteLine(bestIndividualInList.ToString());
             if ((validationFitnessValue < chosenBestFitness && !bestOfAll) || (
                     validationFitnessValue > chosenBestFitness && bestOfAll))
             {
@@ -146,6 +147,42 @@ public class RlcwRunStrategy(
             }
 
         return count > 0 ? sumFitness / count : 0.0;
+    }
+
+    private double CalculateFitnessSumOfBestIndividuals(
+        IIndividualList[] individualLists,
+        int targetSize)
+    {
+        var sumFitness = 0.0;
+        foreach (var list in individualLists)
+        {
+            var bestFitnessInList = double.MinValue;
+            IIndividual? bestIndividualInList = null;
+            foreach (var individual in list)
+                if (individual.Size == targetSize)
+                {
+                    if (individual.Genotype is not IValidatableGenotype
+                        validatable)
+                        throw new ArgumentException(
+                            "Expected genotype of type IValidatableGenotype");
+                    var fitnessValue =
+                        //validatable.TrainingFitness.ConsolidatedValue +
+                        validatable.ValidationFitness.ConsolidatedValue;
+                    if (!(fitnessValue > bestFitnessInList)) continue;
+                    bestFitnessInList = fitnessValue;
+                    bestIndividualInList = individual;
+                }
+
+            if (bestIndividualInList.Genotype is not IValidatableGenotype
+                validatableBest)
+                throw new ArgumentException(
+                    "Expected genotype of type IValidatableGenotype");
+            var validationFitnessValue =
+                validatableBest.ValidationFitness.ConsolidatedValue;
+            sumFitness += validationFitnessValue;
+        }
+
+        return sumFitness;
     }
 
 
