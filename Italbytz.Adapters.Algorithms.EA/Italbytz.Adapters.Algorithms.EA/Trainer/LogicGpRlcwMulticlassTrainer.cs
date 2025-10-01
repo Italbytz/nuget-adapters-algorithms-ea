@@ -10,7 +10,7 @@ public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
         int phase2Generations, double minMaxWeight = 0.0)
     {
         ConfusionAndSizeFitnessValue.UsedMetric = Metric.F1Score;
-        RunStrategy = new FastRunStrategy(phase1Generations, phase2Generations,
+        RunStrategy = new RlcwRunStrategy(phase1Generations, phase2Generations,
             minMaxWeight);
     }
 }

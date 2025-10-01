@@ -15,6 +15,8 @@ public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
         Monomials = monomials;
     }
 
+    public float[][] Predictions { get; set; }
+
     public float[] Weights { get; set; }
 
     public int Size
@@ -53,12 +55,6 @@ public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
         }
 
         // Check if sum is zero and return weights instead
-        if (Weights == null)
-        {
-            Console.WriteLine("S");
-            Console.WriteLine("S");
-        }
-
         return result.Sum() == 0.0f ? Weights : result;
     }
 
@@ -67,14 +63,13 @@ public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
         var random = ThreadSafeRandomNetCore.Shared;
         return Monomials[random.Next(Monomials.Count)];
     }
-    
+
     public List<ILiteral<TCategory>> GetAllLiterals()
     {
         return Monomials.SelectMany(m => m.Literals).Distinct().ToList();
     }
 
     public List<IMonomial<TCategory>> Monomials { get; set; }
-    public float[][] Predictions { get; set; }
 
     public override string ToString()
     {

@@ -8,12 +8,21 @@ namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Simulated;
 public class SNPSimulationTests
 {
     [TestMethod]
-    public void TestSNP()
+    public void TestSimulation1()
     {
         GPASSimulation(1, AppDomain.CurrentDomain.BaseDirectory,
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                1000, 10000, 1.1));
+                1000, 1000, 1.1));
     }
+
+    [TestMethod]
+    public void TestSimulation2()
+    {
+        GPASSimulation(2, AppDomain.CurrentDomain.BaseDirectory,
+            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                100, 1000, 1.1));
+    }
+
 
     private void GPASSimulation(int simulation,
         string baseDirectory, IEstimator<ITransformer> trainer)

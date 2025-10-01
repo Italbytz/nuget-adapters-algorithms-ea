@@ -10,7 +10,7 @@ using Microsoft.ML;
 
 namespace Italbytz.EA.Trainer.Bioinformatics;
 
-public class FastRunStrategy(
+public class RlcwRunStrategy(
     int phase1Generations,
     int phase2Generations,
     double minMaxWeight = 0.0)
@@ -101,18 +101,28 @@ public class FastRunStrategy(
             foreach (var individual in list)
                 if (individual.Size == targetSize)
                 {
-                    var fitnessValue =
-                        individual.LatestKnownFitness.ConsolidatedValue;
-                    if (!(fitnessValue > bestFitnessInList)) continue;
-                    bestFitnessInList = fitnessValue;
+                    if (individual.Genotype is not IValidatableGenotype
+                        validatable)
+                        throw new ArgumentException(
+                            "Expected genotype of type IValidatableGenotype");
+                    var trainingFitnessValue =
+                        validatable.TrainingFitness.ConsolidatedValue;
+                    if (!(trainingFitnessValue > bestFitnessInList)) continue;
+                    bestFitnessInList = trainingFitnessValue;
                     bestIndividualInList = individual;
                 }
 
+            if (bestIndividualInList.Genotype is not IValidatableGenotype
+                validatableBest)
+                throw new ArgumentException(
+                    "Expected genotype of type IValidatableGenotype");
+            var validationFitnessValue =
+                validatableBest.ValidationFitness.ConsolidatedValue;
             Console.WriteLine(bestIndividualInList.ToString());
-            if ((bestFitnessInList < chosenBestFitness && !bestOfAll) || (
-                    bestFitnessInList > chosenBestFitness && bestOfAll))
+            if ((validationFitnessValue < chosenBestFitness && !bestOfAll) || (
+                    validationFitnessValue > chosenBestFitness && bestOfAll))
             {
-                chosenBestFitness = bestFitnessInList;
+                chosenBestFitness = validationFitnessValue;
                 chosenBestIndividual = bestIndividualInList;
             }
         }

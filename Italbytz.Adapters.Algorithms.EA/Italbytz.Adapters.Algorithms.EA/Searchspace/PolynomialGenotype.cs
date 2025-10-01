@@ -148,6 +148,8 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
     public int PredictClass(TCategory[] features)
     {
         var result = Polynomial.Evaluate(features);
+        /*Console.WriteLine(
+            $"{string.Join(",", Polynomial.GetAllLiterals())} predicts {string.Join(",", result)} for {string.Join(",", features.Take(6))}");*/
         var chosenIndex = PredictionStrategy switch
         {
             PredictionStrategy.Max => MaxIndex(result),
@@ -165,6 +167,10 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
         var results = new int[features.Length];
         Parallel.For(0, features.Length,
             i => { results[i] = PredictClass(features[i]); });
+        /*for (var i = 0; i < results.Length; i++)
+            if (results[i] == 0)
+                Console.WriteLine($"Index {i + 2}: {results[i]}");*/
+
         return results;
     }
 
