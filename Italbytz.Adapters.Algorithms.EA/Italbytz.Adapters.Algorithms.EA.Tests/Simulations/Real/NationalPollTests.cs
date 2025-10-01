@@ -41,7 +41,6 @@ public class NationalPollTests
     public StreamWriter LogWriter { get; set; }
 
     [TestMethod]
-    [TestCategory("FixedSeed")]
     public async Task TestLogicGp()
     {
         ThreadSafeRandomNetCore.Seed = 42;

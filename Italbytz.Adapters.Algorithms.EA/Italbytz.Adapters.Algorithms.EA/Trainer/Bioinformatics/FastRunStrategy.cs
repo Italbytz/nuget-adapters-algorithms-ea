@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
@@ -14,8 +15,8 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
     : CommonRunStrategy
 {
     private const int MaximumSize = 50;
-    private readonly bool sizeDetermination = true;
     private int _currentMaxSize;
+    private bool sizeDetermination = true;
 
     public IValidatedPopulationSelection SelectionStrategy { get; set; } =
         new FinalCandidatesSelection();
@@ -25,6 +26,7 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
         Dictionary<uint, int> labelMapping)
     {
         // Phase 1: Determine model size
+        sizeDetermination = true;
         var mlContext = ThreadSafeMLContext.LocalMLContext;
         var fitnessIncrease = true;
         var previousAvgFitness = 0.0;
@@ -46,12 +48,7 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
             var avgFitness =
                 CalculateWorstBestFitness(individualLists, _currentMaxSize);
 
-            /* Calculate average fitness for individuals of current size
-            var avgFitness =
-                CalculateAverageFitness(individualLists, _currentMaxSize);*/
-
             // Check if we should increase the size or stop
-
             if (_currentMaxSize >= MaximumSize ||
                 avgFitness < previousAvgFitness)
             {
@@ -66,7 +63,17 @@ public class FastRunStrategy(int generations, double minMaxWeight = 0.0)
             }
         }
 
-        return null;
+        // Phase 2: Determine model 
+        sizeDetermination = false;
+        var individuals = TrainAndValidate(input, input, featureValueMappings,
+            labelMapping);
+
+        var bestIndividual = individuals
+            //.Where(ind => ind.Size == _currentMaxSize)
+            .OrderByDescending(ind => ind.LatestKnownFitness.ConsolidatedValue)
+            .FirstOrDefault();
+
+        return bestIndividual;
     }
 
     private double CalculateWorstBestFitness(IIndividualList[] individualLists,
