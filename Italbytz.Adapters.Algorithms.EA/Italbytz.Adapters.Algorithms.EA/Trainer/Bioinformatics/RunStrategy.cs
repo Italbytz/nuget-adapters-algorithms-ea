@@ -16,7 +16,7 @@ public class RunStrategy(int generations, double minMaxWeight = 0.0)
         new FinalCandidatesSelection();
 
 
-    public override IIndividual Run(IDataView input,
+    public override (IIndividual, IIndividualList) Run(IDataView input,
         Dictionary<float, int>[] featureValueMappings,
         Dictionary<uint, int> labelMapping)
     {
@@ -32,7 +32,11 @@ public class RunStrategy(int generations, double minMaxWeight = 0.0)
             foldIndex++;
         }
 
-        return SelectionStrategy.Process(individualLists);
+        var chosenIndividual = SelectionStrategy.Process(individualLists);
+        var allIndividuals = new ListBasedPopulation();
+        foreach (var list in individualLists) allIndividuals.AddRange(list);
+
+        return (chosenIndividual, allIndividuals);
     }
 
     protected override Task<IIndividualList> RunSpecificLogicGp(

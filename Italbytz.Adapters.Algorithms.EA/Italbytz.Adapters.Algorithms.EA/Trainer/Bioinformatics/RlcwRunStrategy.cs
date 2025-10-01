@@ -23,7 +23,7 @@ public class RlcwRunStrategy(
     public IValidatedPopulationSelection SelectionStrategy { get; set; } =
         new FinalCandidatesSelection();
 
-    public override IIndividual Run(IDataView input,
+    public override (IIndividual, IIndividualList) Run(IDataView input,
         Dictionary<float, int>[] featureValueMappings,
         Dictionary<uint, int> labelMapping)
     {
@@ -84,7 +84,10 @@ public class RlcwRunStrategy(
             DetermineDesiredBestIndividualAndFitness(individualLists,
                 _currentMaxSize).Item1;
 
-        return bestIndividual;
+        var allIndividuals = new ListBasedPopulation();
+        foreach (var list in individualLists) allIndividuals.AddRange(list);
+
+        return (bestIndividual, allIndividuals);
     }
 
     private (IIndividual, double) DetermineDesiredBestIndividualAndFitness(

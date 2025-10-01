@@ -14,7 +14,7 @@ namespace Italbytz.EA;
 
 public abstract class CommonRunStrategy : IRunStrategy
 {
-    public abstract IIndividual Run(IDataView input,
+    public abstract (IIndividual, IIndividualList) Run(IDataView input,
         Dictionary<float, int>[] featureValueMappings,
         Dictionary<uint, int> labelMapping);
 

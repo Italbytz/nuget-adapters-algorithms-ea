@@ -94,7 +94,7 @@ public abstract class LogicGpTrainer<TOutput> :
             MappingHelper.CreateLabelMapping(labels);
         (_featureValueMappings, _reverseFeatureValueMappings) =
             MappingHelper.CreateFeatureValueMappings(features);
-        Model = RunStrategy.Run(input, _featureValueMappings,
+        (Model, FinalPopulation) = RunStrategy.Run(input, _featureValueMappings,
             _labelMapping);
     }
 }
