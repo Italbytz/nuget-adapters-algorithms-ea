@@ -28,18 +28,19 @@ public class RlcwRunStrategy(
         Dictionary<float, int>[] featureValueMappings,
         Dictionary<uint, int> labelMapping)
     {
+        var allIndividuals = new ListBasedPopulation();
+
         // Phase 1: Determine model size
         sizeDetermination = true;
         var mlContext = ThreadSafeMLContext.LocalMLContext;
-        var fitnessIncrease = true;
-        var previousAvgFitness = 0.0;
+        var fitnessDecreases = 0;
+        var bestAvgFitness = 0.0;
         var chosenSize = 1;
-        var isSecondChance = false;
         _currentMaxSize = 1;
         var cvResults = mlContext.Data.CrossValidationSplit(input);
         IIndividualList[] individualLists;
         int foldIndex;
-        while (fitnessIncrease)
+        while (fitnessDecreases < 2)
         {
             individualLists = new IIndividualList[folds];
             foldIndex = 0;
@@ -51,31 +52,35 @@ public class RlcwRunStrategy(
                 foldIndex++;
             }
 
-            var avgFitness =
-                CalculateFitnessSumOfBestIndividuals(individualLists,
-                    _currentMaxSize);
+            var bestIndividualsPhase1 =
+                BestModelsForGivenSizeAndMetric(individualLists,
+                    _currentMaxSize,
+                    g => g.TrainingFitness.ConsolidatedValue +
+                         5 * g.ValidationFitness.ConsolidatedValue);
 
-            // ToDo: This is just for testing purposes, remove later
+
+            var avgFitness = CalculateFitnessSumOfBestIndividuals(
+                bestIndividualsPhase1,
+                g => g.ValidationFitness.ConsolidatedValue);
+
             // Check if we should increase the size or stop
             if (_currentMaxSize >= MaximumSize ||
-                avgFitness + 2 < previousAvgFitness)
+                avgFitness < bestAvgFitness)
             {
-                fitnessIncrease = false;
-                // Use the previous size as it had better fitness
-                _currentMaxSize = Math.Max(1, _currentMaxSize - 1);
+                fitnessDecreases++;
             }
             else
             {
-                previousAvgFitness = avgFitness;
-                _currentMaxSize++;
+                bestAvgFitness = avgFitness;
+                chosenSize = _currentMaxSize;
             }
+
+            _currentMaxSize++;
         }
-
-
-        _currentMaxSize = 2; //ToDo: Remove this line, just for testing
 
         // Phase 2: Determine model 
         sizeDetermination = false;
+        _currentMaxSize = chosenSize;
         individualLists = new IIndividualList[folds];
         foldIndex = 0;
 
@@ -86,11 +91,16 @@ public class RlcwRunStrategy(
             foldIndex++;
         }
 
-        var bestIndividual =
-            DetermineDesiredBestIndividualAndFitness(individualLists,
-                _currentMaxSize).Item1;
+        var bestIndividualsPhase2 = BestModelsForGivenSizeAndMetric(
+            individualLists,
+            _currentMaxSize,
+            g => g.TrainingFitness.ConsolidatedValue +
+                 5 * g.ValidationFitness.ConsolidatedValue);
 
-        var allIndividuals = new ListBasedPopulation();
+        var bestIndividual = DetermineBestIndividual(bestIndividualsPhase2,
+            g => g.ValidationFitness.ConsolidatedValue);
+
+
         foreach (var list in individualLists) allIndividuals.AddRange(list);
 
         return (bestIndividual, allIndividuals);
@@ -110,13 +120,33 @@ public class RlcwRunStrategy(
         return (maxValue, maxIndex);
     }
 
-    private (IIndividual, double) DetermineDesiredBestIndividualAndFitness(
-        IIndividualList[] individualLists,
-        int targetSize, bool bestOfAll = true)
-    {
-        var chosenBestFitness = bestOfAll ? double.MinValue : double.MaxValue;
-        IIndividual? chosenBestIndividual = null;
 
+    private IIndividual DetermineBestIndividual(IIndividualList individuals,
+        Func<IValidatableGenotype, double> metric)
+    {
+        IIndividual? bestIndividual = null;
+        var chosenBestFitness = double.MinValue;
+        foreach (var individual in individuals)
+        {
+            if (individual.Genotype is not IValidatableGenotype
+                validatable)
+                throw new ArgumentException(
+                    "Expected genotype of type IValidatableGenotype");
+            var validationFitnessValue = metric(validatable);
+            if (validationFitnessValue < chosenBestFitness)
+                continue;
+            chosenBestFitness = validationFitnessValue;
+            bestIndividual = individual;
+        }
+
+        return bestIndividual;
+    }
+
+    private IIndividualList BestModelsForGivenSizeAndMetric(
+        IIndividualList[] individualLists,
+        int targetSize, Func<IValidatableGenotype, double> metric)
+    {
+        IIndividualList bestIndividualsList = new ListBasedPopulation();
         foreach (var list in individualLists)
         {
             var bestFitnessInList = double.MinValue;
@@ -129,62 +159,31 @@ public class RlcwRunStrategy(
                         throw new ArgumentException(
                             "Expected genotype of type IValidatableGenotype");
                     var fitnessValue =
-                        //validatable.TrainingFitness.ConsolidatedValue +
-                        validatable.ValidationFitness.ConsolidatedValue;
+                        metric(validatable);
                     if (!(fitnessValue > bestFitnessInList)) continue;
                     bestFitnessInList = fitnessValue;
                     bestIndividualInList = individual;
                 }
 
-            if (bestIndividualInList == null) return (null, 0.0);
-            if (bestIndividualInList.Genotype is not IValidatableGenotype
-                validatableBest)
-                throw new ArgumentException(
-                    "Expected genotype of type IValidatableGenotype");
-            var validationFitnessValue =
-                validatableBest.ValidationFitness.ConsolidatedValue;
-            //Console.WriteLine(bestIndividualInList.ToString());
-            if ((!(validationFitnessValue < chosenBestFitness) || bestOfAll) &&
-                (!(validationFitnessValue > chosenBestFitness) || !bestOfAll))
-                continue;
-            chosenBestFitness = validationFitnessValue;
-            chosenBestIndividual = bestIndividualInList;
+            if (bestIndividualInList != null)
+                bestIndividualsList.Add(bestIndividualInList);
         }
 
-        return (chosenBestIndividual, chosenBestFitness);
+        return bestIndividualsList;
     }
 
     private double CalculateFitnessSumOfBestIndividuals(
-        IIndividualList[] individualLists,
-        int targetSize)
+        IIndividualList individuals, Func<IValidatableGenotype, double> metric)
     {
         var sumFitness = 0.0;
-        foreach (var list in individualLists)
+        foreach (var individual in individuals)
         {
-            var bestFitnessInList = double.MinValue;
-            IIndividual? bestIndividualInList = null;
-            foreach (var individual in list)
-                if (individual.Size == targetSize)
-                {
-                    if (individual.Genotype is not IValidatableGenotype
-                        validatable)
-                        throw new ArgumentException(
-                            "Expected genotype of type IValidatableGenotype");
-                    var fitnessValue =
-                        validatable.TrainingFitness.ConsolidatedValue +
-                        5 * validatable.ValidationFitness.ConsolidatedValue;
-                    if (!(fitnessValue > bestFitnessInList)) continue;
-                    bestFitnessInList = fitnessValue;
-                    bestIndividualInList = individual;
-                }
-
-            if (bestIndividualInList == null) return 0.0;
-            if (bestIndividualInList.Genotype is not IValidatableGenotype
-                validatableBest)
+            if (individual.Genotype is not IValidatableGenotype
+                validatable)
                 throw new ArgumentException(
                     "Expected genotype of type IValidatableGenotype");
             var validationFitnessValue =
-                validatableBest.ValidationFitness.ConsolidatedValue;
+                metric(validatable);
             sumFitness += validationFitnessValue;
         }
 
