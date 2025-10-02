@@ -7,10 +7,10 @@ public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
     TOutput> where TOutput : class, new()
 {
     public LogicGpRlcwMulticlassTrainer(int phase1Generations,
-        int phase2Generations, double minMaxWeight = 0.0)
+        int phase2Generations, int folds = 5, double minMaxWeight = 0.0)
     {
         ConfusionAndSizeFitnessValue.UsedMetric = Metric.F1Score;
         RunStrategy = new RlcwRunStrategy(phase1Generations, phase2Generations,
-            minMaxWeight);
+            folds, minMaxWeight);
     }
 }
