@@ -32,6 +32,303 @@
         <None Update="Data\Simulations\Simulation3\SNPglm_1.csv">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_2.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_3.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_4.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_5.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_6.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_7.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_8.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_9.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_10.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_11.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_12.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_13.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_14.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_15.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_16.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_17.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_18.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_19.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_20.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_21.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_22.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_23.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_24.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_25.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_26.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_27.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_28.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_29.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_30.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_31.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_32.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_33.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_34.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_35.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_36.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_37.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_38.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_39.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_40.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_41.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_42.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_43.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_44.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_45.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_46.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_47.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_48.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_49.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_50.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_51.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_52.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_53.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_54.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_55.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_56.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_57.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_58.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_59.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_60.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_61.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_62.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_63.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_64.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_65.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_66.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_67.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_68.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_69.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_70.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_71.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_72.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_73.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_74.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_75.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_76.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_77.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_78.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_79.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_80.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_81.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_82.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_83.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_84.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_85.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_86.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_87.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_88.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_89.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_90.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_91.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_92.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_93.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_94.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_95.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_96.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_97.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_98.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_99.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation1\SNPglm_100.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

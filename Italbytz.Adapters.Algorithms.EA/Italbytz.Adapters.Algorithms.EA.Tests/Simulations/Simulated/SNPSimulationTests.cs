@@ -10,25 +10,26 @@ public class SNPSimulationTests
     [TestMethod]
     public void TestSimulation1()
     {
-        GPASSimulation(1, AppDomain.CurrentDomain.BaseDirectory,
-            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                100, 100, 1.1));
+        for (var i = 1; i < 101; i++)
+            GPASSimulation(1, i, AppDomain.CurrentDomain.BaseDirectory,
+                new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                    1000, 100, 1.1));
     }
 
     [TestMethod]
     public void TestSimulation2()
     {
-        GPASSimulation(2, AppDomain.CurrentDomain.BaseDirectory,
+        GPASSimulation(2, 1, AppDomain.CurrentDomain.BaseDirectory,
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
                 100, 1000, 1.1));
     }
 
 
-    private void GPASSimulation(int simulation,
+    private void GPASSimulation(int simulation, int dataset,
         string baseDirectory, IEstimator<ITransformer> trainer)
     {
         var mlContext = ThreadSafeMLContext.LocalMLContext;
-        var data = SNPHelper.LoadData(baseDirectory, simulation, 1);
+        var data = SNPHelper.LoadData(baseDirectory, simulation, dataset);
         var pipeline = SNPHelper.BuildPipeline(mlContext, trainer);
         var model = pipeline.Fit(data);
         var predictions = model.Transform(data);
