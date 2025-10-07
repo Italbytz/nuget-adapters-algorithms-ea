@@ -45,7 +45,7 @@ public class NationalPollTests
         ThreadSafeRandomNetCore.Seed = 42;
         var trainer =
                 new LogicGpFlcwMacroMulticlassTrainer<
-                    TernaryClassificationOutput>(10000)
+                    TernaryClassificationOutput>(10)
             ;
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
@@ -53,6 +53,12 @@ public class NationalPollTests
             ProcessingType.FeatureBinningAndCustomLabelMapping);
         var model = pipeline.Fit(_dataset.DataView);
         var predictions = model.Transform(_dataset.DataView);
+        if (trainer is IInterpretableTrainer interpretableTrainer)
+        {
+            var finalModel = interpretableTrainer.Model;
+            Console.WriteLine(finalModel);
+        }
+
         var metrics = ThreadSafeMLContext.LocalMLContext
             .MulticlassClassification
             .Evaluate(predictions);

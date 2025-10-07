@@ -30,7 +30,12 @@ public class LogicGpGraph : OperatorGraph
             Start.AddChildren(selectionsForMutation[i]);
         }
 
-        var finalSelection = new DominationTournamentSelection
+/*        var finalSelection = new DominationTournamentSelection
+        {
+            NoOfIndividualsToSelect = maxIndividuals
+        };*/
+
+        var finalSelection = new FitnessTournamentSelection
         {
             NoOfIndividualsToSelect = maxIndividuals
         };

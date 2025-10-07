@@ -48,8 +48,8 @@ public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
             return -1;
 
         // First, compare based on objectives
-        var objectivesComparison = fitnessValue.Objectives.Sum()
-            .CompareTo(otherFitnessValue.Objectives.Sum());
+        var objectivesComparison = fitnessValue.ConsolidatedValue
+            .CompareTo(otherFitnessValue.ConsolidatedValue);
         return objectivesComparison != 0
             ? objectivesComparison
             : otherFitnessValue.Size.CompareTo(fitnessValue.Size);

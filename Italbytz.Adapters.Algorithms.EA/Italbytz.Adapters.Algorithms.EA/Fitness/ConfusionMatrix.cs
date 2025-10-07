@@ -142,7 +142,7 @@ public sealed class ConfusionMatrix : ICloneable
                 }
 
             var total = truePositives + falseNegatives + falsePositives;
-            accuracies[i] = total == 0 ? 0 : truePositives / total;
+            accuracies[i] = total == 0 ? 0 : (double)truePositives / total;
         }
 
         return accuracies;
