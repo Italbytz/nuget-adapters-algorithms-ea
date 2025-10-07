@@ -8,12 +8,13 @@ namespace Italbytz.EA.Trainer.Gecco;
 
 public class LogicGpGraph : OperatorGraph
 {
-    public LogicGpGraph()
+    public LogicGpGraph(int maxIndividuals = 10000,
+        int crossoverIndividuals = 2, int mutationIndividuals = 1)
     {
         Start = new Start();
         var selectionForCrossover = new UniformSelection
         {
-            NoOfIndividualsToSelect = 2
+            NoOfIndividualsToSelect = crossoverIndividuals
         };
         Start.AddChildren(selectionForCrossover);
         var crossover = new StandardCrossover();
@@ -22,14 +23,14 @@ public class LogicGpGraph : OperatorGraph
         {
             selectionsForMutation[i] = new UniformSelection
             {
-                NoOfIndividualsToSelect = 1
+                NoOfIndividualsToSelect = mutationIndividuals
             };
             Start.AddChildren(selectionsForMutation[i]);
         }
 
         var finalSelection = new ParetoFrontSelection
         {
-            NoOfIndividualsToSelect = 10000
+            NoOfIndividualsToSelect = maxIndividuals
         };
 
         var deleteLiteralMutation = new DeleteLiteral();

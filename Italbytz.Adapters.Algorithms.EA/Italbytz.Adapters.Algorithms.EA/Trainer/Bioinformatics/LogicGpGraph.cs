@@ -8,13 +8,14 @@ namespace Italbytz.EA.Trainer.Bioinformatics;
 
 public class LogicGpGraph : OperatorGraph
 {
-    public LogicGpGraph()
+    public LogicGpGraph(int maxIndividuals = 1000, double crossoverRatio = 1.8,
+        double mutationRatio = 0.1)
     {
         Start = new Start();
         var selectionForCrossover = new FitnessTournamentSelection
         {
             UseRatio = true,
-            RatioOfIndividualsToSelect = 1.8 // 2 parents for 90 % of population
+            RatioOfIndividualsToSelect = crossoverRatio
         };
         Start.AddChildren(selectionForCrossover);
         var crossover = new StandardCrossover();
@@ -24,14 +25,14 @@ public class LogicGpGraph : OperatorGraph
             selectionsForMutation[i] = new FitnessTournamentSelection
             {
                 UseRatio = true,
-                RatioOfIndividualsToSelect = 0.1
+                RatioOfIndividualsToSelect = mutationRatio
             };
             Start.AddChildren(selectionsForMutation[i]);
         }
 
         var finalSelection = new DominationTournamentSelection
         {
-            NoOfIndividualsToSelect = 10000
+            NoOfIndividualsToSelect = maxIndividuals
         };
 
         var deleteLiteralMutation = new DeleteLiteral();

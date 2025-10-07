@@ -10,7 +10,7 @@ using Italbytz.EA.StoppingCriterion;
 
 namespace Italbytz.EA;
 
-public class EvolutionaryAlgorithm : IGenerationProvider
+public class EvolutionaryAlgorithm : IGenerationProvider, IAdaptionCountProvider
 {
     public required IFitnessFunction FitnessFunction { get; set; }
     public required ISearchSpace SearchSpace { get; set; }
@@ -47,4 +47,6 @@ public class EvolutionaryAlgorithm : IGenerationProvider
 
         return PopulationManager.Population;
     }
+
+    public int Adaptions { get; set; }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Italbytz.EA.Graph;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Selection;
@@ -11,6 +12,7 @@ using Microsoft.ML;
 namespace Italbytz.EA.Trainer.Bioinformatics;
 
 public class RlcwRunStrategy(
+    OperatorGraph algorithmGraph,
     int phase1Generations,
     int phase2Generations,
     int folds = 5,
@@ -194,7 +196,7 @@ public class RlcwRunStrategy(
         int[][] features, int[] labels)
     {
         return RunLogicGp(features, labels,
-            new Gecco.LogicGpGraph(), new CompleteInitialization(),
+            algorithmGraph, new CompleteInitialization(),
             _currentMaxSize,
             generations: sizeDetermination
                 ? phase1Generations

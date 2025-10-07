@@ -1,12 +1,48 @@
+using System.Diagnostics;
 using Italbytz.EA.Trainer;
 using Italbytz.ML;
 using Microsoft.ML;
+using LogicGpGraph = Italbytz.EA.Trainer.Gecco.LogicGpGraph;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Simulated;
 
 [TestClass]
 public class SNPSimulationTests
 {
+    [TestMethod]
+    public void Benchmark()
+    {
+        var stopwatch = new Stopwatch();
+        var trainer1 =
+            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                10000, 10000, 5, 1.1);
+        var trainer2 =
+            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                1000, 1000, 5, 1.1, new LogicGpGraph(10000, 20, 10));
+        //new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+        //  10, 100, 5, 1.1, new LogicGpGraph());
+        stopwatch.Reset();
+        stopwatch.Start();
+        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory, trainer1);
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.ElapsedMilliseconds}");
+        stopwatch.Reset();
+        stopwatch.Start();
+        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory, trainer2);
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.ElapsedMilliseconds}");
+        stopwatch.Reset();
+        stopwatch.Start();
+        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory, trainer1);
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.ElapsedMilliseconds}");
+        stopwatch.Reset();
+        stopwatch.Start();
+        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory, trainer2);
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.ElapsedMilliseconds}");
+    }
+
     [TestMethod]
     public void TestSimulation1()
     {
