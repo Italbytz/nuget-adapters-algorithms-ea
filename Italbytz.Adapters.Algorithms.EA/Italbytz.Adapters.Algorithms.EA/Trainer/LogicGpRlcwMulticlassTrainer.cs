@@ -1,22 +1,23 @@
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Graph;
 using Italbytz.EA.Trainer.Bioinformatics;
-using LogicGpGraph = Italbytz.EA.Trainer.Gecco.LogicGpGraph;
 
 namespace Italbytz.EA.Trainer;
 
 public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
     TOutput> where TOutput : class, new()
 {
-    public LogicGpRlcwMulticlassTrainer(int phase1Generations,
-        int phase2Generations, int folds = 5, double minMaxWeight = 0.0,
+    public LogicGpRlcwMulticlassTrainer(int phase1Time,
+        int phase2Time, int maxIndividuals = 1000, double crossoverRatio = 1.8,
+        double mutationRatio = 0.1, int folds = 5, double minMaxWeight = 0.0,
         OperatorGraph? algorithmGraph = null,
         Metric usedMetric = Metric.F1Score)
     {
-        algorithmGraph ??= new LogicGpGraph();
+        algorithmGraph ??=
+            new LogicGpGraph(maxIndividuals, crossoverRatio, mutationRatio);
         ConfusionAndSizeFitnessValue.UsedMetric = usedMetric;
-        RunStrategy = new RlcwRunStrategy(algorithmGraph, phase1Generations,
-            phase2Generations,
+        RunStrategy = new RlcwRunStrategy(algorithmGraph, phase1Time,
+            phase2Time,
             folds, minMaxWeight);
     }
 }

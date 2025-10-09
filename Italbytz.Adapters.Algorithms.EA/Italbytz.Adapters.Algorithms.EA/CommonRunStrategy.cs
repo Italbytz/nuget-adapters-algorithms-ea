@@ -27,7 +27,8 @@ public abstract class CommonRunStrategy : IRunStrategy
         int[] labels, OperatorGraph algorithmGraph,
         IInitialization initialization,
         int maxModelSize = int.MaxValue,
-        Weighting weighting = Weighting.Computed, int generations = 100,
+        Weighting weighting = Weighting.Computed,
+        int generations = int.MaxValue, int maxTime = 60,
         double minMaxWeight = 0.0)
     {
         var logicGp = new EvolutionaryAlgorithm
@@ -52,7 +53,8 @@ public abstract class CommonRunStrategy : IRunStrategy
             new GenerationStoppingCriterion(logicGp)
             {
                 Limit = generations
-            }
+            },
+            new TimeStoppingCriterion(maxTime)
         ];
         var population = logicGp.Run();
         return population;

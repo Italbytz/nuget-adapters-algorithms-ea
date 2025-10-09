@@ -10,15 +10,30 @@ namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Simulated;
 public class SNPSimulationTests
 {
     [TestMethod]
+    public void Benchmark1()
+    {
+        var stopwatch = new Stopwatch();
+        var trainer1 =
+            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                1, 2, folds: 5, minMaxWeight: 1.1);
+        stopwatch.Reset();
+        stopwatch.Start();
+        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory, trainer1);
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.ElapsedMilliseconds}");
+    }
+
+    [TestMethod]
     public void Benchmark()
     {
         var stopwatch = new Stopwatch();
         var trainer1 =
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                10000, 10000, 5, 1.1);
+                10000, 10000, folds: 5, minMaxWeight: 1.1);
         var trainer2 =
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                1000, 1000, 5, 1.1, new LogicGpGraph(10000, 20, 10));
+                1000, 1000, folds: 5, minMaxWeight: 1.1,
+                algorithmGraph: new LogicGpGraph(10000, 20, 10));
         //new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
         //  10, 100, 5, 1.1, new LogicGpGraph());
         stopwatch.Reset();

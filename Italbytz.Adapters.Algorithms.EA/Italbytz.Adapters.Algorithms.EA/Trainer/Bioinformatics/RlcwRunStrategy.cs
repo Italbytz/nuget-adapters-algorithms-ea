@@ -13,8 +13,8 @@ namespace Italbytz.EA.Trainer.Bioinformatics;
 
 public class RlcwRunStrategy(
     OperatorGraph algorithmGraph,
-    int phase1Generations,
-    int phase2Generations,
+    int phase1Time,
+    int phase2Time,
     int folds = 5,
     double minMaxWeight = 0.0)
     : CommonRunStrategy
@@ -198,9 +198,8 @@ public class RlcwRunStrategy(
         return RunLogicGp(features, labels,
             algorithmGraph, new CompleteInitialization(),
             _currentMaxSize,
-            generations: sizeDetermination
-                ? phase1Generations
-                : phase2Generations,
+            generations: int.MaxValue,
+            maxTime: sizeDetermination ? phase1Time : phase2Time,
             minMaxWeight: minMaxWeight);
     }
 }
