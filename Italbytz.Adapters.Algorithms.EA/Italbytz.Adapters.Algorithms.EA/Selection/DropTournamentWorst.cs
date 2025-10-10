@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Italbytz.AI;
 using Italbytz.EA.Individuals;
 
@@ -43,18 +42,16 @@ public class DropTournamentWorst : AbstractSelection
             {
                 var individual = individualList[selectedIndex];
 
-                if (unfittest == null || individual.LatestKnownFitness.CompareTo(unfittest.LatestKnownFitness) < 0)
-                {
-                    unfittest = individual;
-                    unfittestIndex = selectedIndex;
-                }
+                if (unfittest != null &&
+                    individual.LatestKnownFitness.CompareTo(unfittest
+                        .LatestKnownFitness) >= 0) continue;
+                unfittest = individual;
+                unfittestIndex = selectedIndex;
             }
 
-            if (unfittestIndex != -1 && !selected[unfittestIndex])
-            {
-                selected[unfittestIndex] = true;
-                dropped++;
-            }
+            if (unfittestIndex == -1 || selected[unfittestIndex]) continue;
+            selected[unfittestIndex] = true;
+            dropped++;
         }
 
         for (var i = 0; i < count; i++)

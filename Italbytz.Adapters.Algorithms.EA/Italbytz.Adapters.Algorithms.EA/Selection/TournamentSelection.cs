@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Italbytz.AI;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
@@ -15,6 +13,7 @@ public abstract class TournamentSelection : AbstractSelection
     public override bool FitnessBasedSelection { get; } = true;
 
     public abstract bool UseDomination { get; }
+
     protected override IEnumerable<IIndividual> Select(
         IIndividualList individuals, int noOfIndividualsToSelect)
     {
@@ -23,44 +22,27 @@ public abstract class TournamentSelection : AbstractSelection
         var selectedIndividuals = new IIndividual[noOfIndividualsToSelect];
         var rnd = ThreadSafeRandomNetCore.Shared;
 
-        if (noOfIndividualsToSelect > 1000) // Schwellenwert anpassen
-            Parallel.For(0, noOfIndividualsToSelect, i =>
-            {
-                IIndividual? fittest = null;
-                IFitnessValue? highestFitness = null;
-                for (var j = 0; j < TournamentSize; j++)
-                {
-                    var individual =
-                        individualList[rnd.Next(individualList.Count)];
-                    var fitness = individual.LatestKnownFitness;
-                    if (fittest == null || highestFitness == null || (UseDomination && fitness.IsDominating(highestFitness)) || (!UseDomination && fitness.CompareTo(highestFitness) > 0))
-                    {
-                        fittest = individual;
-                        highestFitness = fitness;
-                    }
-                }
 
-                selectedIndividuals[i] = fittest;
-            });
-        else
-            for (var i = 0; i < noOfIndividualsToSelect; i++)
+        for (var i = 0; i < noOfIndividualsToSelect; i++)
+        {
+            IIndividual? fittest = null;
+            IFitnessValue? highestFitness = null;
+            for (var j = 0; j < TournamentSize; j++)
             {
-                IIndividual? fittest = null;
-                IFitnessValue? highestFitness = null;
-                for (var j = 0; j < TournamentSize; j++)
+                var individual =
+                    individualList[rnd.Next(individualList.Count)];
+                var fitness = individual.LatestKnownFitness;
+                if (fittest == null || highestFitness == null ||
+                    (UseDomination && fitness.IsDominating(highestFitness)) ||
+                    (!UseDomination && fitness.CompareTo(highestFitness) > 0))
                 {
-                    var individual =
-                        individualList[rnd.Next(individualList.Count)];
-                    var fitness = individual.LatestKnownFitness;
-                    if (fittest == null || highestFitness == null || (UseDomination && fitness.IsDominating(highestFitness)) || (!UseDomination && fitness.CompareTo(highestFitness) > 0))
-                    {
-                        fittest = individual;
-                        highestFitness = fitness;
-                    }
+                    fittest = individual;
+                    highestFitness = fitness;
                 }
-
-                selectedIndividuals[i] = fittest;
             }
+
+            selectedIndividuals[i] = fittest;
+        }
 
         return selectedIndividuals;
     }

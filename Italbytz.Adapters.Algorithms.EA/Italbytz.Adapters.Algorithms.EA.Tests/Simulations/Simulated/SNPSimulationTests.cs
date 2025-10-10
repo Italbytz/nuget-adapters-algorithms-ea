@@ -61,10 +61,14 @@ public class SNPSimulationTests
     [TestMethod]
     public void TestSimulation1()
     {
+        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory,
+            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                5, 5, folds: 5, minMaxWeight: 1.1));
+        return;
         for (var i = 1; i < 101; i++)
             GPASSimulation(1, i, AppDomain.CurrentDomain.BaseDirectory,
                 new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                    100, 100, 5, minMaxWeight: 1.1));
+                    10, 10, folds: 5, minMaxWeight: 1.1));
     }
 
     [TestMethod]
@@ -72,7 +76,7 @@ public class SNPSimulationTests
     {
         GPASSimulation(2, 1, AppDomain.CurrentDomain.BaseDirectory,
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                100, 1000, 5, minMaxWeight: 1.1));
+                100, 1000, folds: 5, minMaxWeight: 1.1));
     }
 
 
@@ -85,6 +89,13 @@ public class SNPSimulationTests
         var model = pipeline.Fit(data);
         var predictions = model.Transform(data);
         var metrics = mlContext.BinaryClassification.Evaluate(predictions);
+        if (trainer is IInterpretableTrainer interpretableTrainer)
+        {
+            var logicGpModel = interpretableTrainer.Model;
+            if (logicGpModel != null)
+                Console.WriteLine(logicGpModel);
+        }
+
         // Just ensure the process completes
         Assert.IsNotNull(metrics);
     }

@@ -9,7 +9,7 @@ public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
 {
     public LogicGpRlcwMulticlassTrainer(int phase1Time,
         int phase2Time, int maxIndividuals = 1000,
-        int crossoverIndividuals = 86, int mutationIndividuals = 1,
+        int crossoverIndividuals = 14, int mutationIndividuals = 1,
         int folds = 5, double minMaxWeight = 0.0,
         OperatorGraph? algorithmGraph = null,
         Metric usedMetric = Metric.F1Score)

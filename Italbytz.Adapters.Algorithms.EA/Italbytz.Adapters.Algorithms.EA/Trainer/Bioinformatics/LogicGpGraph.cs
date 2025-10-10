@@ -28,15 +28,20 @@ public class LogicGpGraph : OperatorGraph
             Start.AddChildren(selectionsForMutation[i]);
         }
 
-/*        var finalSelection = new DominationTournamentSelection
+        var finalSelection = new DropTournamentWorst
+        {
+            NoOfIndividualsToSelect = maxIndividuals
+        };
+
+        /*var finalSelection = new DominationTournamentSelection
         {
             NoOfIndividualsToSelect = maxIndividuals
         };*/
 
-        var finalSelection = new FitnessTournamentSelection
+        /*var finalSelection = new FitnessTournamentSelection
         {
             NoOfIndividualsToSelect = maxIndividuals
-        };
+        };*/
 
         var deleteLiteralMutation = new DeleteLiteral();
         selectionsForMutation[0].AddChildren(deleteLiteralMutation);
