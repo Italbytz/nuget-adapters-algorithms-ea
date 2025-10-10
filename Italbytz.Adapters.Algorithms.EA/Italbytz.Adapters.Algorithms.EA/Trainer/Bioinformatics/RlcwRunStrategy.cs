@@ -42,6 +42,7 @@ public class RlcwRunStrategy(
         var cvResults = mlContext.Data.CrossValidationSplit(input);
         IIndividualList[] individualLists;
         int foldIndex;
+        IIndividualList? chosenIndividualsPhase1 = null;
         while (fitnessDecreases < 2)
         {
             individualLists = new IIndividualList[folds];
@@ -75,10 +76,14 @@ public class RlcwRunStrategy(
             {
                 bestAvgFitness = avgFitness;
                 chosenSize = _currentMaxSize;
+                chosenIndividualsPhase1 = bestIndividualsPhase1;
             }
 
             _currentMaxSize++;
         }
+
+        allIndividuals.Add(DetermineBestIndividual(chosenIndividualsPhase1,
+            g => g.ValidationFitness.ConsolidatedValue));
 
         // Phase 2: Determine model 
         sizeDetermination = false;
@@ -93,17 +98,19 @@ public class RlcwRunStrategy(
             foldIndex++;
         }
 
-        var bestIndividualsPhase2 = BestModelsForGivenSizeAndMetric(
+        foreach (var list in individualLists) allIndividuals.AddRange(list);
+        var bestIndividual = DetermineBestIndividual(allIndividuals,
+            g => g.ValidationFitness.ConsolidatedValue);
+
+        /*var bestIndividualsPhase2 = BestModelsForGivenSizeAndMetric(
             individualLists,
             _currentMaxSize,
             g => g.TrainingFitness.ConsolidatedValue +
                  5 * g.ValidationFitness.ConsolidatedValue);
 
         var bestIndividual = DetermineBestIndividual(bestIndividualsPhase2,
-            g => g.ValidationFitness.ConsolidatedValue);
+            g => g.ValidationFitness.ConsolidatedValue);*/
 
-
-        foreach (var list in individualLists) allIndividuals.AddRange(list);
 
         return (bestIndividual, allIndividuals);
     }
