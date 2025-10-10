@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Nullable>enable</Nullable>
-        <PackageVersion>9.3.0</PackageVersion>
+        <PackageVersion>9.3.1</PackageVersion>
         <Authors>Robin Nunkesser</Authors>
         <PackageProjectUrl>https://github.com/Italbytz/nuget-adapters-algorithms-ea</PackageProjectUrl>
         <Description>Some algorithm adapters to use with Ports and Adapters.</Description>

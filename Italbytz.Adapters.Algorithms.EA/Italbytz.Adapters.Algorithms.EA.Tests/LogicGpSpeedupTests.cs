@@ -20,7 +20,7 @@ public class LogicGpSpeedupTests
     {
         var trainer =
             new LogicGpRlcwMulticlassTrainer<TernaryClassificationOutput>(
-                100, 100, 5, 1.1);
+                100, 100, 5, minMaxWeight: 1.1);
         var pipeline = _dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,

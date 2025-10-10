@@ -8,13 +8,15 @@ public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
     TOutput> where TOutput : class, new()
 {
     public LogicGpRlcwMulticlassTrainer(int phase1Time,
-        int phase2Time, int maxIndividuals = 1000, double crossoverRatio = 1.8,
-        double mutationRatio = 0.1, int folds = 5, double minMaxWeight = 0.0,
+        int phase2Time, int maxIndividuals = 1000,
+        int crossoverIndividuals = 86, int mutationIndividuals = 1,
+        int folds = 5, double minMaxWeight = 0.0,
         OperatorGraph? algorithmGraph = null,
         Metric usedMetric = Metric.F1Score)
     {
         algorithmGraph ??=
-            new LogicGpGraph(maxIndividuals, crossoverRatio, mutationRatio);
+            new LogicGpGraph(maxIndividuals, crossoverIndividuals,
+                mutationIndividuals);
         ConfusionAndSizeFitnessValue.UsedMetric = usedMetric;
         RunStrategy = new RlcwRunStrategy(algorithmGraph, phase1Time,
             phase2Time,
