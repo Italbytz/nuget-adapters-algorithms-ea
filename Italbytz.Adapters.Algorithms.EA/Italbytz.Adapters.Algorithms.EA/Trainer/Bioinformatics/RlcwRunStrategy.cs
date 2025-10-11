@@ -82,8 +82,10 @@ public class RlcwRunStrategy(
             _currentMaxSize++;
         }
 
-        allIndividuals.Add(DetermineBestIndividual(chosenIndividualsPhase1,
-            g => g.ValidationFitness.ConsolidatedValue));
+        var bestIndividualPhase1 = DetermineBestIndividual(
+            chosenIndividualsPhase1,
+            g => g.ValidationFitness.ConsolidatedValue);
+        allIndividuals.Add(bestIndividualPhase1);
 
         // Phase 2: Determine model 
         sizeDetermination = false;
@@ -99,17 +101,19 @@ public class RlcwRunStrategy(
         }
 
         foreach (var list in individualLists) allIndividuals.AddRange(list);
-        var bestIndividual = DetermineBestIndividual(allIndividuals,
-            g => g.ValidationFitness.ConsolidatedValue);
+        /*var bestIndividual = DetermineBestIndividual(allIndividuals,
+            g => g.ValidationFitness.ConsolidatedValue);*/
 
-        /*var bestIndividualsPhase2 = BestModelsForGivenSizeAndMetric(
+        var bestIndividualsPhase2 = BestModelsForGivenSizeAndMetric(
             individualLists,
             _currentMaxSize,
             g => g.TrainingFitness.ConsolidatedValue +
                  5 * g.ValidationFitness.ConsolidatedValue);
 
+        bestIndividualsPhase2.Add(bestIndividualPhase1);
+
         var bestIndividual = DetermineBestIndividual(bestIndividualsPhase2,
-            g => g.ValidationFitness.ConsolidatedValue);*/
+            g => g.ValidationFitness.ConsolidatedValue);
 
 
         return (bestIndividual, allIndividuals);
