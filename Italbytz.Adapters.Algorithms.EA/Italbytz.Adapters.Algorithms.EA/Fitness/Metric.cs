@@ -7,5 +7,6 @@ public enum Metric
     MacroAccuracy,
     BalancedAccuracy,
     Precision,
-    Recall
+    Recall,
+    PrecisionRecall
 }

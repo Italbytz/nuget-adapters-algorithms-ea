@@ -79,6 +79,13 @@ public class SNPSimulationTests
                 100, 1000, folds: 5, minMaxWeight: 1.1));
     }
 
+    [TestMethod]
+    public void TestSimulation3()
+    {
+        GPASSimulation(3, 1, AppDomain.CurrentDomain.BaseDirectory,
+            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                5, 5, folds: 5, minMaxWeight: 1.1));
+    }
 
     private void GPASSimulation(int simulation, int dataset,
         string baseDirectory, IEstimator<ITransformer> trainer)

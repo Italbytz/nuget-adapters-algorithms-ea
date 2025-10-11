@@ -43,7 +43,7 @@ public class RlcwRunStrategy(
         IIndividualList[] individualLists;
         int foldIndex;
         IIndividualList? chosenIndividualsPhase1 = null;
-        while (fitnessDecreases < 2)
+        while (fitnessDecreases < 4)
         {
             individualLists = new IIndividualList[folds];
             foldIndex = 0;

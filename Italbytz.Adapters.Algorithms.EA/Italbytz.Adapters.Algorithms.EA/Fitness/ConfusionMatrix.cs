@@ -121,9 +121,15 @@ public sealed class ConfusionMatrix : ICloneable
             Metric.Recall => PerClassRecall.ToArray(),
             Metric.MicroAccuracy => ComputePerClassMicroAccuracy(),
             Metric.MacroAccuracy => ComputePerClassMacroAccuracy(),
+            Metric.PrecisionRecall => ComputePrecisionRecall(),
             _ => throw new ArgumentOutOfRangeException(nameof(usedMetric),
                 usedMetric, null)
         };
+    }
+
+    private double[] ComputePrecisionRecall()
+    {
+        return [PerClassPrecision.Average(), PerClassRecall.Average()];
     }
 
     private double[] ComputePerClassMacroAccuracy()
