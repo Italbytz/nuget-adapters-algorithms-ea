@@ -329,6 +329,12 @@
         <None Update="Data\Simulations\Simulation1\SNPglm_100.csv">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="Data\Simulations\Simulation3\SNPglm_2.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Data\Simulations\Simulation3\SNPglm_24.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

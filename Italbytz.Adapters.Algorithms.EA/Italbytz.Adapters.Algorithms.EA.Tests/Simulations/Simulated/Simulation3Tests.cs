@@ -7,43 +7,35 @@ using Italbytz.ML;
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Simulated;
 
 [TestClass]
-public class Simulation2Tests
+public class Simulation3Tests
 {
     private readonly List<ILiteral<int>> _allLiterals;
     private readonly SetLiteral<int> _literal1;
     private readonly SetLiteral<int> _literal2;
     private readonly SetLiteral<int> _literal3;
     private readonly SetLiteral<int> _literal4;
-    private readonly SetLiteral<int> _literal5;
-    private readonly SetLiteral<int> _literal6;
     private readonly WeightedMonomial<int> _monomial1;
     private readonly WeightedMonomial<int> _monomial2;
     private readonly WeightedMonomial<int> _monomial3;
     private readonly WeightedMonomial<int> _monomial4;
-    private readonly WeightedMonomial<int> _monomial5;
-    private readonly WeightedMonomial<int> _monomial6;
     private readonly WeightedPolynomial<int> _polynomial;
     private readonly IIndividual realModel;
 
-    public Simulation2Tests()
+    public Simulation3Tests()
     {
         _literal1 = new SetLiteral<int>(0, [0, 1, 2], 6);
         _literal2 = new SetLiteral<int>(1, [0, 1, 2], 6);
         _literal3 = new SetLiteral<int>(2, [0, 1, 2], 6);
         _literal4 = new SetLiteral<int>(3, [0, 1, 2], 6);
-        _literal5 = new SetLiteral<int>(4, [0, 1, 2], 6);
-        _literal6 = new SetLiteral<int>(5, [0, 1, 2], 6);
         _allLiterals =
-            [_literal1, _literal2, _literal3, _literal4, _literal5, _literal6];
+            [_literal1, _literal2, _literal3, _literal4];
         _monomial1 = new WeightedMonomial<int>([_literal1]);
         _monomial2 = new WeightedMonomial<int>([_literal2]);
         _monomial3 = new WeightedMonomial<int>([_literal3]);
-        _monomial4 = new WeightedMonomial<int>([_literal4]);
-        _monomial5 = new WeightedMonomial<int>([_literal5]);
-        _monomial6 = new WeightedMonomial<int>([_literal6]);
+        _monomial4 = new WeightedMonomial<int>([_literal1, _literal4]);
         _polynomial = new WeightedPolynomial<int>([
             _monomial1, _monomial2,
-            _monomial3, _monomial4, _monomial5, _monomial6
+            _monomial3, _monomial4
         ]);
         var genotype =
             new PolynomialGenotype<int>(_polynomial,
@@ -58,7 +50,7 @@ public class Simulation2Tests
     {
         var mlContext = ThreadSafeMLContext.LocalMLContext;
         var data =
-            SNPHelper.LoadData(AppDomain.CurrentDomain.BaseDirectory, 2, 1);
+            SNPHelper.LoadData(AppDomain.CurrentDomain.BaseDirectory, 3, 2);
         var pipeline = SNPHelper.BuildPreprocessingPipeline(mlContext);
         var processed = pipeline.Fit(data).Transform(data);
         var excerpt = processed.GetDataExcerpt();
@@ -116,20 +108,6 @@ public class Simulation2Tests
         var fitness4 = fitnessFunction.Evaluate(ind4);
         ind4.LatestKnownFitness = fitness4;
         Console.WriteLine(ind4.ToString());
-        var geno5 = new PolynomialGenotype<int>(_literal5,
-            _allLiterals,
-            Weighting.Computed);
-        var ind5 = new Individual(geno5, null);
-        var fitness5 = fitnessFunction.Evaluate(ind5);
-        ind5.LatestKnownFitness = fitness5;
-        Console.WriteLine(ind5.ToString());
-        var geno6 = new PolynomialGenotype<int>(_literal6,
-            _allLiterals,
-            Weighting.Computed);
-        var ind6 = new Individual(geno6, null);
-        var fitness6 = fitnessFunction.Evaluate(ind6);
-        ind6.LatestKnownFitness = fitness6;
-        Console.WriteLine(ind6.ToString());
         Console.WriteLine("--- All  Literals---");
 
 

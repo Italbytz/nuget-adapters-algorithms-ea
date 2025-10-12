@@ -74,6 +74,7 @@ public class RlcwRunStrategy(
             }
             else
             {
+                fitnessDecreases = 0;
                 bestAvgFitness = avgFitness;
                 chosenSize = _currentMaxSize;
                 chosenIndividualsPhase1 = bestIndividualsPhase1;
