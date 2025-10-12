@@ -122,9 +122,20 @@ public sealed class ConfusionMatrix : ICloneable
             Metric.MicroAccuracy => ComputePerClassMicroAccuracy(),
             Metric.MacroAccuracy => ComputePerClassMacroAccuracy(),
             Metric.PrecisionRecall => ComputePrecisionRecall(),
+            Metric.MaxClassRecallAvgNonClassRecall =>
+                ComputeMaxClassRecallAvgNonClassRecall(),
             _ => throw new ArgumentOutOfRangeException(nameof(usedMetric),
                 usedMetric, null)
         };
+    }
+
+    private double[] ComputeMaxClassRecallAvgNonClassRecall()
+    {
+        var maxIndex = Array.IndexOf(PerClassRecall.ToArray(),
+            PerClassRecall.Max());
+        var avgNonClassAccuracies =
+            PerClassRecall.Where((t, i) => i != maxIndex).Average();
+        return [PerClassRecall[maxIndex], avgNonClassAccuracies];
     }
 
     private double[] ComputePrecisionRecall()

@@ -8,5 +8,6 @@ public enum Metric
     BalancedAccuracy,
     Precision,
     Recall,
-    PrecisionRecall
+    PrecisionRecall,
+    MaxClassRecallAvgNonClassRecall
 }

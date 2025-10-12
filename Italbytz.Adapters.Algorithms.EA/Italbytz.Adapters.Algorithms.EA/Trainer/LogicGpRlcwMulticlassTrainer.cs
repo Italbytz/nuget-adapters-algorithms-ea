@@ -12,7 +12,7 @@ public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
         int crossoverIndividuals = 14, int mutationIndividuals = 1,
         int folds = 5, double minMaxWeight = 0.0,
         OperatorGraph? algorithmGraph = null,
-        Metric usedMetric = Metric.F1Score)
+        Metric usedMetric = Metric.MaxClassRecallAvgNonClassRecall)
     {
         algorithmGraph ??=
             new LogicGpGraph(maxIndividuals, crossoverIndividuals,

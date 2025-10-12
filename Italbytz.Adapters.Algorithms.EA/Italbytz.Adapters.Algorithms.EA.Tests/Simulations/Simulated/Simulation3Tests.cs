@@ -74,7 +74,8 @@ public class Simulation3Tests
         var fitnessFunction =
             new ConfusionAndSizeFitnessFunction<int>(mappedFeatures,
                 mappedLabels);
-        ConfusionAndSizeFitnessValue.UsedMetric = Metric.MicroAccuracy;
+        ConfusionAndSizeFitnessValue.UsedMetric =
+            Metric.MaxClassRecallAvgNonClassRecall;
 
         var fitness = fitnessFunction.Evaluate(realModel);
         realModel.LatestKnownFitness = fitness;
@@ -108,6 +109,40 @@ public class Simulation3Tests
         var fitness4 = fitnessFunction.Evaluate(ind4);
         ind4.LatestKnownFitness = fitness4;
         Console.WriteLine(ind4.ToString());
+        var geno5 = new PolynomialGenotype<int>(_monomial4,
+            _allLiterals,
+            Weighting.Computed);
+        var ind5 = new Individual(geno5, null);
+        var fitness5 = fitnessFunction.Evaluate(ind5);
+        ind5.LatestKnownFitness = fitness5;
+        Console.WriteLine(ind5.ToString());
+
+        for (var i = 1; i <= 5; i++)
+        for (var j = 1; j <= 5; j++)
+        {
+            var fitA = i switch
+            {
+                1 => fitness1,
+                2 => fitness2,
+                3 => fitness3,
+                4 => fitness4,
+                5 => fitness5,
+                _ => null
+            };
+            var fitB = j switch
+            {
+                1 => fitness1,
+                2 => fitness2,
+                3 => fitness3,
+                4 => fitness4,
+                5 => fitness5,
+                _ => null
+            };
+            if (i != j && fitA != null && fitB != null &&
+                fitA.IsDominating(fitB))
+                Console.WriteLine($"fitness{i} dominiert fitness{j}");
+        }
+
         Console.WriteLine("--- All  Literals---");
 
 

@@ -12,6 +12,12 @@ public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
     public double[] Objectives { get; init; } =
         matrix?.GetPerClassMetric(UsedMetric) ?? [0.0];
 
+    public int SpecializationClass { get; init; } =
+        matrix?.PerClassRecall != null
+            ? Array.IndexOf(matrix.PerClassRecall.ToArray(),
+                matrix.PerClassRecall.Max())
+            : -1;
+
     public ConfusionMatrix? Matrix { get; } = matrix;
     public int Size { get; } = size;
 
@@ -32,7 +38,9 @@ public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
         if (otherFitnessValue is not ConfusionAndSizeFitnessValue other)
             throw new ArgumentException(
                 "Expected fitness value of type MultiObjectiveAndSizeFitnessValue");
-
+        // Only dominate if specializing in the same class
+        if (SpecializationClass != other.SpecializationClass)
+            return false;
         if (Objectives.Where((t, i) => t < other.Objectives[i]).Any())
             return false;
         return Size <= other.Size;
