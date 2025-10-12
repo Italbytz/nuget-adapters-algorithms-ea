@@ -37,7 +37,9 @@ public sealed class ConfusionMatrix : ICloneable
             for (var j = 0; j < NumberOfClasses; j++)
                 if (j != i)
                 {
+                    // Predicted as i, but actually j
                     fp += confusionTableCounts[j, i];
+                    // Actually i, but predicted as j
                     fn += confusionTableCounts[i, j];
                 }
 
@@ -48,6 +50,9 @@ public sealed class ConfusionMatrix : ICloneable
         PerClassPrecision = precisionPerClass.ToImmutableArray();
         PerClassRecall = recallPerClass.ToImmutableArray();
         Counts = confusionTableCounts;
+        Accuracy = (double)Enumerable.Range(0, NumberOfClasses)
+                       .Select(t => confusionTableCounts[t, t]).Sum() /
+                   confusionTableCounts.Cast<int>().Sum();
     }
 
     internal ConfusionMatrix(double[] precision, double[] recall,
@@ -59,6 +64,8 @@ public sealed class ConfusionMatrix : ICloneable
 
         NumberOfClasses = precision.Length;
     }
+
+    public double Accuracy { get; set; }
 
     /// <summary>
     ///     The calculated value of
@@ -112,21 +119,23 @@ public sealed class ConfusionMatrix : ICloneable
         return Counts[actualClassIndicatorIndex, predictedClassIndicatorIndex];
     }
 
-    public double[] GetPerClassMetric(Metric usedMetric)
+    public double[] GetPerClassMetric(ClassMetric usedMetric, bool compress)
     {
-        return usedMetric switch
+        var perClassMetric = usedMetric switch
         {
-            Metric.F1Score => ComputePerClassF1Score(),
-            Metric.Precision => PerClassPrecision.ToArray(),
-            Metric.Recall => PerClassRecall.ToArray(),
-            Metric.MicroAccuracy => ComputePerClassMicroAccuracy(),
-            Metric.MacroAccuracy => ComputePerClassMacroAccuracy(),
-            Metric.PrecisionRecall => ComputePrecisionRecall(),
-            Metric.MaxClassRecallAvgNonClassRecall =>
-                ComputeMaxClassRecallAvgNonClassRecall(),
+            ClassMetric.F1 => ComputePerClassF1Score(),
+            ClassMetric.Precision => PerClassPrecision.ToArray(),
+            ClassMetric.Recall => PerClassRecall.ToArray(),
+            ClassMetric.Accuracy => PerClassRecall.ToArray(),
             _ => throw new ArgumentOutOfRangeException(nameof(usedMetric),
                 usedMetric, null)
         };
+        if (!compress) return perClassMetric;
+        var maxIndex = Array.IndexOf(perClassMetric,
+            perClassMetric.Max());
+        var avgNonClassMetrics =
+            perClassMetric.Where((t, i) => i != maxIndex).Average();
+        return [perClassMetric[maxIndex], avgNonClassMetrics];
     }
 
     private double[] ComputeMaxClassRecallAvgNonClassRecall()
@@ -138,39 +147,6 @@ public sealed class ConfusionMatrix : ICloneable
         return [PerClassRecall[maxIndex], avgNonClassAccuracies];
     }
 
-    private double[] ComputePrecisionRecall()
-    {
-        return [PerClassPrecision.Average(), PerClassRecall.Average()];
-    }
-
-    private double[] ComputePerClassMacroAccuracy()
-    {
-        var accuracies = new double[NumberOfClasses];
-        for (var i = 0; i < NumberOfClasses; i++)
-        {
-            var truePositives = Counts[i, i];
-            var falseNegatives = 0;
-            var falsePositives = 0;
-            for (var j = 0; j < NumberOfClasses; j++)
-                if (j != i)
-                {
-                    falseNegatives += Counts[i, j];
-                    falsePositives += Counts[j, i];
-                }
-
-            var total = truePositives + falseNegatives + falsePositives;
-            accuracies[i] = total == 0 ? 0 : (double)truePositives / total;
-        }
-
-        return accuracies;
-    }
-
-    private double[] ComputePerClassMicroAccuracy()
-    {
-        var accuracies = new double[NumberOfClasses];
-        for (var i = 0; i < NumberOfClasses; i++) accuracies[i] = Counts[i, i];
-        return accuracies;
-    }
 
     private double[] ComputePerClassF1Score()
     {

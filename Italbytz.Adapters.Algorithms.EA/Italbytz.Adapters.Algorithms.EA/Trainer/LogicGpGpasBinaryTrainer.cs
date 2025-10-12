@@ -7,7 +7,8 @@ public class LogicGpGpasBinaryTrainer : LogicGpBinaryTrainer
 {
     public LogicGpGpasBinaryTrainer(int generations)
     {
-        ConfusionAndSizeFitnessValue.UsedMetric = Metric.MicroAccuracy;
+        ConfusionAndSizeFitnessValue.UsedMetric =
+            (ClassMetric.Accuracy, Averaging.Micro);
         RunStrategy = new GPASRunStrategy(generations);
     }
 }

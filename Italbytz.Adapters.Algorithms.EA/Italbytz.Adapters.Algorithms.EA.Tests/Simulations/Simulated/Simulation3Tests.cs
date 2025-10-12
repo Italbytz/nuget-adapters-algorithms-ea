@@ -75,7 +75,7 @@ public class Simulation3Tests
             new ConfusionAndSizeFitnessFunction<int>(mappedFeatures,
                 mappedLabels);
         ConfusionAndSizeFitnessValue.UsedMetric =
-            Metric.MaxClassRecallAvgNonClassRecall;
+            (ClassMetric.Accuracy, Averaging.Macro);
 
         var fitness = fitnessFunction.Evaluate(realModel);
         realModel.LatestKnownFitness = fitness;

@@ -12,12 +12,15 @@ public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
         int crossoverIndividuals = 14, int mutationIndividuals = 1,
         int folds = 5, double minMaxWeight = 0.0,
         OperatorGraph? algorithmGraph = null,
-        Metric usedMetric = Metric.MaxClassRecallAvgNonClassRecall)
+        (ClassMetric, Averaging)? usedMetric = null)
     {
+        usedMetric ??=
+            (ClassMetric.Accuracy, Averaging.Micro);
         algorithmGraph ??=
             new LogicGpGraph(maxIndividuals, crossoverIndividuals,
                 mutationIndividuals);
-        ConfusionAndSizeFitnessValue.UsedMetric = usedMetric;
+        ConfusionAndSizeFitnessValue.UsedMetric =
+            ((ClassMetric, Averaging))usedMetric;
         RunStrategy = new RlcwRunStrategy(algorithmGraph, phase1Time,
             phase2Time,
             folds, minMaxWeight);

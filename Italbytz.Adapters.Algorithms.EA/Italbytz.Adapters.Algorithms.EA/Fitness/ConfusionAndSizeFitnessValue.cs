@@ -4,13 +4,17 @@ using System.Linq;
 
 namespace Italbytz.EA.Fitness;
 
-public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
+public class ConfusionAndSizeFitnessValue(
+    ConfusionMatrix? matrix,
+    int size,
+    bool compress = true)
     : IFitnessValue
 {
-    public static Metric UsedMetric { get; set; } = Metric.F1Score;
+    public static (ClassMetric, Averaging) UsedMetric { get; set; } =
+        (ClassMetric.F1, Averaging.Macro);
 
     public double[] Objectives { get; init; } =
-        matrix?.GetPerClassMetric(UsedMetric) ?? [0.0];
+        matrix?.GetPerClassMetric(UsedMetric.Item1, compress) ?? [0.0];
 
     public int SpecializationClass { get; init; } =
         matrix?.PerClassRecall != null
@@ -46,7 +50,9 @@ public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
         return Size <= other.Size;
     }
 
-    public double ConsolidatedValue => Objectives.Sum();
+    public double ConsolidatedValue => UsedMetric.Item2 == Averaging.Macro
+        ? Objectives.Average()
+        : matrix?.Accuracy ?? 0.0;
 
     private int Compare(ConfusionAndSizeFitnessValue fitnessValue,
         IFitnessValue? other)
@@ -66,6 +72,6 @@ public class ConfusionAndSizeFitnessValue(ConfusionMatrix? matrix, int size)
     public override string ToString()
     {
         return
-            $"[{string.Join(", ", Objectives.Select(o => o.ToString(CultureInfo.InvariantCulture)))}], Size: {Size}";
+            $"[{string.Join(", ", Objectives.Select(o => o.ToString(CultureInfo.InvariantCulture)))}] ({ConsolidatedValue.ToString(CultureInfo.InvariantCulture)}), Size: {Size}";
     }
 }

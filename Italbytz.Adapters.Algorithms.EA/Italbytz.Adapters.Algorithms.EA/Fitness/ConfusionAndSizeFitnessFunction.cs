@@ -9,11 +9,14 @@ public class ConfusionAndSizeFitnessFunction<TCategory> : IFitnessFunction
 {
     private readonly TCategory[][] _features;
     private readonly int[] _labels;
+    private readonly bool _compress;
 
-    public ConfusionAndSizeFitnessFunction(TCategory[][] features, int[] labels)
+    public ConfusionAndSizeFitnessFunction(TCategory[][] features, int[] labels,
+        bool compress = true)
     {
         _features = features;
         _labels = labels;
+        _compress = compress;
         NumberOfObjectives = labels.Max() + 1;
     }
 
@@ -56,6 +59,7 @@ public class ConfusionAndSizeFitnessFunction<TCategory> : IFitnessFunction
         var confusionMatrix = new ConfusionMatrix(confusionTableCounts);
 
 
-        return new ConfusionAndSizeFitnessValue(confusionMatrix, size);
+        return new ConfusionAndSizeFitnessValue(confusionMatrix, size,
+            _compress);
     }
 }

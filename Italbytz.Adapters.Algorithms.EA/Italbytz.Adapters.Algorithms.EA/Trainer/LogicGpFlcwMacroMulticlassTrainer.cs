@@ -9,7 +9,8 @@ public class
 {
     public LogicGpFlcwMacroMulticlassTrainer(int generations)
     {
-        ConfusionAndSizeFitnessValue.UsedMetric = Metric.MacroAccuracy;
+        ConfusionAndSizeFitnessValue.UsedMetric =
+            (ClassMetric.Accuracy, Averaging.Macro);
         RunStrategy = new FlcwRunStrategy(generations);
     }
 }

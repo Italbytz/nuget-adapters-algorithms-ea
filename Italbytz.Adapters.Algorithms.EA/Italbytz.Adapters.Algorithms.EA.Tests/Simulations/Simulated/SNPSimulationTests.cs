@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Italbytz.AI;
 using Italbytz.EA.Trainer;
 using Italbytz.ML;
 using Microsoft.ML;
@@ -82,6 +83,8 @@ public class SNPSimulationTests
     [TestMethod]
     public void TestSimulation3()
     {
+        ThreadSafeRandomNetCore.Seed = 42;
+        ThreadSafeMLContext.Seed = 42;
         GPASSimulation(3, 1, AppDomain.CurrentDomain.BaseDirectory,
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
                 5, 5, folds: 5, minMaxWeight: 1.1));
