@@ -12,16 +12,16 @@ public class LogicGpGraph : OperatorGraph
         int crossoverIndividuals = 2, int mutationIndividuals = 1)
     {
         Start = new Start();
-        var selectionForCrossover = new FitnessTournamentSelection
+        var selectionForCrossover = new UniformSelection
         {
             NoOfIndividualsToSelect = crossoverIndividuals
         };
         Start.AddChildren(selectionForCrossover);
         var crossover = new StandardCrossover();
-        var selectionsForMutation = new FitnessTournamentSelection[5];
+        var selectionsForMutation = new UniformSelection[5];
         for (var i = 0; i < selectionsForMutation.Length; i++)
         {
-            selectionsForMutation[i] = new FitnessTournamentSelection
+            selectionsForMutation[i] = new UniformSelection
             {
                 NoOfIndividualsToSelect = mutationIndividuals
             };
