@@ -36,7 +36,7 @@ public class RlcwRunStrategy(
         sizeDetermination = true;
         var mlContext = ThreadSafeMLContext.LocalMLContext;
         var fitnessDecreases = 0;
-        var bestAvgFitness = 0.0;
+        var bestMedianFitness = 0.0;
         var chosenSize = 1;
         _currentMaxSize = 1;
         var cvResults = mlContext.Data.CrossValidationSplit(input);
@@ -62,20 +62,20 @@ public class RlcwRunStrategy(
                          5 * g.ValidationFitness.ConsolidatedValue);
 
 
-            var avgFitness = CalculateFitnessSumOfBestIndividuals(
+            var medianFitness = CalculateFitnessMedianOfBestIndividuals(
                 bestIndividualsPhase1,
                 g => g.ValidationFitness.ConsolidatedValue);
 
             // Check if we should increase the size or stop
             if (_currentMaxSize >= MaximumSize ||
-                avgFitness < bestAvgFitness)
+                medianFitness < bestMedianFitness)
             {
                 fitnessDecreases++;
             }
             else
             {
                 fitnessDecreases = 0;
-                bestAvgFitness = avgFitness;
+                bestMedianFitness = medianFitness;
                 chosenSize = _currentMaxSize;
                 chosenIndividualsPhase1 = bestIndividualsPhase1;
             }
@@ -200,6 +200,29 @@ public class RlcwRunStrategy(
         }
 
         return sumFitness;
+    }
+
+    private double CalculateFitnessMedianOfBestIndividuals(
+        IIndividualList individuals, Func<IValidatableGenotype, double> metric)
+    {
+        var fitnessValues = new List<double>();
+        foreach (var individual in individuals)
+        {
+            if (individual.Genotype is not IValidatableGenotype
+                validatable)
+                throw new ArgumentException(
+                    "Expected genotype of type IValidatableGenotype");
+            var validationFitnessValue =
+                metric(validatable);
+            fitnessValues.Add(validationFitnessValue);
+        }
+
+        if (fitnessValues.Count == 0) return 0.0;
+        fitnessValues.Sort();
+        var mid = fitnessValues.Count / 2;
+        if (fitnessValues.Count % 2 == 0)
+            return (fitnessValues[mid - 1] + fitnessValues[mid]) / 2.0;
+        return fitnessValues[mid];
     }
 
     protected override Task<IIndividualList> RunSpecificLogicGp(
