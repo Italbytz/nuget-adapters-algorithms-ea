@@ -91,16 +91,28 @@ public class RlcwRunStrategy(
         // Phase 2: Determine model 
         sizeDetermination = false;
         _currentMaxSize = chosenSize;
+        individualLists = new IIndividualList[folds];
+        foldIndex = 0;
 
-        var individualListPhase2 = TrainAndValidate(input, input,
-            featureValueMappings, labelMapping);
+        foreach (var fold in cvResults)
+        {
+            individualLists[foldIndex] = TrainAndValidate(fold.TrainSet,
+                fold.TestSet, featureValueMappings, labelMapping);
+            foldIndex++;
+        }
 
+        foreach (var list in individualLists) allIndividuals.AddRange(list);
 
-        allIndividuals.AddRange(individualListPhase2);
+        var bestIndividualsPhase2 = BestModelsForGivenSizeAndMetric(
+            individualLists,
+            _currentMaxSize,
+            g => g.TrainingFitness.ConsolidatedValue +
+                 5 * g.ValidationFitness.ConsolidatedValue);
 
+        bestIndividualsPhase2.Add(bestIndividualPhase1);
 
-        var bestIndividual = DetermineBestIndividual(allIndividuals,
-            g => g.TrainingFitness.ConsolidatedValue);
+        var bestIndividual = DetermineBestIndividual(bestIndividualsPhase2,
+            g => g.ValidationFitness.ConsolidatedValue);
 
 
         return (bestIndividual, allIndividuals);

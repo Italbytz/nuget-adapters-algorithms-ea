@@ -15,7 +15,7 @@ public class LogicGpRlcwMulticlassTrainer<TOutput> : LogicGpMulticlassTrainer<
         (ClassMetric, Averaging)? usedMetric = null)
     {
         usedMetric ??=
-            (ClassMetric.Accuracy, Averaging.Micro);
+            (ClassMetric.F1, Averaging.Macro);
         algorithmGraph ??=
             new LogicGpGraph(maxIndividuals, crossoverIndividuals,
                 mutationIndividuals);
