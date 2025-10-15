@@ -15,9 +15,9 @@ public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
         Monomials = monomials;
     }
 
-    public float[][] Predictions { get; set; }
-
     public float[] Weights { get; set; }
+
+    //public int Size => GetAllLiterals().Count;
 
     public int Size
     {

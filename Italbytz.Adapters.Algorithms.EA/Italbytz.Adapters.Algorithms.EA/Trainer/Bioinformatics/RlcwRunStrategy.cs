@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Italbytz.EA.Graph;
 using Italbytz.EA.Individuals;
@@ -31,15 +32,54 @@ public class RlcwRunStrategy(
         Dictionary<uint, int> labelMapping)
     {
         var allIndividuals = new ListBasedPopulation();
+        var mlContext = ThreadSafeMLContext.LocalMLContext;
+        var cvResults = mlContext.Data.CrossValidationSplit(input);
+
+        IIndividual bestCandidate = null;
+        foreach (var fold in cvResults)
+        {
+            _currentMaxSize = 15;
+            var individuals = TrainAndValidate(fold.TrainSet,
+                fold.TestSet, featureValueMappings, labelMapping);
+            allIndividuals.AddRange(individuals);
+
+            /*
+            for (var i = 1; i <= _currentMaxSize; i++)
+            {
+                var candidates = BestModelsForGivenSizeAndMetric([individuals],
+                    i, g => g.TrainingFitness.ConsolidatedValue);
+                if (candidates.Count == 0) continue;
+                bestCandidate = candidates[0];
+                if (bestCandidate.Genotype is not IValidatableGenotype gen)
+                    throw new ArgumentException(
+                        "Expected genotype of type IValidatableGenotype");
+                Console.WriteLine(
+                    $"{bestCandidate.Size}, {gen.TrainingFitness.ConsolidatedValue.ToString(CultureInfo.InvariantCulture)}, \"Training\"");
+                Console.WriteLine(
+                    $"{bestCandidate.Size}, {gen.ValidationFitness.ConsolidatedValue.ToString(CultureInfo.InvariantCulture)}, \"Validation\"");
+            }*/
+        }
+
+        var paretoFront = ParetoFront(allIndividuals);
+        foreach (var individual in paretoFront)
+        {
+            if (individual.Genotype is not IValidatableGenotype genotype)
+                throw new ArgumentException(
+                    "Expected genotype of type IValidatableGenotype");
+            Console.WriteLine(
+                $"{individual.Size}, {genotype.TrainingFitness.ConsolidatedValue.ToString(CultureInfo.InvariantCulture)}, {genotype.ValidationFitness.ConsolidatedValue.ToString(CultureInfo.InvariantCulture)}");
+        }
+
+        return (paretoFront[0], paretoFront);
+
+        return (bestCandidate, allIndividuals);
 
         // Phase 1: Determine model size
         sizeDetermination = true;
-        var mlContext = ThreadSafeMLContext.LocalMLContext;
         var fitnessDecreases = 0;
         var bestMedianFitness = 0.0;
         var chosenSize = 1;
         _currentMaxSize = 1;
-        var cvResults = mlContext.Data.CrossValidationSplit(input);
         IIndividualList[] individualLists;
         int foldIndex;
         IIndividualList? chosenIndividualsPhase1 = null;
@@ -59,7 +99,7 @@ public class RlcwRunStrategy(
                 BestModelsForGivenSizeAndMetric(individualLists,
                     _currentMaxSize,
                     g => g.TrainingFitness.ConsolidatedValue +
-                         5 * g.ValidationFitness.ConsolidatedValue);
+                         4 * g.ValidationFitness.ConsolidatedValue);
 
 
             var medianFitness = CalculateFitnessMedianOfBestIndividuals(
@@ -116,6 +156,64 @@ public class RlcwRunStrategy(
 
 
         return (bestIndividual, allIndividuals);
+    }
+
+    private IIndividualList ParetoFront(IIndividualList individuals)
+    {
+        // Remove duplicate individuals with the same size, training fitness, and validation fitness
+        var uniqueIndividuals = new ListBasedPopulation();
+        var seen = new HashSet<string>();
+
+        foreach (var ind in individuals)
+        {
+            if (ind.Genotype is not IValidatableGenotype validatable)
+                continue;
+
+            var key =
+                $"{ind.Size}_{validatable.TrainingFitness.ConsolidatedValue}_{validatable.ValidationFitness.ConsolidatedValue}";
+            if (!seen.Contains(key))
+            {
+                uniqueIndividuals.Add(ind);
+                seen.Add(key);
+            }
+        }
+
+        individuals = uniqueIndividuals;
+
+        var paretoFront = new ListBasedPopulation();
+        foreach (var individual in individuals)
+        {
+            if (individual.Genotype is not IValidatableGenotype validatable)
+                throw new ArgumentException(
+                    "Expected genotype of type IValidatableGenotype");
+            var dominated = false;
+            foreach (var otherIndividual in individuals)
+            {
+                if (otherIndividual == individual) continue;
+                if (otherIndividual.Genotype is not IValidatableGenotype
+                    otherValidatable)
+                    throw new ArgumentException(
+                        "Expected genotype of type IValidatableGenotype");
+                if (otherValidatable.TrainingFitness.ConsolidatedValue >=
+                    validatable.TrainingFitness.ConsolidatedValue &&
+                    otherValidatable.ValidationFitness.ConsolidatedValue >=
+                    validatable.ValidationFitness.ConsolidatedValue &&
+                    otherIndividual.Size <= individual.Size &&
+                    (otherValidatable.TrainingFitness.ConsolidatedValue >
+                     validatable.TrainingFitness.ConsolidatedValue ||
+                     otherValidatable.ValidationFitness.ConsolidatedValue >
+                     validatable.ValidationFitness.ConsolidatedValue
+                     || otherIndividual.Size < individual.Size))
+                {
+                    dominated = true;
+                    break;
+                }
+            }
+
+            if (!dominated) paretoFront.Add(individual);
+        }
+
+        return paretoFront;
     }
 
     private (double, int) MaxValueAndIndex(double[] array)

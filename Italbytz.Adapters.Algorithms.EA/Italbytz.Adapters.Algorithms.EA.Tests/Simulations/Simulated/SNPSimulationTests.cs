@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Italbytz.AI;
 using Italbytz.EA.Trainer;
 using Italbytz.ML;
 using Microsoft.ML;
@@ -62,32 +61,49 @@ public class SNPSimulationTests
     [TestMethod]
     public void TestSimulation1()
     {
-        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory,
+/*        GPASSimulation(1, 1, AppDomain.CurrentDomain.BaseDirectory,
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                5, 5, folds: 5, minMaxWeight: 1.1));
-        return;
+                1, 5, folds: 5, minMaxWeight: 1.1));
+        return;*/
         for (var i = 1; i < 101; i++)
             GPASSimulation(1, i, AppDomain.CurrentDomain.BaseDirectory,
                 new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                    10, 10, folds: 5, minMaxWeight: 1.1));
+                    10, 10, folds: 5,
+                    minMaxWeight: 1.0)); // minMaxWeight: 1.1));
     }
 
     [TestMethod]
     public void TestSimulation2()
     {
-        GPASSimulation(2, 1, AppDomain.CurrentDomain.BaseDirectory,
-            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                100, 1000, folds: 5, minMaxWeight: 1.1));
+        for (var i = 1; i < 101; i++)
+            GPASSimulation(2, i, AppDomain.CurrentDomain.BaseDirectory,
+                new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                    10, 10, folds: 5,
+                    minMaxWeight: 1.0)); // minMaxWeight: 1.1));
     }
 
     [TestMethod]
     public void TestSimulation3()
     {
-        ThreadSafeRandomNetCore.Seed = 42;
-        ThreadSafeMLContext.Seed = 42;
-        GPASSimulation(3, 1, AppDomain.CurrentDomain.BaseDirectory,
-            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                5, 5, folds: 5, minMaxWeight: 1.1));
+        //ThreadSafeRandomNetCore.Seed = 42;
+        //ThreadSafeMLContext.Seed = 42;
+        for (var i = 1; i < 101; i++)
+            GPASSimulation(3, i, AppDomain.CurrentDomain.BaseDirectory,
+                new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                    10, 10, folds: 5,
+                    minMaxWeight: 1.0)); // minMaxWeight: 1.1));
+    }
+
+    [TestMethod]
+    public void TestSimulation4()
+    {
+        //ThreadSafeRandomNetCore.Seed = 42;
+        //ThreadSafeMLContext.Seed = 42;
+        for (var i = 1; i < 101; i++)
+            GPASSimulation(4, i, AppDomain.CurrentDomain.BaseDirectory,
+                new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
+                    10, 10, folds: 5,
+                    minMaxWeight: 1.0)); // minMaxWeight: 1.1));
     }
 
     private void GPASSimulation(int simulation, int dataset,
@@ -95,15 +111,14 @@ public class SNPSimulationTests
     {
         var mlContext = ThreadSafeMLContext.LocalMLContext;
         var data = SNPHelper.LoadData(baseDirectory, simulation, dataset);
-        var pipeline = SNPHelper.BuildPipeline(mlContext, trainer);
+        var pipeline = SNPHelper.BuildEnvironmentPipeline(mlContext, trainer);
         var model = pipeline.Fit(data);
         var predictions = model.Transform(data);
         var metrics = mlContext.BinaryClassification.Evaluate(predictions);
         if (trainer is IInterpretableTrainer interpretableTrainer)
         {
             var logicGpModel = interpretableTrainer.Model;
-            if (logicGpModel != null)
-                Console.WriteLine(logicGpModel);
+            //  if (logicGpModel != null) Console.WriteLine(logicGpModel);
         }
 
         // Just ensure the process completes
