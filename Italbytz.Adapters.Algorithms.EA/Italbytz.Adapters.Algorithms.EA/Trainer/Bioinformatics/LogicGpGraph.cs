@@ -33,6 +33,11 @@ public class LogicGpGraph : OperatorGraph
             NoOfIndividualsToSelect = maxIndividuals
         };*/
 
+        var uniquenessSelection = new UniquenessSelection
+        {
+            NoOfIndividualsToSelect = int.MaxValue
+        };
+
         var finalSelection = new DominationTournamentSelection
         {
             NoOfIndividualsToSelect = maxIndividuals
@@ -50,22 +55,23 @@ public class LogicGpGraph : OperatorGraph
 
         var deleteLiteralMutation = new DeleteLiteral();
         selectionsForMutation[0].AddChildren(deleteLiteralMutation);
-        deleteLiteralMutation.AddChildren(finalSelection);
+        deleteLiteralMutation.AddChildren(uniquenessSelection);
         var deleteMonomialMutation = new DeleteMonomial();
         selectionsForMutation[1].AddChildren(deleteMonomialMutation);
-        deleteMonomialMutation.AddChildren(finalSelection);
+        deleteMonomialMutation.AddChildren(uniquenessSelection);
         var insertLiteralMutation = new InsertLiteral();
         selectionsForMutation[2].AddChildren(insertLiteralMutation);
-        insertLiteralMutation.AddChildren(finalSelection);
+        insertLiteralMutation.AddChildren(uniquenessSelection);
         var insertMonomialMutation = new InsertMonomial();
         selectionsForMutation[3].AddChildren(insertMonomialMutation);
-        insertMonomialMutation.AddChildren(finalSelection);
+        insertMonomialMutation.AddChildren(uniquenessSelection);
         var replaceLiteralMutation = new ReplaceLiteral();
         selectionsForMutation[4].AddChildren(replaceLiteralMutation);
-        replaceLiteralMutation.AddChildren(finalSelection);
+        replaceLiteralMutation.AddChildren(uniquenessSelection);
         selectionForCrossover.AddChildren(crossover);
-        crossover.AddChildren(finalSelection);
-        Start.AddChildren(finalSelection);
+        crossover.AddChildren(uniquenessSelection);
+        Start.AddChildren(uniquenessSelection);
+        uniquenessSelection.AddChildren(finalSelection);
         Finish = new Finish();
         finalSelection.AddChildren(Finish);
     }
