@@ -1,5 +1,4 @@
 using Italbytz.ML;
-using logicGP.Tests.Data.Simulated;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Transforms;
@@ -15,7 +14,7 @@ public class SNPHelper
         var dataPath = Path.Combine(baseDirectory, "Data",
             $"Simulations/Simulation{simulation}",
             $"SNPglm_{dataset}.csv");
-        return mlContext.Data.LoadFromTextFile<SNPEnvironmentModelInput>(
+        return mlContext.Data.LoadFromTextFile<SNPModelInput>(
             dataPath, hasHeader: true, separatorChar: ',');
     }
 

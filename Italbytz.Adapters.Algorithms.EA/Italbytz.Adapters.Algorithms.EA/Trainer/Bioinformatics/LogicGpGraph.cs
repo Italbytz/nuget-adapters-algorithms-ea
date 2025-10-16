@@ -38,6 +38,11 @@ public class LogicGpGraph : OperatorGraph
             NoOfIndividualsToSelect = maxIndividuals
         };
 
+        /*var finalSelection = new ParetoFrontSelection
+        {
+            NoOfIndividualsToSelect = maxIndividuals
+        };*/
+
         /*var finalSelection = new FitnessTournamentSelection
         {
             NoOfIndividualsToSelect = maxIndividuals

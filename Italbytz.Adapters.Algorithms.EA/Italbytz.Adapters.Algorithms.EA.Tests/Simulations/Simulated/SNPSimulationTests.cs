@@ -68,8 +68,8 @@ public class SNPSimulationTests
         for (var i = 1; i < 101; i++)
             GPASSimulation(1, i, AppDomain.CurrentDomain.BaseDirectory,
                 new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                    10, 10, folds: 5,
-                    minMaxWeight: 1.0)); // minMaxWeight: 1.1));
+                    -5, 10, folds: 5,
+                    minMaxWeight: 1.1)); // minMaxWeight: 1.1));
     }
 
     [TestMethod]
@@ -111,7 +111,7 @@ public class SNPSimulationTests
     {
         var mlContext = ThreadSafeMLContext.LocalMLContext;
         var data = SNPHelper.LoadData(baseDirectory, simulation, dataset);
-        var pipeline = SNPHelper.BuildEnvironmentPipeline(mlContext, trainer);
+        var pipeline = SNPHelper.BuildPipeline(mlContext, trainer);
         var model = pipeline.Fit(data);
         var predictions = model.Transform(data);
         var metrics = mlContext.BinaryClassification.Evaluate(predictions);
