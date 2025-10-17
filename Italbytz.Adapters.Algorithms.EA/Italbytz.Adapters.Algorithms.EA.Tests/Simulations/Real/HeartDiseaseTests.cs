@@ -8,11 +8,11 @@ using Italbytz.ML.ModelBuilder.Configuration;
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Real;
 
 [TestClass]
-public class NationalPollTests : RealTests
+public class HeartDiseaseTests : RealTests
 {
-    public NationalPollTests()
+    public HeartDiseaseTests()
     {
-        Dataset = Data.NPHA;
+        Dataset = Data.HeartDisease;
     }
 
     [TestMethod]
@@ -22,7 +22,7 @@ public class NationalPollTests : RealTests
         {
             ThreadSafeRandomNetCore.Seed = 42;
             var trainer =
-                new LogicGpRlcwMulticlassTrainer<TernaryClassificationOutput>(
+                new LogicGpRlcwMulticlassTrainer<QuinaryClassificationOutput>(
                     10, 2, folds: 5,
                     minMaxWeight: 1.05,
                     usedMetric: (ClassMetric.F1, Averaging.Macro));
@@ -54,7 +54,7 @@ public class NationalPollTests : RealTests
         ThreadSafeMLContext.Seed = 42;
         var trainer =
             new LogicGpFlcwMacroMulticlassTrainer<
-                TernaryClassificationOutput>(10000);
+                QuinaryClassificationOutput>(10000);
         var pipeline = Dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
@@ -68,7 +68,7 @@ public class NationalPollTests : RealTests
         ThreadSafeRandomNetCore.Seed = 42;
         ThreadSafeMLContext.Seed = 42;
         var trainer =
-            new LogicGpRlcwMulticlassTrainer<TernaryClassificationOutput>(
+            new LogicGpRlcwMulticlassTrainer<QuinaryClassificationOutput>(
                 -4, 100, folds: 5,
                 minMaxWeight: 1.05,
                 usedMetric: (ClassMetric.F1, Averaging.Macro));

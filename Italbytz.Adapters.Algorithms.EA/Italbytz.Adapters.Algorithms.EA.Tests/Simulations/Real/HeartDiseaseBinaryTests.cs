@@ -8,11 +8,11 @@ using Italbytz.ML.ModelBuilder.Configuration;
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Real;
 
 [TestClass]
-public class NationalPollTests : RealTests
+public class HeartDiseaseBinaryTests : RealTests
 {
-    public NationalPollTests()
+    public HeartDiseaseBinaryTests()
     {
-        Dataset = Data.NPHA;
+        Dataset = Data.HeartDiseaseBinary;
     }
 
     [TestMethod]
@@ -22,7 +22,7 @@ public class NationalPollTests : RealTests
         {
             ThreadSafeRandomNetCore.Seed = 42;
             var trainer =
-                new LogicGpRlcwMulticlassTrainer<TernaryClassificationOutput>(
+                new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
                     10, 2, folds: 5,
                     minMaxWeight: 1.05,
                     usedMetric: (ClassMetric.F1, Averaging.Macro));
@@ -39,10 +39,6 @@ public class NationalPollTests : RealTests
                 var finalModel = interpretableTrainer.Model;
                 //Console.WriteLine(finalModel);
             }
-
-            var metrics = ThreadSafeMLContext.LocalMLContext
-                .MulticlassClassification
-                .Evaluate(predictions);
         }
         //Assert.IsTrue(metrics.MacroAccuracy > 0.38);
     }
@@ -54,7 +50,7 @@ public class NationalPollTests : RealTests
         ThreadSafeMLContext.Seed = 42;
         var trainer =
             new LogicGpFlcwMacroMulticlassTrainer<
-                TernaryClassificationOutput>(10000);
+                BinaryClassificationOutput>(10000);
         var pipeline = Dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
@@ -68,7 +64,7 @@ public class NationalPollTests : RealTests
         ThreadSafeRandomNetCore.Seed = 42;
         ThreadSafeMLContext.Seed = 42;
         var trainer =
-            new LogicGpRlcwMulticlassTrainer<TernaryClassificationOutput>(
+            new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
                 -4, 100, folds: 5,
                 minMaxWeight: 1.05,
                 usedMetric: (ClassMetric.F1, Averaging.Macro));

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Italbytz.EA.Graph;
 using Italbytz.EA.Individuals;
@@ -46,9 +47,8 @@ public class RlcwRunStrategy(
 
         var filteredParetoFront = FilterForSize(paretoFront, mostCommonSize);
 
-        return (mostCommonSize, filteredParetoFront);
 
-        /*var medianSize = GetMedianSize(paretoFront);
+        //var medianSize = GetMedianSize(paretoFront);
 
         foreach (var individual in paretoFront)
         {
@@ -57,7 +57,9 @@ public class RlcwRunStrategy(
                     "Expected genotype of type IValidatableGenotype");
             Console.WriteLine(
                 $"{individual.Size}, {genotype.TrainingFitness.ConsolidatedValue.ToString(CultureInfo.InvariantCulture)}, {genotype.ValidationFitness.ConsolidatedValue.ToString(CultureInfo.InvariantCulture)}");
-        }*/
+        }
+
+        return (mostCommonSize, filteredParetoFront);
     }
 
     private IIndividualList FilterForSize(IIndividualList individuals, int size)
@@ -86,6 +88,8 @@ public class RlcwRunStrategy(
                 featureValueMappings, labelMapping);
         allIndividuals.AddRange(chosenSize.Item2);
         _currentMaxSize = chosenSize.Item1 + 1;
+
+        //return (allIndividuals[0], allIndividuals);
 
         // Phase 2: Determine model 
         sizeDetermination = false;
