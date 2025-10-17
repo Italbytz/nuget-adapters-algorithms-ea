@@ -14,6 +14,8 @@ namespace Italbytz.EA;
 
 public abstract class CommonRunStrategy : IRunStrategy
 {
+    protected int NumberOfObjectives { get; set; }
+
     public abstract (IIndividual, IIndividualList) Run(IDataView input,
         Dictionary<float, int>[] featureValueMappings,
         Dictionary<uint, int> labelMapping);
@@ -34,7 +36,8 @@ public abstract class CommonRunStrategy : IRunStrategy
         var logicGp = new EvolutionaryAlgorithm
         {
             FitnessFunction =
-                new ConfusionAndSizeFitnessFunction<int>(features, labels)
+                new ConfusionAndSizeFitnessFunction<int>(features, labels,
+                    NumberOfObjectives)
                 {
                     MaxSize = maxModelSize
                 },
@@ -64,6 +67,7 @@ public abstract class CommonRunStrategy : IRunStrategy
         IDataView validationSet, Dictionary<float, int>[] featureValueMappings,
         Dictionary<uint, int> labelMapping)
     {
+        NumberOfObjectives = labelMapping.Count;
         // Train
         var trainExcerpt = trainSet.GetDataExcerpt();
         var trainFeatures = trainExcerpt.Features;
@@ -89,7 +93,8 @@ public abstract class CommonRunStrategy : IRunStrategy
             validationLabels,
             labelMapping);
         var fitness = new ConfusionAndSizeFitnessFunction<int>(
-            convertedValidationFeatures, convertedValidationLabels);
+            convertedValidationFeatures, convertedValidationLabels,
+            NumberOfObjectives);
         foreach (var individual in individuals.Result)
         {
             var oldFitness =

@@ -68,7 +68,7 @@ public class Simulation1Tests
 
         var fitnessFunction =
             new ConfusionAndSizeFitnessFunction<int>(mappedFeatures,
-                mappedLabels);
+                mappedLabels, 2);
         ConfusionAndSizeFitnessValue.UsedMetric =
             (ClassMetric.F1, Averaging.Macro);
 

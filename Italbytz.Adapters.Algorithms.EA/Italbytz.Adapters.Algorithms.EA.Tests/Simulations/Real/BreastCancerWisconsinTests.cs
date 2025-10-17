@@ -65,7 +65,7 @@ public class BreastCancerWisconsinTests : RealTests
         ThreadSafeMLContext.Seed = 42;
         var trainer =
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                -4, 100, folds: 5,
+                -6, 100, folds: 5,
                 minMaxWeight: 1.05,
                 usedMetric: (ClassMetric.F1, Averaging.Macro));
         var pipeline = Dataset.BuildPipeline(

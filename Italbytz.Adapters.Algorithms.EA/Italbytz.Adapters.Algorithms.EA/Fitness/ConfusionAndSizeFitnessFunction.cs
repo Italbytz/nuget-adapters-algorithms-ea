@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Italbytz.EA.Individuals;
 
 namespace Italbytz.EA.Fitness;
@@ -7,17 +6,18 @@ namespace Italbytz.EA.Fitness;
 public class ConfusionAndSizeFitnessFunction<TCategory> : IFitnessFunction
     where TCategory : notnull
 {
+    private readonly bool _compress;
     private readonly TCategory[][] _features;
     private readonly int[] _labels;
-    private readonly bool _compress;
 
     public ConfusionAndSizeFitnessFunction(TCategory[][] features, int[] labels,
+        int numberOfObjectives,
         bool compress = true)
     {
         _features = features;
         _labels = labels;
         _compress = compress;
-        NumberOfObjectives = labels.Max() + 1;
+        NumberOfObjectives = numberOfObjectives;
     }
 
     public int MaxSize { get; set; } = int.MaxValue;

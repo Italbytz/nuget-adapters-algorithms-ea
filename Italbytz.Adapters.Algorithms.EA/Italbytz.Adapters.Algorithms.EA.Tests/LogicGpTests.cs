@@ -359,7 +359,7 @@ public class LogicGpTests
         {
             FitnessFunction =
                 new ConfusionAndSizeFitnessFunction<int>(_trainingFeatures,
-                    _trainingLabels)
+                    _trainingLabels, 3)
                 {
                     MaxSize = int.MaxValue
                 },
@@ -389,7 +389,7 @@ public class LogicGpTests
         population.Freeze();
         var fitness =
             new ConfusionAndSizeFitnessFunction<int>(_testFeatures,
-                _testLabels);
+                _testLabels, 3);
         foreach (var individual in population)
         {
             var newFitness = fitness.Evaluate(individual);
