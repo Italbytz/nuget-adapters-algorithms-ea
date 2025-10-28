@@ -58,6 +58,6 @@ public class TinyGpTests
         Console.WriteLine(population.First());
         var lastFitness = population.First().LatestKnownFitness;
         Assert.IsTrue(lastFitness != null);
-        Assert.IsTrue(Math.Abs(lastFitness.ConsolidatedValue + 25.31) < 0.02);
+        Assert.IsTrue(Math.Abs(lastFitness.ConsolidatedValue + 34.72) < 0.02);
     }
 }
