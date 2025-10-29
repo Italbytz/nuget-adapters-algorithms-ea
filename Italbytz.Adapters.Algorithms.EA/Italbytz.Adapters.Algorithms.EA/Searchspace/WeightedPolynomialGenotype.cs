@@ -23,20 +23,28 @@ public class WeightedPolynomialGenotype<TLiteral, TCategory> :
 {
     private readonly IList<TLiteral> _literals;
 
+    [JsonInclude]
     public readonly WeightedPolynomial<TLiteral, TCategory> Polynomial;
 
-    public WeightedPolynomialGenotype()
+    [JsonConstructor]
+    public WeightedPolynomialGenotype(WeightedPolynomial<TLiteral,
+            TCategory> polynomial, Weighting weighting,
+        PredictionStrategy predictionStrategy) : this(
+        polynomial, [],
+        weighting, predictionStrategy)
     {
     }
 
     public WeightedPolynomialGenotype(
         WeightedPolynomial<TLiteral,
             TCategory> polynomial,
-        IList<TLiteral> literals, Weighting weighting)
+        IList<TLiteral> literals, Weighting weighting,
+        PredictionStrategy predictionStrategy = PredictionStrategy.Max)
     {
         Polynomial = polynomial;
         _literals = literals;
         Weighting = weighting;
+        PredictionStrategy = predictionStrategy;
     }
 
     public WeightedPolynomialGenotype(
