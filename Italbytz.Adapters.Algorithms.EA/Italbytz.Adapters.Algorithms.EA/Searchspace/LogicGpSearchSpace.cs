@@ -20,12 +20,13 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
 
     public Weighting Weighting { get; set; } = Weighting.Fixed;
 
-    public List<ILiteral<TCategory>> Literals { get; set; }
+    public IList<SetLiteral<TCategory>> Literals { get; set; }
 
     public IGenotype GetRandomGenotype()
     {
-        return PolynomialGenotype<TCategory>.GenerateRandomGenotype(Literals,
-            Weighting);
+        return WeightedPolynomialGenotype<SetLiteral<TCategory>, TCategory>
+            .GenerateRandomGenotype(Literals,
+                Weighting);
     }
 
     public IIndividualList GetAStartingPopulation()
@@ -33,11 +34,15 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
         var result = new ListBasedPopulation();
         foreach (var literal in Literals)
         {
-            var monomial = new WeightedMonomial<TCategory>([literal]);
-            var polynomial = new WeightedPolynomial<TCategory>(
-                [monomial]);
+            var monomial =
+                new WeightedMonomial<SetLiteral<TCategory>, TCategory>(
+                    [literal]);
+            var polynomial =
+                new WeightedPolynomial<SetLiteral<TCategory>, TCategory>(
+                    [monomial]);
             var genotype =
-                new PolynomialGenotype<TCategory>(polynomial, Literals,
+                new WeightedPolynomialGenotype<SetLiteral<TCategory>,
+                    TCategory>(polynomial, Literals,
                     Weighting);
             var individual = new Individual(genotype, null);
             result.Add(individual);
@@ -72,7 +77,8 @@ public class LogicGpSearchSpace<TCategory> : ISearchSpace
                 if (minMaxWeight > 0)
                 {
                     var genotype =
-                        new PolynomialGenotype<TCategory>(literal, null,
+                        new WeightedPolynomialGenotype<SetLiteral<TCategory>,
+                            TCategory>(literal, null,
                             Weighting.Computed);
                     genotype.ComputeWeights(_features, _labels);
                     var weights = genotype.Polynomial.Monomials[0].Weights;

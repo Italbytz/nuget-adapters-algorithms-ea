@@ -1,12 +1,12 @@
 using System;
-using System.Globalization;
-using System.Linq;
+using System.IO;
 using Italbytz.EA.Fitness;
+using Italbytz.ML;
 
 namespace Italbytz.EA.Individuals;
 
 /// <inheritdoc cref="IIndividual" />
-public class Individual : IIndividual
+public class Individual : IIndividual, ISaveable
 {
     public Individual(IGenotype genotype, IIndividual[]? parents)
     {
@@ -49,6 +49,14 @@ public class Individual : IIndividual
         {
             Generation = Generation
         };
+    }
+
+    public void Save(Stream stream)
+    {
+        if (Genotype is ISaveable saveable)
+            saveable.Save(stream);
+        else
+            throw new InvalidOperationException("Genotype is not saveable.");
     }
 
     /// <inheritdoc />

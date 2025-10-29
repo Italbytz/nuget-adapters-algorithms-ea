@@ -3,7 +3,6 @@ using Italbytz.ML;
 using Italbytz.ML.Data;
 using Italbytz.ML.ModelBuilder.Configuration;
 using Microsoft.ML;
-using Microsoft.ML.Data;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
@@ -27,23 +26,43 @@ public class LogicGpTrainerTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var model = pipeline.Fit(_dataset.DataView);
-        if (model is TransformerChain<ITransformer> tc)
+        pipeline.Fit(_dataset.DataView);
+        if (trainer is ICanSaveCustomModel modelSaver)
         {
-            var tmpDir = Path.GetTempPath();
-            var file = Path.Combine(tmpDir, $"test.logicGP");
-            tc.Save(file);
+            var stream = new MemoryStream();
+            modelSaver.Save(stream);
+            stream.Position = 0;
+            using var reader = new StreamReader(stream, leaveOpen: true);
+            var content = reader.ReadToEnd();
+            Console.WriteLine(content);
         }
-
-        var predictions = model.Transform(_dataset.DataView);
     }
-    
+
+
     [TestMethod]
     public void LoadModel()
     {
+        var trainer =
+            new LogicGpFlcwMacroMulticlassTrainer<TernaryClassificationOutput>(
+                10);
+        var pipeline = _dataset.BuildPipeline(
+            ThreadSafeMLContext.LocalMLContext, trainer,
+            ScenarioType.Classification,
+            ProcessingType.FeatureBinningAndCustomLabelMapping);
+        pipeline.Fit(_dataset.DataView);
+        var tmpFolder = Path.GetTempPath();
+        var modelPath = Path.Combine(tmpFolder, "logicgp_model.json");
+        if (trainer is ICanSaveCustomModel modelSaver)
+            using (var fileStream = new FileStream(modelPath, FileMode.Create,
+                       FileAccess.Write))
+            {
+                modelSaver.Save(fileStream);
+            }
+
         var mlContext = new MLContext();
-        ITransformer mlModel = mlContext.Model.Load("");
+        var mlModel = mlContext.Model.Load(modelPath);
     }
+
     [TestMethod]
     public async Task TestLogicGp()
     {

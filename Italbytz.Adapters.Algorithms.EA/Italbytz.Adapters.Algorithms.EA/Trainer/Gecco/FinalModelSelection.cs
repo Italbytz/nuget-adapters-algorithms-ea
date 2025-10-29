@@ -27,7 +27,8 @@ public class FinalModelSelection
         var allCandidates = individuals.ToList();
         var groups = allCandidates
             .GroupBy(i =>
-                ((PolynomialGenotype<int>)i.Genotype).LiteralSignature())
+                ((WeightedPolynomialGenotype<SetLiteral<int>, int>)i.Genotype)
+                .LiteralSignature())
             .Where(group => group.Count() > 0)
             .OrderByDescending(group => group.FirstOrDefault().Size);
         var largestSize = groups.FirstOrDefault()!.FirstOrDefault().Size;

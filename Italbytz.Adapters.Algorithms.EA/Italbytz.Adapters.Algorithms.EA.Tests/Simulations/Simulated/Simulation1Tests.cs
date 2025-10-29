@@ -1,7 +1,6 @@
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Searchspace;
-using Italbytz.EA.SearchSpace;
 using Italbytz.ML;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Simulated;
@@ -9,15 +8,15 @@ namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Simulated;
 [TestClass]
 public class Simulation1Tests
 {
-    private readonly List<ILiteral<int>> _allLiterals;
+    private readonly List<SetLiteral<int>> _allLiterals;
     private readonly SetLiteral<int> _literal1;
     private readonly SetLiteral<int> _literal2;
     private readonly SetLiteral<int> _literal3;
     private readonly SetLiteral<int> _literal4;
     private readonly SetLiteral<int> _literal5;
-    private readonly WeightedMonomial<int> _monomial1;
-    private readonly WeightedMonomial<int> _monomial2;
-    private readonly WeightedPolynomial<int> _polynomial;
+    private readonly WeightedMonomial<SetLiteral<int>, int> _monomial1;
+    private readonly WeightedMonomial<SetLiteral<int>, int> _monomial2;
+    private readonly WeightedPolynomial<SetLiteral<int>, int> _polynomial;
     private readonly IIndividual realModel;
 
     public Simulation1Tests()
@@ -28,12 +27,18 @@ public class Simulation1Tests
         _literal4 = new SetLiteral<int>(8, [0, 1, 2], 1);
         _literal5 = new SetLiteral<int>(9, [0, 1, 2], 1);
         _allLiterals = [_literal1, _literal2, _literal3, _literal4, _literal5];
-        _monomial1 = new WeightedMonomial<int>([_literal1, _literal2]);
+        _monomial1 =
+            new WeightedMonomial<SetLiteral<int>, int>([_literal1, _literal2]);
         _monomial2 =
-            new WeightedMonomial<int>([_literal3, _literal4, _literal5]);
-        _polynomial = new WeightedPolynomial<int>([_monomial1, _monomial2]);
+            new WeightedMonomial<SetLiteral<int>, int>([
+                _literal3, _literal4, _literal5
+            ]);
+        _polynomial =
+            new WeightedPolynomial<SetLiteral<int>, int>([
+                _monomial1, _monomial2
+            ]);
         var genotype =
-            new PolynomialGenotype<int>(_polynomial,
+            new WeightedPolynomialGenotype<SetLiteral<int>, int>(_polynomial,
                 _allLiterals,
                 Weighting.Computed);
         realModel = new Individual(genotype, null);
@@ -76,49 +81,56 @@ public class Simulation1Tests
         realModel.LatestKnownFitness = fitness;
         Console.WriteLine(realModel.ToString());
 
-        var geno1 = new PolynomialGenotype<int>(_literal1,
+        var geno1 = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+            _literal1,
             _allLiterals,
             Weighting.Computed);
         var ind1 = new Individual(geno1, null);
         var fitness1 = fitnessFunction.Evaluate(ind1);
         ind1.LatestKnownFitness = fitness1;
         Console.WriteLine(ind1.ToString());
-        var geno2 = new PolynomialGenotype<int>(_literal2,
+        var geno2 = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+            _literal2,
             _allLiterals,
             Weighting.Computed);
         var ind2 = new Individual(geno2, null);
         var fitness2 = fitnessFunction.Evaluate(ind2);
         ind2.LatestKnownFitness = fitness2;
         Console.WriteLine(ind2.ToString());
-        var geno3 = new PolynomialGenotype<int>(_literal3,
+        var geno3 = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+            _literal3,
             _allLiterals,
             Weighting.Computed);
         var ind3 = new Individual(geno3, null);
         var fitness3 = fitnessFunction.Evaluate(ind3);
         ind3.LatestKnownFitness = fitness3;
         Console.WriteLine(ind3.ToString());
-        var geno4 = new PolynomialGenotype<int>(_literal4,
+        var geno4 = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+            _literal4,
             _allLiterals,
             Weighting.Computed);
         var ind4 = new Individual(geno4, null);
         var fitness4 = fitnessFunction.Evaluate(ind4);
         ind4.LatestKnownFitness = fitness4;
         Console.WriteLine(ind4.ToString());
-        var geno5 = new PolynomialGenotype<int>(_literal5,
+        var geno5 = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+            _literal5,
             _allLiterals,
             Weighting.Computed);
         var ind5 = new Individual(geno5, null);
         var fitness5 = fitnessFunction.Evaluate(ind5);
         ind5.LatestKnownFitness = fitness5;
         Console.WriteLine(ind5.ToString());
-        var geno6 = new PolynomialGenotype<int>(_monomial1,
+        var geno6 = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+            _monomial1,
             _allLiterals,
             Weighting.Computed);
         var ind6 = new Individual(geno6, null);
         var fitness6 = fitnessFunction.Evaluate(ind6);
         ind6.LatestKnownFitness = fitness6;
         Console.WriteLine(ind6.ToString());
-        var geno7 = new PolynomialGenotype<int>(_monomial2,
+        var geno7 = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+            _monomial2,
             _allLiterals,
             Weighting.Computed);
         var ind7 = new Individual(geno7, null);
@@ -128,8 +140,9 @@ public class Simulation1Tests
 
         foreach (var literal in allLiterals)
         {
-            var geno = new PolynomialGenotype<int>(literal,
-                allLiterals,
+            var geno = new WeightedPolynomialGenotype<SetLiteral<int>, int>(
+                literal,
+                allLiterals.ToList(),
                 Weighting.Computed);
             var ind = new Individual(geno, null);
             var fit = fitnessFunction.Evaluate(ind);

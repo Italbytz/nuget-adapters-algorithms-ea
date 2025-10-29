@@ -2,77 +2,80 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class SetLiteral<TCategory> : ILiteral<TCategory>
+public class SetLiteral<TCategory> : ISetLiteral<TCategory>
 {
     private readonly bool[] _bitSet;
-    private readonly IList<TCategory> _categories;
     private readonly Dictionary<TCategory, int> _categoryIndexMap;
-    private readonly int _feature;
-    private readonly SetLiteralType _literalType;
-    private readonly int _set;
 
+    [JsonConstructor]
     public SetLiteral(int feature,
-        IEnumerable<TCategory> categories,
+        IList<TCategory> categories,
         int set,
         SetLiteralType literalType = SetLiteralType.Rudell)
     {
+        (Feature, Categories, Set, LiteralType) = (feature,
+            categories, set, literalType);
         Label = $"F{feature}";
-        _categories = categories.ToList();
-        _feature = feature;
-        _literalType = literalType;
-        _set = set;
-        _bitSet = new bool[_categories.Count];
-        _categoryIndexMap = new Dictionary<TCategory, int>(_categories.Count);
+        _bitSet = new bool[Categories.Count];
+        _categoryIndexMap = new Dictionary<TCategory, int>(Categories.Count);
 
-        for (var i = 0; i < _categories.Count; i++)
+        for (var i = 0; i < Categories.Count; i++)
         {
             _bitSet[i] = (set & (1 << i)) != 0;
-            _categoryIndexMap[_categories[i]] = i;
+            _categoryIndexMap[Categories[i]] = i;
         }
     }
+
+    [JsonInclude] public SetLiteralType LiteralType { get; }
+
+    [JsonInclude] public IList<TCategory> Categories { get; }
+    [JsonInclude] public int Feature { get; }
+    [JsonInclude] public int Set { get; }
+
+    [JsonIgnore] public string Label { get; }
 
     public int CompareTo(ILiteral<TCategory>? other)
     {
         return Compare(this, other);
     }
-    
+
+    public bool Evaluate(TCategory[] input)
+    {
+        var value = input[Feature];
+        if (_categoryIndexMap.TryGetValue(value, out var index))
+            return index < _bitSet.Length && _bitSet[index];
+        return false;
+    }
+
     private static int Compare(ILiteral<TCategory>? x, ILiteral<TCategory>? y)
     {
         if (x is null && y is null) return 0;
         if (x is not SetLiteral<TCategory> literal1) return -1;
         if (y is not SetLiteral<TCategory> literal2) return 1;
-        if (x.Label != y.Label)
-            return string.Compare(x.Label, y.Label, StringComparison.Ordinal);
-        if (literal1._set !=
-            literal2._set)
-            return literal1._set.CompareTo(
-                literal2._set);
+        if (literal1.Label != literal2.Label)
+            return string.Compare(literal1.Label, literal2.Label,
+                StringComparison.Ordinal);
+        if (literal1.Set !=
+            literal2.Set)
+            return literal1.Set.CompareTo(
+                literal2.Set);
         return 0;
     }
 
-    public bool Evaluate(TCategory[] input)
-    {
-        var value = input[_feature];
-        if (_categoryIndexMap.TryGetValue(value, out var index))
-            return index < _bitSet.Length && _bitSet[index];
-        return false;
-    }
-    
-    public string Label { get; set; }
-    
     public override bool Equals(object? obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
         if (obj is not SetLiteral<TCategory> other) return false;
-        if (other._literalType != _literalType) return false;
+        if (other.LiteralType != LiteralType) return false;
         if (other.Label != Label) return false;
-        return other._set == _set;
+        return other.Set == Set;
     }
 
     public override int GetHashCode()
@@ -84,7 +87,7 @@ public class SetLiteral<TCategory> : ILiteral<TCategory>
 
     public override string ToString()
     {
-        return _literalType switch
+        return LiteralType switch
         {
             SetLiteralType.Dussault => ToDussaultString(),
             SetLiteralType.Rudell => ToRudellString(),
@@ -100,12 +103,12 @@ public class SetLiteral<TCategory> : ILiteral<TCategory>
         if (_bitSet[0])
         {
             var index = Array.IndexOf(_bitSet, false);
-            sb.Append($"({Label} < {_categories[index]})");
+            sb.Append($"({Label} < {Categories[index]})");
         }
         else
         {
             var index = Array.IndexOf(_bitSet, true);
-            sb.Append($"({Label} > {_categories[index - 1]})");
+            sb.Append($"({Label} > {Categories[index - 1]})");
         }
 
         return sb.ToString();
@@ -128,10 +131,10 @@ public class SetLiteral<TCategory> : ILiteral<TCategory>
                 negative = true;
         if (negative)
             sb.Append(
-                $"({Label} ∉ [{_categories[firstIndexNegative]},{_categories[lastIndexNegative]}])");
+                $"({Label} ∉ [{Categories[firstIndexNegative]},{Categories[lastIndexNegative]}])");
         else
             sb.Append(
-                $"({Label} ∈ [{_categories[firstIndexPositive]},{_categories[lastIndexPositive]}])");
+                $"({Label} ∈ [{Categories[firstIndexPositive]},{Categories[lastIndexPositive]}])");
         return sb.ToString();
     }
 
@@ -144,10 +147,10 @@ public class SetLiteral<TCategory> : ILiteral<TCategory>
                 "Dussault literals must have exactly one or all but one bit set");
         if (count == 1)
             sb.Append(
-                $"({Label} = {_categories[Array.IndexOf(_bitSet, true)]})");
+                $"({Label} = {Categories[Array.IndexOf(_bitSet, true)]})");
         else
             sb.Append(
-                $"({Label} \u2260 {_categories[Array.IndexOf(_bitSet, false)]})");
+                $"({Label} \u2260 {Categories[Array.IndexOf(_bitSet, false)]})");
         return sb.ToString();
     }
 
@@ -155,9 +158,9 @@ public class SetLiteral<TCategory> : ILiteral<TCategory>
     {
         var sb = new StringBuilder();
         sb.Append($"({Label} ∈ {{");
-        for (var j = 0; j < _categories.Count; j++)
+        for (var j = 0; j < Categories.Count; j++)
             if (_bitSet[j])
-                sb.Append(_categories[j] + ",");
+                sb.Append(Categories[j] + ",");
         sb.Remove(sb.Length - 1, 1);
         sb.Append("})");
         return sb.ToString();

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Italbytz.AI;
 using Italbytz.EA.Crossover;
@@ -8,33 +11,48 @@ using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Mutation;
 using Italbytz.EA.SearchSpace;
+using Italbytz.ML;
 
 namespace Italbytz.EA.Searchspace;
 
-public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
-    ILogicGpMutable, ICrossable, IFreezable, IValidatableGenotype
+public class WeightedPolynomialGenotype<TLiteral, TCategory> :
+    IPredictingGenotype<TCategory>,
+    ILogicGpMutable, ICrossable, IFreezable, IValidatableGenotype,
+    ISaveable
+    where TLiteral : ILiteral<TCategory>
 {
-    private readonly List<ILiteral<TCategory>> _literals;
-    public readonly IPolynomial<TCategory> Polynomial;
+    private readonly IList<TLiteral> _literals;
 
-    public PolynomialGenotype(IPolynomial<TCategory> polynomial,
-        List<ILiteral<TCategory>> literals, Weighting weighting)
+    public readonly WeightedPolynomial<TLiteral, TCategory> Polynomial;
+
+    public WeightedPolynomialGenotype()
+    {
+    }
+
+    public WeightedPolynomialGenotype(
+        WeightedPolynomial<TLiteral,
+            TCategory> polynomial,
+        IList<TLiteral> literals, Weighting weighting)
     {
         Polynomial = polynomial;
         _literals = literals;
         Weighting = weighting;
     }
 
-    public PolynomialGenotype(IMonomial<TCategory> monomial,
-        List<ILiteral<TCategory>> literals, Weighting weighting) : this(
-        new WeightedPolynomial<TCategory>([monomial]), literals,
+    public WeightedPolynomialGenotype(
+        WeightedMonomial<TLiteral, TCategory> monomial,
+        IList<TLiteral> literals, Weighting weighting) : this(
+        new WeightedPolynomial<TLiteral,
+            TCategory>([monomial]),
+        literals,
         weighting)
     {
     }
 
-    public PolynomialGenotype(ILiteral<TCategory> literal,
-        List<ILiteral<TCategory>> literals, Weighting weighting) : this(
-        new WeightedMonomial<TCategory>([literal]), literals,
+    public WeightedPolynomialGenotype(TLiteral literal,
+        List<TLiteral> literals, Weighting weighting) : this(
+        new WeightedMonomial<TLiteral, TCategory>([literal]),
+        literals,
         weighting)
     {
     }
@@ -47,11 +65,12 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
     public void CrossWith(ICrossable parentGenotype)
     {
         if (LatestKnownFitness != null) throw new InvalidOperationException();
-        if (parentGenotype is not PolynomialGenotype<TCategory> parent)
+        if (parentGenotype is not
+            WeightedPolynomialGenotype<TLiteral, TCategory> parent)
             throw new InvalidOperationException(
                 "Parent genotype is not of the same type");
         var monomial =
-            (IMonomial<TCategory>)parent.Polynomial
+            (WeightedMonomial<TLiteral, TCategory>)parent.Polynomial
                 .GetRandomMonomial().Clone();
         Polynomial.Monomials.Add(monomial);
     }
@@ -103,7 +122,7 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
         if (LatestKnownFitness != null) throw new InvalidOperationException();
         var literal =
             _literals[ThreadSafeRandomNetCore.Shared.Next(_literals.Count)];
-        var monomial = new WeightedMonomial<TCategory>([literal]);
+        var monomial = new WeightedMonomial<TLiteral, TCategory>([literal]);
         Polynomial.Monomials.Add(monomial);
     }
 
@@ -127,13 +146,16 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
     public object Clone()
     {
         var clonedPolynomial =
-            (IPolynomial<TCategory>)Polynomial.Clone();
-        return new PolynomialGenotype<TCategory>(clonedPolynomial, _literals,
+            (WeightedPolynomial<TLiteral,
+                TCategory>)Polynomial.Clone();
+        return new WeightedPolynomialGenotype<TLiteral, TCategory>(
+            clonedPolynomial, _literals,
             Weighting);
     }
 
-    public IFitnessValue? LatestKnownFitness { get; set; }
-    public int Size => Polynomial.Size;
+    [JsonIgnore] public IFitnessValue? LatestKnownFitness { get; set; }
+
+    [JsonIgnore] public int Size => Polynomial.Size;
 
     public float PredictValue(float[] features)
     {
@@ -174,14 +196,30 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
         return results;
     }
 
-    public IFitnessValue? TrainingFitness { get; set; }
-    public IFitnessValue? ValidationFitness { get; set; }
+    public void Save(Stream stream)
+    {
+        var options = new JsonSerializerOptions
+        {
+            IncludeFields = true,
+            WriteIndented = true
+        };
+
+        using var writer = new Utf8JsonWriter(stream,
+            new JsonWriterOptions { Indented = true });
+        JsonSerializer.Serialize(writer, this, GetType(), options);
+        writer.Flush();
+    }
+
+    [JsonIgnore] public IFitnessValue? TrainingFitness { get; set; }
+
+    [JsonIgnore] public IFitnessValue? ValidationFitness { get; set; }
 
     public string LiteralSignature()
     {
         var literals = Polynomial.GetAllLiterals();
-        literals.Sort();
-        return string.Join(" ", literals.Select(literal => literal.Label));
+        literals.ToList().Sort();
+        return string.Join(" ",
+            literals.Select(literal => "x")); //ToDo: literal.Label));
     }
 
     public void ComputeWeights(TCategory[][] features, int[] labels)
@@ -333,19 +371,21 @@ public class PolynomialGenotype<TCategory> : IPredictingGenotype<TCategory>,
         return Polynomial.ToString() ?? string.Empty;
     }
 
-    private IMonomial<TCategory> GetRandomMonomial()
+    private WeightedMonomial<TLiteral, TCategory> GetRandomMonomial()
     {
         return Polynomial.GetRandomMonomial();
     }
 
-    public static IGenotype GenerateRandomGenotype<TCategory>(
-        List<ILiteral<TCategory>> literals, Weighting weighting)
+    public static IGenotype GenerateRandomGenotype(
+        IList<TLiteral> literals, Weighting weighting)
     {
         var literal =
             literals[ThreadSafeRandomNetCore.Shared.Next(literals.Count)];
-        var monomial = new WeightedMonomial<TCategory>([literal]);
-        var polynomial = new WeightedPolynomial<TCategory>([monomial]);
-        return new PolynomialGenotype<TCategory>(polynomial, literals,
+        var monomial = new WeightedMonomial<TLiteral, TCategory>([literal]);
+        var polynomial =
+            new WeightedPolynomial<TLiteral, TCategory>([monomial]);
+        return new WeightedPolynomialGenotype<TLiteral, TCategory>(
+            polynomial, literals,
             weighting);
     }
 }

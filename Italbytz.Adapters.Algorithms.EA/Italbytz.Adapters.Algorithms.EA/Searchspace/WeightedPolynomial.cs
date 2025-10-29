@@ -8,12 +8,19 @@ using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
+public class
+    WeightedPolynomial<TLiteral, TCategory> : IPolynomial<
+    WeightedMonomial<TLiteral, TCategory>,
+    TLiteral, TCategory>
+    where TLiteral : ILiteral<TCategory>
 {
-    public WeightedPolynomial(List<IMonomial<TCategory>> monomials)
+    public WeightedPolynomial(
+        IList<WeightedMonomial<TLiteral, TCategory>> monomials)
     {
         Monomials = monomials;
     }
+
+    public IList<WeightedMonomial<TLiteral, TCategory>> Monomials { get; set; }
 
     public float[] Weights { get; set; }
 
@@ -28,8 +35,9 @@ public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
     {
         var monomials =
             Monomials.Select(monomial =>
-                (IMonomial<TCategory>)monomial.Clone());
-        return new WeightedPolynomial<TCategory>(monomials.ToList());
+                (WeightedMonomial<TLiteral, TCategory>)monomial.Clone());
+        return new WeightedPolynomial<TLiteral, TCategory>(
+            monomials.ToList());
     }
 
     public float[] Evaluate(TCategory[] input)
@@ -58,18 +66,16 @@ public class WeightedPolynomial<TCategory> : IPolynomial<TCategory>
         return result.Sum() == 0.0f ? Weights : result;
     }
 
-    public IMonomial<TCategory> GetRandomMonomial()
+    public WeightedMonomial<TLiteral, TCategory> GetRandomMonomial()
     {
         var random = ThreadSafeRandomNetCore.Shared;
         return Monomials[random.Next(Monomials.Count)];
     }
 
-    public List<ILiteral<TCategory>> GetAllLiterals()
+    public IList<TLiteral> GetAllLiterals()
     {
         return Monomials.SelectMany(m => m.Literals).Distinct().ToList();
     }
-
-    public List<IMonomial<TCategory>> Monomials { get; set; }
 
     public override string ToString()
     {

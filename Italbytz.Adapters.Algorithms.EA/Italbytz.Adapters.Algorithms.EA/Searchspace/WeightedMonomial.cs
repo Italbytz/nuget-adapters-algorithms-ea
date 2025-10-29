@@ -7,9 +7,11 @@ using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.EA.Searchspace;
 
-public class WeightedMonomial<TCategory> : IMonomial<TCategory>
+public class
+    WeightedMonomial<TLiteral, TCategory> : IMonomial<TLiteral, TCategory>
+    where TLiteral : ILiteral<TCategory>
 {
-    public WeightedMonomial(List<ILiteral<TCategory>> literals)
+    public WeightedMonomial(IList<TLiteral> literals)
     {
         Literals = literals;
     }
@@ -28,13 +30,13 @@ public class WeightedMonomial<TCategory> : IMonomial<TCategory>
             Array.Copy(Weights, weightsCopy, Weights.Length);
         }
 
-        return new WeightedMonomial<TCategory>(literalsCopy)
+        return new WeightedMonomial<TLiteral, TCategory>(literalsCopy)
         {
             Weights = weightsCopy
         };
     }
 
-    public List<ILiteral<TCategory>> Literals { get; set; }
+    public IList<TLiteral> Literals { get; set; }
     public float[] Weights { get; set; }
     public int Size => Literals.Count;
 

@@ -1,4 +1,6 @@
+using System.Text.Json;
 using Italbytz.EA.Searchspace;
+using Italbytz.EA.SearchSpace;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
@@ -6,13 +8,24 @@ namespace Italbytz.Adapters.Algorithms.EA.Tests;
 public class SetLiteralTests
 {
     private readonly List<SetLiteral<string>> _literals = [];
-    
+
     public required HashSet<string> UniqueValues =
     [
         "1",
         "2",
         "3"
     ];
+
+    [TestMethod]
+    public void TestJSONDeserialization()
+    {
+        var literal = new SetLiteral<string>(0,
+            UniqueValues.ToList(), 5);
+        var json = JsonSerializer.Serialize(literal);
+        var deserializedLiteral =
+            JsonSerializer.Deserialize<SetLiteral<string>>(json);
+        Assert.AreEqual(literal.ToString(), deserializedLiteral.ToString());
+    }
 
     [TestMethod]
     public void TestLogicGpAllSuLiterals()
@@ -27,15 +40,13 @@ public class SetLiteralTests
                     continue;
                 set = set + (1 << (j - 1));
                 negativeset = ~set & ((1 << UniqueValues.Count) - 1);
-                var literal = new SetLiteral<string>(0, 
-                    UniqueValues, set,
-                    
+                var literal = new SetLiteral<string>(0,
+                    UniqueValues.ToList(), set,
                     SetLiteralType.Su);
                 if (!_literals.Contains(literal))
                     _literals.Add(literal);
-                var negativeliteral = new SetLiteral<string>(0, 
-                    UniqueValues, negativeset,
-                    
+                var negativeliteral = new SetLiteral<string>(0,
+                    UniqueValues.ToList(), negativeset,
                     SetLiteralType.Su);
                 if (!_literals.Contains(negativeliteral))
                     _literals.Add(negativeliteral);
@@ -70,14 +81,12 @@ public class SetLiteralTests
             set = set + (1 << (i - 1));
             negativeset = negativeset + (1 << (UniqueValues.Count - i));
 
-            var literal = new SetLiteral<string>(0, 
-                UniqueValues, set,
-                
+            var literal = new SetLiteral<string>(0,
+                UniqueValues.ToList(), set,
                 SetLiteralType.LessGreater);
             _literals.Add(literal);
-            var negativeliteral = new SetLiteral<string>(0, 
-                UniqueValues, negativeset,
-                
+            var negativeliteral = new SetLiteral<string>(0,
+                UniqueValues.ToList(), negativeset,
                 SetLiteralType.LessGreater);
             _literals.Add(negativeliteral);
         }
@@ -102,14 +111,12 @@ public class SetLiteralTests
         {
             var set = 1 << (i - 1);
             var negativeset = ~set & ((1 << UniqueValues.Count) - 1);
-            var literal = new SetLiteral<string>(0, 
-                UniqueValues, set,
-                
+            var literal = new SetLiteral<string>(0,
+                UniqueValues.ToList(), set,
                 SetLiteralType.Dussault);
             _literals.Add(literal);
-            var negativeliteral = new SetLiteral<string>(0, 
-                UniqueValues, negativeset,
-                
+            var negativeliteral = new SetLiteral<string>(0,
+                UniqueValues.ToList(), negativeset,
                 SetLiteralType.Dussault);
             _literals.Add(negativeliteral);
         }
@@ -135,8 +142,8 @@ public class SetLiteralTests
         var powerSetCount = 1 << UniqueValues.Count;
         for (var i = 1; i < powerSetCount - 1; i++)
         {
-            var literal = new SetLiteral<string>(0, 
-                UniqueValues, i);
+            var literal = new SetLiteral<string>(0,
+                UniqueValues.ToList(), i);
             _literals.Add(literal);
         }
 

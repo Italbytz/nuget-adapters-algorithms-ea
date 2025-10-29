@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Italbytz.EA.Control;
 using Italbytz.EA.Individuals;
@@ -12,7 +13,8 @@ using Microsoft.ML.Data;
 namespace Italbytz.EA.Trainer;
 
 public abstract class LogicGpTrainer<TOutput> :
-    CustomClassificationTrainer<TOutput>, IInterpretableTrainer
+    CustomClassificationTrainer<TOutput>, IInterpretableTrainer,
+    ICanSaveCustomModel
     where TOutput : class, new()
 
 {
@@ -24,6 +26,15 @@ public abstract class LogicGpTrainer<TOutput> :
     private int _classes => _labelMapping.Count;
 
     public IRunStrategy? RunStrategy { get; set; }
+
+    public void Save(Stream stream)
+    {
+        if (Model is ISaveable saveable)
+            saveable.Save(stream);
+        else
+            throw new InvalidOperationException("Model is not saveable.");
+    }
+
 
     public IIndividualList FinalPopulation { get; set; }
     public IIndividual Model { get; set; }
