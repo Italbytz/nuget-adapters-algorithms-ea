@@ -8,6 +8,7 @@ namespace Italbytz.ML;
 
 public static class ModelOperationsCatalogExtensions
 {
+    // ToDo: To obtain a transformer, we also need to deserialize the trainer to get the feature and label mappings. Additionally, the preprocessing steps need to be reapplied.
     public static ITransformer Load(this ModelOperationsCatalog catalog,
         string fileName)
     {

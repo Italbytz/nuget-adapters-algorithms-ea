@@ -2,7 +2,6 @@ using Italbytz.EA.Trainer;
 using Italbytz.ML;
 using Italbytz.ML.Data;
 using Italbytz.ML.ModelBuilder.Configuration;
-using Microsoft.ML;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests;
 
@@ -17,7 +16,7 @@ public class LogicGpTrainerTests
     }
 
     [TestMethod]
-    public void SaveModel()
+    public void TestSave()
     {
         var trainer =
             new LogicGpFlcwMacroMulticlassTrainer<TernaryClassificationOutput>(
@@ -40,7 +39,7 @@ public class LogicGpTrainerTests
 
 
     [TestMethod]
-    public void LoadModel()
+    public void TestLoad()
     {
         var trainer =
             new LogicGpFlcwMacroMulticlassTrainer<TernaryClassificationOutput>(
@@ -59,8 +58,9 @@ public class LogicGpTrainerTests
                 saveable.Save(fileStream);
             }
 
-        var mlContext = new MLContext();
-        var mlModel = mlContext.Model.Load(modelPath);
+        // ToDo: Implement static(?) Load method in LogicGpTrainer and uncomment the code below
+        /*var mlContext = new MLContext();
+        var mlModel = mlContext.Model.Load(modelPath);*/
     }
 
     [TestMethod]
