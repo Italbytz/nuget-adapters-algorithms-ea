@@ -27,10 +27,10 @@ public class LogicGpTrainerTests
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
         pipeline.Fit(_dataset.DataView);
-        if (trainer is ICanSaveCustomModel modelSaver)
+        if (trainer is ISaveable saveable)
         {
             var stream = new MemoryStream();
-            modelSaver.Save(stream);
+            saveable.Save(stream);
             stream.Position = 0;
             using var reader = new StreamReader(stream, leaveOpen: true);
             var content = reader.ReadToEnd();
@@ -52,11 +52,11 @@ public class LogicGpTrainerTests
         pipeline.Fit(_dataset.DataView);
         var tmpFolder = Path.GetTempPath();
         var modelPath = Path.Combine(tmpFolder, "logicgp_model.json");
-        if (trainer is ICanSaveCustomModel modelSaver)
+        if (trainer is ISaveable saveable)
             using (var fileStream = new FileStream(modelPath, FileMode.Create,
                        FileAccess.Write))
             {
-                modelSaver.Save(fileStream);
+                saveable.Save(fileStream);
             }
 
         var mlContext = new MLContext();

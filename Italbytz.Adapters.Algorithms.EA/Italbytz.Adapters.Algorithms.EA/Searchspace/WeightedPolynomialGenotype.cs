@@ -28,10 +28,10 @@ public class WeightedPolynomialGenotype<TLiteral, TCategory> :
 
     [JsonConstructor]
     public WeightedPolynomialGenotype(WeightedPolynomial<TLiteral,
-            TCategory> polynomial, Weighting weighting,
+            TCategory> polynomial,
         PredictionStrategy predictionStrategy) : this(
         polynomial, [],
-        weighting, predictionStrategy)
+        Weighting.Fixed, predictionStrategy)
     {
     }
 
@@ -65,7 +65,7 @@ public class WeightedPolynomialGenotype<TLiteral, TCategory> :
     {
     }
 
-    public Weighting Weighting { get; set; } = Weighting.Fixed;
+    [JsonIgnore] public Weighting Weighting { get; set; } = Weighting.Fixed;
 
     public PredictionStrategy PredictionStrategy { get; set; } =
         PredictionStrategy.Max;

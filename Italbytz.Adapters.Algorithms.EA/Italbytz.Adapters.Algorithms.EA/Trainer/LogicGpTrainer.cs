@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Italbytz.EA.Control;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Searchspace;
@@ -14,30 +16,62 @@ namespace Italbytz.EA.Trainer;
 
 public abstract class LogicGpTrainer<TOutput> :
     CustomClassificationTrainer<TOutput>, IInterpretableTrainer,
-    ICanSaveCustomModel
+    ISaveable
     where TOutput : class, new()
 
 {
-    private Dictionary<float, int>[] _featureValueMappings;
-    private Dictionary<uint, int> _labelMapping = new();
+    [JsonInclude] private Dictionary<float, int>[] _featureValueMappings;
+    [JsonInclude] private Dictionary<uint, int> _labelMapping = new();
     private Dictionary<int, float>[] _reverseFeatureValueMappings;
     private Dictionary<int, uint> _reverseLabelMapping;
 
     private int _classes => _labelMapping.Count;
 
-    public IRunStrategy? RunStrategy { get; set; }
+    [JsonIgnore] public IRunStrategy? RunStrategy { get; set; }
+
+
+    [JsonIgnore] public IIndividualList FinalPopulation { get; set; }
+    [JsonIgnore] public IIndividual Model { get; set; }
 
     public void Save(Stream stream)
     {
-        if (Model is ISaveable saveable)
+        //var memoryStream = new MemoryStream();
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = false
+        };
+
+        /*using var writer = new Utf8JsonWriter(memoryStream,
+            new JsonWriterOptions { Indented = true });*/
+        var trainerJson = JsonSerializer.Serialize(this, GetType(), options);
+        //writer.Flush();
+        var genotypeJson = JsonSerializer.Serialize(Model.Genotype,
+            Model.Genotype.GetType(), options);
+
+        var json =
+            $"{{\"Model\":{{\"Genotype\":{genotypeJson}}},{trainerJson[1..]}";
+
+        /*trainerJson = Regex.Replace(trainerJson,
+            @"(""Genotype""\s*:\s*){[^}]*}", $"\"Genotype\":{genotypeJson}");*/
+
+
+        /*trainerJson = Regex.Replace(trainerJson,
+            @"(""Genotype""\s*)""_featureValueMappings""",
+            $"\"Genotype\":{genotypeJson}");*/
+
+        json = JsonSerializer.Serialize(
+            JsonSerializer.Deserialize<object>(json),
+            new JsonSerializerOptions { WriteIndented = true });
+
+        var writer = new StreamWriter(stream);
+        writer.Write(json);
+        writer.Flush();
+
+        /*if (Model is ISaveable saveable)
             saveable.Save(stream);
         else
-            throw new InvalidOperationException("Model is not saveable.");
+            throw new InvalidOperationException("Model is not saveable.");*/
     }
-
-
-    public IIndividualList FinalPopulation { get; set; }
-    public IIndividual Model { get; set; }
 
     protected override void Map(ClassificationInput input, TOutput output)
     {
