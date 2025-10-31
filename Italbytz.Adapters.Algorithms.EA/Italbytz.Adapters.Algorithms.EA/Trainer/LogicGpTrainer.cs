@@ -35,29 +35,14 @@ public abstract class LogicGpTrainer<TOutput> :
 
     public void Save(Stream stream)
     {
-        //var memoryStream = new MemoryStream();
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = false
-        };
-
-        /*using var writer = new Utf8JsonWriter(memoryStream,
-            new JsonWriterOptions { Indented = true });*/
-        var trainerJson = JsonSerializer.Serialize(this, GetType(), options);
-        //writer.Flush();
+        var trainerJson = JsonSerializer.Serialize(this, GetType(),
+            new JsonSerializerOptions { WriteIndented = false });
         var genotypeJson = JsonSerializer.Serialize(Model.Genotype,
-            Model.Genotype.GetType(), options);
+            Model.Genotype.GetType(),
+            new JsonSerializerOptions { WriteIndented = false });
 
         var json =
             $"{{\"Model\":{{\"Genotype\":{genotypeJson}}},{trainerJson[1..]}";
-
-        /*trainerJson = Regex.Replace(trainerJson,
-            @"(""Genotype""\s*:\s*){[^}]*}", $"\"Genotype\":{genotypeJson}");*/
-
-
-        /*trainerJson = Regex.Replace(trainerJson,
-            @"(""Genotype""\s*)""_featureValueMappings""",
-            $"\"Genotype\":{genotypeJson}");*/
 
         json = JsonSerializer.Serialize(
             JsonSerializer.Deserialize<object>(json),
@@ -66,11 +51,6 @@ public abstract class LogicGpTrainer<TOutput> :
         var writer = new StreamWriter(stream);
         writer.Write(json);
         writer.Flush();
-
-        /*if (Model is ISaveable saveable)
-            saveable.Save(stream);
-        else
-            throw new InvalidOperationException("Model is not saveable.");*/
     }
 
     protected override void Map(ClassificationInput input, TOutput output)
