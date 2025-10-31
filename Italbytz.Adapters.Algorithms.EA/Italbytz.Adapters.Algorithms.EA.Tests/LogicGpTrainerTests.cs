@@ -58,9 +58,11 @@ public class LogicGpTrainerTests
                 saveable.Save(fileStream);
             }
 
-        // ToDo: Implement static(?) Load method in LogicGpTrainer and uncomment the code below
-        /*var mlContext = new MLContext();
-        var mlModel = mlContext.Model.Load(modelPath);*/
+        var loadStream = new FileStream(modelPath, FileMode.Open,
+            FileAccess.Read);
+        var loadedTrainer =
+            LogicGpTrainer<TernaryClassificationOutput>
+                .Load(loadStream);
     }
 
     [TestMethod]

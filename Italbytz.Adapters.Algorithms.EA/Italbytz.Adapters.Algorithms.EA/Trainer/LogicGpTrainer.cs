@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Italbytz.EA.Control;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Searchspace;
@@ -23,7 +24,7 @@ public abstract class LogicGpTrainer<TOutput> :
     [JsonInclude] private Dictionary<float, int>[] _featureValueMappings;
     [JsonInclude] private Dictionary<uint, int> _labelMapping = new();
     private Dictionary<int, float>[] _reverseFeatureValueMappings;
-    private Dictionary<int, uint> _reverseLabelMapping;
+    [JsonInclude] private Dictionary<int, uint> _reverseLabelMapping;
 
     private int _classes => _labelMapping.Count;
 
@@ -31,21 +32,26 @@ public abstract class LogicGpTrainer<TOutput> :
 
 
     [JsonIgnore] public IIndividualList FinalPopulation { get; set; }
-    [JsonIgnore] public IIndividual Model { get; set; }
+    public IIndividual Model { get; set; }
 
     public void Save(Stream stream)
     {
         var trainerJson = JsonSerializer.Serialize(this, GetType(),
-            new JsonSerializerOptions { WriteIndented = false });
-        var genotypeJson = JsonSerializer.Serialize(Model.Genotype,
+            new JsonSerializerOptions
+            {
+                WriteIndented = false,
+                Converters = { new ModelJsonConverter() },
+                TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+            });
+        /*var genotypeJson = JsonSerializer.Serialize(Model.Genotype,
             Model.Genotype.GetType(),
             new JsonSerializerOptions { WriteIndented = false });
 
         var json =
-            $"{{\"Model\":{{\"Genotype\":{genotypeJson}}},{trainerJson[1..]}";
+            $"{{\"Model\":{{\"Genotype\":{genotypeJson}}},{trainerJson[1..]}";*/
 
-        json = JsonSerializer.Serialize(
-            JsonSerializer.Deserialize<object>(json),
+        var json = JsonSerializer.Serialize(
+            JsonSerializer.Deserialize<object>(trainerJson),
             new JsonSerializerOptions { WriteIndented = true });
 
         var writer = new StreamWriter(stream);
@@ -121,5 +127,91 @@ public abstract class LogicGpTrainer<TOutput> :
             MappingHelper.CreateFeatureValueMappings(features);
         (Model, FinalPopulation) = RunStrategy.Run(input, _featureValueMappings,
             _labelMapping);
+    }
+
+    public static LogicGpTrainer<TOutput>? Load(Stream stream)
+    {
+        var trainerJson =
+            JsonSerializer.Deserialize<LogicGpLoadedTrainer<TOutput>>(
+                stream,
+                new JsonSerializerOptions
+                {
+                    Converters = { new ModelJsonConverter() }
+                });
+        return trainerJson;
+    }
+}
+
+public sealed class ModelJsonConverter : JsonConverter<IIndividual>
+{
+    public override IIndividual? Read(ref Utf8JsonReader reader,
+        Type typeToConvert,
+        JsonSerializerOptions options)
+    {
+        if (reader.TokenType != JsonTokenType.StartObject)
+            throw new JsonException();
+
+        IGenotype? genotype = null;
+
+        while (reader.Read())
+        {
+            if (reader.TokenType == JsonTokenType.EndObject)
+                break;
+
+            if (reader.TokenType != JsonTokenType.PropertyName)
+                throw new JsonException();
+
+            var propertyName = reader.GetString()!;
+            reader.Read();
+
+            if (propertyName == "Genotype")
+            {
+                // Deserialize the genotype
+                var genotypeElement =
+                    JsonDocument.ParseValue(ref reader).RootElement;
+
+                //var genotypeTypeProperty = genotypeElement.GetProperty("Type");
+                //var genotypeTypeName = genotypeTypeProperty.GetString();
+                var genotypeType =
+                    typeof(WeightedPolynomialGenotype<SetLiteral<int>, int>);
+                /*if (genotypeTypeName != null)
+                    genotypeType = Type.GetType(genotypeTypeName);
+
+                if (genotypeType == null)
+                    throw new JsonException(
+                        $"Unknown genotype type: {genotypeTypeName}");*/
+
+                genotype = (IGenotype)JsonSerializer.Deserialize(
+                    genotypeElement.GetRawText(),
+                    genotypeType,
+                    options)!;
+            }
+            else
+            {
+                // Skip unknown properties
+                reader.Skip();
+            }
+        }
+
+        if (genotype == null)
+            throw new JsonException("Genotype property is missing.");
+
+        return new Individual(genotype, null);
+    }
+
+    public override void Write(Utf8JsonWriter writer, IIndividual value,
+        JsonSerializerOptions options)
+    {
+        writer.WriteStartObject();
+        writer.WritePropertyName("Genotype");
+        var genotypeJson = JsonSerializer.Serialize(value.Genotype,
+            value.Genotype.GetType(),
+            new JsonSerializerOptions { WriteIndented = false });
+        using (var doc = JsonDocument.Parse(genotypeJson))
+        {
+            doc.RootElement.WriteTo(writer);
+        }
+
+        writer.WriteEndObject();
     }
 }
