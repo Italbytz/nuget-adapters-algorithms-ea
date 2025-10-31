@@ -16,7 +16,7 @@ using Microsoft.ML.Data;
 
 namespace Italbytz.EA.Trainer;
 
-public class LogicGpTrainer<TOutput> :
+public abstract class LogicGpTrainer<TOutput> :
     CustomClassificationTrainer<TOutput>, IInterpretableTrainer,
     ISaveable
     where TOutput : class, new()
@@ -133,7 +133,7 @@ public class LogicGpTrainer<TOutput> :
     public static LogicGpTrainer<TOutput>? Load(Stream stream)
     {
         var trainerJson =
-            JsonSerializer.Deserialize<LogicGpTrainer<TOutput>>(
+            JsonSerializer.Deserialize<LogicGpLoadedTrainer<TOutput>>(
                 stream,
                 new JsonSerializerOptions
                 {

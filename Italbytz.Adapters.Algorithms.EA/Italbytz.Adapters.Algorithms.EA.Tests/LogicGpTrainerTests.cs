@@ -48,7 +48,13 @@ public class LogicGpTrainerTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        pipeline.Fit(_dataset.DataView);
+        var model = pipeline.Fit(_dataset.DataView);
+        var predictions = model.Transform(_dataset.DataView);
+        var metrics = ThreadSafeMLContext.LocalMLContext
+            .MulticlassClassification
+            .Evaluate(predictions);
+        var accuracy = metrics.MacroAccuracy;
+
         var tmpFolder = Path.GetTempPath();
         var modelPath = Path.Combine(tmpFolder, "logicgp_model.json");
         if (trainer is ISaveable saveable)
@@ -63,6 +69,16 @@ public class LogicGpTrainerTests
         var loadedTrainer =
             LogicGpTrainer<TernaryClassificationOutput>
                 .Load(loadStream);
+        pipeline = _dataset.BuildPipeline(
+            ThreadSafeMLContext.LocalMLContext, loadedTrainer,
+            ScenarioType.Classification,
+            ProcessingType.FeatureBinningAndCustomLabelMapping);
+        model = pipeline.Fit(_dataset.DataView);
+        predictions = model.Transform(_dataset.DataView);
+        metrics = ThreadSafeMLContext.LocalMLContext
+            .MulticlassClassification
+            .Evaluate(predictions);
+        Assert.AreEqual(accuracy, metrics.MacroAccuracy);
     }
 
     [TestMethod]
