@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <LangVersion>12</LangVersion>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Italbytz.EA.Benchmark.Cli</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../Italbytz.Adapters.Algorithms.EA/Italbytz.Adapters.Algorithms.EA.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="9.0.10" />
+        <PackageReference Include="Italbytz.Adapters.Algorithms.AI" Version="9.11.0"/>
+        <PackageReference Include="Italbytz.ML" Version="9.13.0"/>
+        <PackageReference Include="Italbytz.ML.UCIMLR" Version="10.0.5"/>
+        <PackageReference Include="Italbytz.Ports.Algorithms.EA" Version="9.17.0"/>
+    </ItemGroup>
+
+</Project>
