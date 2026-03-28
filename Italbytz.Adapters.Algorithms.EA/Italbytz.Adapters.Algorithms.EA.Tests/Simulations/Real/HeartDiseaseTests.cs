@@ -59,7 +59,7 @@ public class HeartDiseaseTests : RealTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.2f);
+        var metrics = Simulate(pipeline, trainer, 0.2f);
     }
 
     [TestMethod]
@@ -69,13 +69,13 @@ public class HeartDiseaseTests : RealTests
         ThreadSafeMLContext.Seed = 42;
         var trainer =
             new LogicGpRlcwMulticlassTrainer<QuinaryClassificationOutput>(
-                -4, 100, folds: 5,
+                -5, 100, folds: 5,
                 minMaxWeight: 1.05,
                 usedMetric: (ClassMetric.F1, Averaging.Macro));
         var pipeline = Dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.2f);
+        var metrics = Simulate(pipeline, trainer, 0.2f);
     }
 }

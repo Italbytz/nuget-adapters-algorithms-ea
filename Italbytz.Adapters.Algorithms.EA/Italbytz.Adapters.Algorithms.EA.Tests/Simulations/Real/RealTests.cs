@@ -1,4 +1,5 @@
 using System.Globalization;
+using Italbytz.EA.Trainer;
 using Italbytz.ML;
 using Italbytz.ML.Data;
 using Microsoft.ML;
@@ -10,8 +11,8 @@ public class RealTests
 {
     private readonly int[] _seeds =
     [
-        42, 7, 13, 99, 256, 1024, 73, 3, 17, 23,
-        5, 11, 19, 29, 31, 37, 41, 43, 47, 53,
+        42, 7, 13, 99, 256, 1024, 73, 3, 17, 23
+        /*5, 11, 19, 29, 31, 37, 41, 43, 47, 53,
         59, 61, 67, 71, 79, 83, 89, 97, 101, 103,
         107, 109, 113, 127, 131, 137, 139, 149, 151, 157,
         163, 167, 173, 179, 181, 191, 193, 197, 199, 211,
@@ -19,7 +20,7 @@ public class RealTests
         271, 277, 281, 283, 293, 307, 311, 313, 317, 331,
         337, 347, 349, 353, 359, 367, 373, 379, 383, 389,
         397, 401, 409, 419, 421, 431, 433, 439, 443, 449,
-        457, 461, 463, 467, 479, 487, 491, 499, 503, 509
+        457, 461, 463, 467, 479, 487, 491, 499, 503, 509*/
     ];
 
     private string _timeStamp;
@@ -32,6 +33,7 @@ public class RealTests
 
 
     protected IEnumerable<Metrics> Simulate(IEstimator<ITransformer> pipeline,
+        IInterpretableTrainer trainer,
         float splitRatio, bool binary = false)
     {
         var metrics = new List<Metrics>();
@@ -42,7 +44,7 @@ public class RealTests
             $"{Dataset.FilePrefix}_{_timeStamp}_Metrics.csv");
         LogWriter = new StreamWriter(logPath);
         LogWriter.WriteLine(
-            "\"x\"");
+            "\"F1\",\"Size\"");
         var seedPath = Path.Combine(tmpDir,
             $"{Dataset.FilePrefix}_{_timeStamp}_Seeds.csv");
         SeedWriter = new StreamWriter(seedPath);
@@ -60,6 +62,8 @@ public class RealTests
             var testDataview =
                 Dataset.LoadFromTextFile(Path.Combine(tmpDir,
                     file.TestFileName), ',', true);
+            //trainDataview = Dataset.DataView;
+            //testDataview = Dataset.DataView;
             var model = pipeline.Fit(trainDataview);
             var testResult = model.Transform(testDataview);
             var metric = ComputeMetrics(testResult,
@@ -67,7 +71,8 @@ public class RealTests
             metrics.Add(metric);
             var metricForCSV = metric.F1Score;
             LogWriter?.WriteLine(
-                metricForCSV.ToString(CultureInfo.InvariantCulture));
+                metricForCSV.ToString(CultureInfo.InvariantCulture) + "," +
+                trainer.Model.Size);
             LogWriter?.Flush();
             SeedWriter?.WriteLine(file.TestFileName);
             SeedWriter?.Flush();

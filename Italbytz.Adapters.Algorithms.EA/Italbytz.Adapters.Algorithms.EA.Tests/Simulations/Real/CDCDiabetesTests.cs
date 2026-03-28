@@ -61,7 +61,7 @@ public class CDCDiabetesTests : RealTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.05f);
+        var metrics = Simulate(pipeline, trainer, 0.05f);
     }
 
     [TestMethod]
@@ -78,7 +78,7 @@ public class CDCDiabetesTests : RealTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.05f);
+        var metrics = Simulate(pipeline, trainer, 0.05f);
     }
 
     [TestMethod]
@@ -95,6 +95,6 @@ public class CDCDiabetesTests : RealTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.05f);
+        var metrics = Simulate(pipeline, trainer, 0.05f);
     }
 }

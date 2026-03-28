@@ -8,24 +8,21 @@ using Italbytz.ML.ModelBuilder.Configuration;
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Real;
 
 [TestClass]
-public class BreastCancerWisconsinTests : RealTests
+public class Multiplexer11Tests : RealTests
 {
-    public BreastCancerWisconsinTests()
+    public Multiplexer11Tests()
     {
-        Dataset = Data.BreastCancerWisconsinDiagnostic;
+        Dataset = Data.Multiplexer11;
     }
 
     [TestMethod]
     public async Task TestLogicGp()
     {
-        for (var i = 0; i < 100; i++)
+        for (var i = 0; i < 10; i++)
         {
             ThreadSafeRandomNetCore.Seed = 42;
             var trainer =
-                new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                    10, 2, folds: 5,
-                    minMaxWeight: 1.05,
-                    usedMetric: (ClassMetric.F1, Averaging.Macro));
+                new LogicGpGpasBinaryTrainer(1000);
             var pipeline = Dataset.BuildPipeline(
                 ThreadSafeMLContext.LocalMLContext, trainer,
                 ScenarioType.Classification,
@@ -37,25 +34,10 @@ public class BreastCancerWisconsinTests : RealTests
             if (trainer is IInterpretableTrainer interpretableTrainer)
             {
                 var finalModel = interpretableTrainer.Model;
-                //Console.WriteLine(finalModel);
+                Console.WriteLine(finalModel);
             }
         }
         //Assert.IsTrue(metrics.MacroAccuracy > 0.38);
-    }
-
-    [TestMethod]
-    public async Task SimulateLogicGpFlcw()
-    {
-        ThreadSafeRandomNetCore.Seed = 42;
-        ThreadSafeMLContext.Seed = 42;
-        var trainer =
-            new LogicGpFlcwMacroMulticlassTrainer<
-                BinaryClassificationOutput>(10000);
-        var pipeline = Dataset.BuildPipeline(
-            ThreadSafeMLContext.LocalMLContext, trainer,
-            ScenarioType.Classification,
-            ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, trainer, 0.2f);
     }
 
     [TestMethod]
@@ -65,13 +47,13 @@ public class BreastCancerWisconsinTests : RealTests
         ThreadSafeMLContext.Seed = 42;
         var trainer =
             new LogicGpRlcwMulticlassTrainer<BinaryClassificationOutput>(
-                -6, 100, folds: 5,
-                minMaxWeight: 1.05,
-                usedMetric: (ClassMetric.F1, Averaging.Macro));
+                -100, 500, folds: 2,
+                minMaxWeight: 1.0,
+                usedMetric: (ClassMetric.Accuracy, Averaging.Macro));
         var pipeline = Dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, trainer, 0.2f);
+        var metrics = Simulate(pipeline, trainer, 0.2f, true);
     }
 }

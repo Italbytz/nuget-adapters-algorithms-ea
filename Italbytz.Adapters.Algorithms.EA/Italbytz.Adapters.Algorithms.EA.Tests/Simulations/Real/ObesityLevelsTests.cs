@@ -54,13 +54,13 @@ public class ObesityLevelsTests : RealTests
         ThreadSafeMLContext.Seed = 42;
         var trainer =
             new LogicGpRlcwMulticlassTrainer<SeptenaryClassificationOutput>(
-                -9, 400, folds: 5,
+                -16, 400, folds: 5,
                 minMaxWeight: 1.05,
                 usedMetric: (ClassMetric.F1, Averaging.Macro));
         var pipeline = Dataset.BuildPipeline(
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.1f);
+        var metrics = Simulate(pipeline, trainer, 0.1f);
     }
 }

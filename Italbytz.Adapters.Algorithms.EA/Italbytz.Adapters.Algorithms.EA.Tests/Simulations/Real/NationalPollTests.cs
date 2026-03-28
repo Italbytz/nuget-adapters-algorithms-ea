@@ -59,7 +59,7 @@ public class NationalPollTests : RealTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.2f);
+        var metrics = Simulate(pipeline, trainer, 0.2f);
     }
 
     [TestMethod]
@@ -76,6 +76,6 @@ public class NationalPollTests : RealTests
             ThreadSafeMLContext.LocalMLContext, trainer,
             ScenarioType.Classification,
             ProcessingType.FeatureBinningAndCustomLabelMapping);
-        var metrics = Simulate(pipeline, 0.2f);
+        var metrics = Simulate(pipeline, trainer, 0.2f);
     }
 }
