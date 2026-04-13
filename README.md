@@ -5,7 +5,6 @@ The [Hexagonal Architecture](https://web.archive.org/web/20180822100852/http://a
 This repository provides C# adapters for Evolutionary Algorithms inspired by [FrEAK](https://sourceforge.net/projects/freak427/). The NuGet package is called [Italbytz.Adapters.Algorithms.EA](https://www.nuget.org/packages/Italbytz.Adapters.Algorithms.EA) and offers a [docfx](https://italbytz.github.io/nuget-adapters-algorithms-ea/) page. Ports are in the NuGet package [Italbytz.Ports.Algorithms.EA](https://www.nuget.org/packages/Italbytz.Ports.Algorithms.EA) (Source: [nuget-ports-algorithms-ea](https://github.com/Italbytz/nuget-ports-algorithms-ea)).
  
 
-
 # Getting Started
 
 The project contains a set of unit tests demonstrating the use of the provided ports and adapters.
