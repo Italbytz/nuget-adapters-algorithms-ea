@@ -11,7 +11,7 @@
         <PackageReference Include="Microsoft.ML" Version="4.0.2"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
         <PackageReference Include="MSTest" Version="3.6.4"/>
-        <PackageReference Include="Italbytz.ML.UCIMLR" Version="10.0.5"/>
+        <PackageReference Include="Italbytz.AI.ML.UciDatasets" Version="1.0.0-preview.5"/>
         <PackageReference Include="System.Text.Json" Version="9.0.10"/>
     </ItemGroup>
 
