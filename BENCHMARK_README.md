@@ -38,7 +38,7 @@ Cross-platform benchmarking tool to compare Python and C# LogicGP implementation
 ### C# Side
 
 ```bash
-cd /path/to/nuget-adapters-algorithms-ea/Italbytz.Adapters.Algorithms.EA
+cd /path/to/csharp-console-logicgp/logicGP
 
 # Build the CLI tool
 dotnet build
@@ -48,8 +48,8 @@ dotnet build -c Release
 ```
 
 The CLI tool will be available at:
-- Debug: `Italbytz.Adapters.Algorithms.EA.Benchmark.Cli/bin/Debug/net9.0/Italbytz.Adapters.Algorithms.EA.Benchmark.Cli`
-- Release: `Italbytz.Adapters.Algorithms.EA.Benchmark.Cli/bin/Release/net9.0/Italbytz.Adapters.Algorithms.EA.Benchmark.Cli`
+- Debug: `logicGP/bin/Debug/net9.0/Italbytz.Adapters.Algorithms.EA.Benchmark.Cli`
+- Release: `logicGP/bin/Release/net9.0/Italbytz.Adapters.Algorithms.EA.Benchmark.Cli`
 
 ### Python Side
 
@@ -66,7 +66,7 @@ pip install -e ".[dev,benchmark]"
 
 ```bash
 # Run a single benchmark
-./Italbytz.Adapters.Algorithms.EA.Benchmark.Cli run \
+./logicGP/bin/Debug/net9.0/Italbytz.Adapters.Algorithms.EA.Benchmark.Cli run \
   --trainer flcw-macro \
   --dataset iris \
   --generations 100 \

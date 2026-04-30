@@ -7,7 +7,8 @@ using Italbytz.EA.Individuals;
 using Italbytz.EA.Initialization;
 using Italbytz.EA.Selection;
 using Italbytz.EA.Trainer.Gecco;
-using Italbytz.ML;
+using Italbytz.AI;
+using Italbytz.AI.ML.Core;
 using Microsoft.ML;
 
 namespace Italbytz.EA.Trainer.Bioinformatics;

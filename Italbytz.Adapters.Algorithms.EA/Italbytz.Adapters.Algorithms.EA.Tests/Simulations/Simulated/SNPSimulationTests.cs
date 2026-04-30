@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Italbytz.EA.Trainer;
-using Italbytz.ML;
+using Italbytz.AI;
 using Microsoft.ML;
 using LogicGpGraph = Italbytz.EA.Trainer.Gecco.LogicGpGraph;
 

@@ -1,9 +1,9 @@
 using System.Globalization;
 using Italbytz.EA.Trainer;
-using Italbytz.ML;
-using Italbytz.ML.Data;
+using Italbytz.AI;
+using Italbytz.AI.ML.UciDatasets;
 using Microsoft.ML;
-using Metrics = Italbytz.ML.Metrics;
+using Metrics = Italbytz.AI.ML.Core.Metrics;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Real;
 

@@ -9,8 +9,9 @@ using Italbytz.EA.Control;
 using Italbytz.EA.Extensions;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Searchspace;
-using Italbytz.ML;
-using Italbytz.ML.Trainers;
+using Italbytz.AI;
+using Italbytz.AI.ML.Core;
+using Italbytz.AI.ML.Trainers;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 

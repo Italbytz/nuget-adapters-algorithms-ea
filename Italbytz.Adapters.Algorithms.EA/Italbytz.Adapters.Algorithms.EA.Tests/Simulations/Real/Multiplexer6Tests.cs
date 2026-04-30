@@ -1,9 +1,9 @@
 using Italbytz.AI;
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Trainer;
-using Italbytz.ML;
-using Italbytz.ML.Data;
-using Italbytz.ML.ModelBuilder.Configuration;
+using Italbytz.AI;
+using Italbytz.AI.ML.UciDatasets;
+using Italbytz.AI.ML.Core.Configuration;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Real;
 

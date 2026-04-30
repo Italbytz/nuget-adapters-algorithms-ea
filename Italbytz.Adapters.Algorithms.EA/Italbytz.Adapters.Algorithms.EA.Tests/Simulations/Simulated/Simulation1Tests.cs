@@ -1,7 +1,7 @@
 using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Searchspace;
-using Italbytz.ML;
+using Italbytz.AI;
 
 namespace Italbytz.Adapters.Algorithms.EA.Tests.Simulations.Simulated;
 

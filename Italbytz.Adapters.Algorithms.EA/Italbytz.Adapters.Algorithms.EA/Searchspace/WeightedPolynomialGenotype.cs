@@ -11,7 +11,6 @@ using Italbytz.EA.Fitness;
 using Italbytz.EA.Individuals;
 using Italbytz.EA.Mutation;
 using Italbytz.EA.SearchSpace;
-using Italbytz.ML;
 
 namespace Italbytz.EA.Searchspace;
 

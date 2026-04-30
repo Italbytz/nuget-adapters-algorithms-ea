@@ -23,9 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Italbytz.Adapters.Algorithms.AI" Version="9.11.0"/>
-        <PackageReference Include="Italbytz.ML" Version="9.13.0"/>
         <PackageReference Include="Italbytz.Ports.Algorithms.EA" Version="9.17.0"/>
+        <PackageReference Include="Italbytz.AI.Evolutionary" Version="1.0.0-preview.5"/>
+        <PackageReference Include="Italbytz.AI.ML" Version="1.0.0-preview.5"/>
         <PackageReference Include="System.Text.Json" Version="9.0.10"/>
     </ItemGroup>
 
